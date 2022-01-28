@@ -43,7 +43,7 @@ In order to get a preview of how the interface looks like, you can try running t
 Keep in mind that OpenStreetMap data for the whole country are downloaded when you first select a city, so be prepared to wait many minutes. Municipality-level data are cached and retrieved efficiently afterwards.
 
 ```{r testing app, eval = FALSE}
-library("streetnames")
+library("streetnamer")
 library("latlon2map")
 options(timeout = 60000) # big timeout, as big downloads needed 
 

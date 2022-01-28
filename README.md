@@ -41,7 +41,7 @@ minutes. Municipality-level data are cached and retrieved efficiently
 afterwards.
 
 ``` r
-library("streetnames")
+library("streetnamer")
 library("latlon2map")
 options(timeout = 60000) # big timeout, as big downloads needed 
 

@@ -17,8 +17,8 @@ sn_run_app <- function(
 ) {
   with_golem_options(
     app = shinyApp(
-      ui = app_ui,
-      server = app_server,
+      ui = sn_app_ui,
+      server = sn_app_server,
       onStart = onStart,
       options = options, 
       enableBookmarking = enableBookmarking, 
