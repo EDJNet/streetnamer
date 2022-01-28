@@ -1,0 +1,4 @@
+.table.dataTable tbody td.active, .table.dataTable tbody tr.active td {
+    background-color: #ff5454 !important;
+    color: white !important;
+}
