@@ -10,23 +10,21 @@
 #' @export
 #' @importFrom shiny shinyApp
 #' @importFrom golem with_golem_options
-sn_run_app <- function(
-  lau_by_nuts = sn_lau_by_nuts, 
-  onStart = NULL,
-  options = list(), 
-  enableBookmarking = NULL,
-  uiPattern = "/",
-  ...
-) {
+sn_run_app <- function(lau_by_nuts = sn_lau_by_nuts,
+                       onStart = NULL,
+                       options = list(),
+                       enableBookmarking = NULL,
+                       uiPattern = "/",
+                       ...) {
   with_golem_options(
     app = shinyApp(
       ui = sn_app_ui,
       server = sn_app_server,
       onStart = onStart,
-      options = options, 
-      enableBookmarking = enableBookmarking, 
+      options = options,
+      enableBookmarking = enableBookmarking,
       uiPattern = uiPattern
-    ), 
+    ),
     golem_opts = list(lau_by_nuts = lau_by_nuts)
   )
 }

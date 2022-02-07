@@ -10,7 +10,6 @@
 #' @export
 #'
 #' @examples
-#'
 #' \dontrun{
 #' sn_search_wiki(search = "Mihai Eminescu", language = "en")
 #' sn_search_wiki(search = "Mihai Eminescu", language = "ro")
@@ -67,7 +66,7 @@ sn_search_wiki <- function(search,
     )
   }
   )
-  if (length(search_response)==0) {
+  if (length(search_response) == 0) {
     search_response_df <- tibble::tibble(
       id = NA,
       label = NA,
@@ -118,7 +117,7 @@ sn_search_wiki <- function(search,
 #' }
 #'
 sn_tidy_wiki <- function(id,
-                            cache = TRUE) {
+                         cache = TRUE) {
   if (cache == TRUE) {
     streetnamer::sn_create_cache_folder()
     db_folder <- fs::path(

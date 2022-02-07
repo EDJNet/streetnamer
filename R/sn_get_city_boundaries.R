@@ -9,7 +9,6 @@
 #' @examples
 #'
 #' sn_get_osm_city_boundaries(search = "Sibiu, Romania")
-#'
 #' @export
 #'
 
@@ -20,48 +19,62 @@ sn_get_osm_city_boundaries <- function(city,
                                        cache = TRUE) {
   query <- paste(city, country, sep = ", ")
 
-  if (cache==TRUE) {
+  if (cache == TRUE) {
     streetnamer::sn_create_cache_folder()
     base_folder <- fs::path(streetnamer::sn_get_cache_folder(), "osm_city_boundaries")
     fs::dir_create(path = base_folder)
-    file_location <- fs::path(base_folder,
-                              stringr::str_to_lower(country),
-                              paste0(stringr::str_to_lower(iconv(x = city,
-                                                                 to = "ASCII//TRANSLIT")),
-                                     ".rds"))
-    if (fs::file_exists(file_location)==TRUE) {
+    file_location <- fs::path(
+      base_folder,
+      stringr::str_to_lower(country),
+      paste0(
+        stringr::str_to_lower(iconv(
+          x = city,
+          to = "ASCII//TRANSLIT"
+        )),
+        ".rds"
+      )
+    )
+    if (fs::file_exists(file_location) == TRUE) {
       return(readr::read_rds(file = file_location))
     }
   }
 
   if (is.null(administrative)) {
-
     temp <- osmdata::opq(bbox = query) %>%
-      osmdata::add_osm_feature(key = "admin_level",
-                               value = admin_level) %>%
-      osmdata::add_osm_feature(key = "place",
-                               value = "city") %>%
+      osmdata::add_osm_feature(
+        key = "admin_level",
+        value = admin_level
+      ) %>%
+      osmdata::add_osm_feature(
+        key = "place",
+        value = "city"
+      ) %>%
       osmdata::osmdata_sf()
 
-    if (is.null(temp$osm_polygons)==FALSE) {
+    if (is.null(temp$osm_polygons) == FALSE) {
       city_boundary <- temp$osm_polygons
-    } else if (is.null(temp$osm_multipolygons)==FALSE) {
+    } else if (is.null(temp$osm_multipolygons) == FALSE) {
       city_boundary <- temp$osm_multipolygons
     }
-
   } else {
     temp <- osmdata::opq(bbox = query) %>%
-      osmdata::add_osm_feature(key = "boundary",
-                               value = "administrative") %>%
-      osmdata::add_osm_feature(key = "admin_level",
-                               value = admin_level) %>%
-      osmdata::add_osm_feature(key = "place",
-                               value = "city") %>%
+      osmdata::add_osm_feature(
+        key = "boundary",
+        value = "administrative"
+      ) %>%
+      osmdata::add_osm_feature(
+        key = "admin_level",
+        value = admin_level
+      ) %>%
+      osmdata::add_osm_feature(
+        key = "place",
+        value = "city"
+      ) %>%
       osmdata::osmdata_sf()
 
-    if (is.null(temp$osm_polygons)==FALSE) {
+    if (is.null(temp$osm_polygons) == FALSE) {
       city_boundary <- temp$osm_polygons
-    } else if (is.null(temp$osm_multipolygons)==FALSE) {
+    } else if (is.null(temp$osm_multipolygons) == FALSE) {
       city_boundary <- temp$osm_multipolygons
     }
   }
@@ -69,12 +82,15 @@ sn_get_osm_city_boundaries <- function(city,
     usethis::ui_oops("City boundary not found.")
   } else {
     if (cache == TRUE) {
-      fs::dir_create(path = fs::path(base_folder,
-                                     stringr::str_to_lower(country)))
-      saveRDS(object = city_boundary,
-              file = file_location)
+      fs::dir_create(path = fs::path(
+        base_folder,
+        stringr::str_to_lower(country)
+      ))
+      saveRDS(
+        object = city_boundary,
+        file = file_location
+      )
     }
   }
   city_boundary
 }
-

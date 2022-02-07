@@ -8,7 +8,6 @@
 #' @param overwrite Logical, defaults to FALSE. If true, downloads new files even if already present.
 #' @return Used only for its side effects (downloads osm data).
 #' @examples
-#'
 #' \dontrun{
 #' sn_download_osm(countries = "Romania")
 #' sn_download_osm(countries = c("chile", "colombia"))

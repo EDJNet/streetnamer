@@ -21,7 +21,7 @@
 #' A dataset with all European LAUs, with the correspondent NUTS regions
 #'
 #' Based on 2020 LAUs and 2021 NUTS regions.
-#' 
+#'
 #' For details, see https://edjnet.github.io/lau_centres/
 #'
 #' @source \url{https://edjnet.github.io/lau_centres/}

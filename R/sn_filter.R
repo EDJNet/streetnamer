@@ -8,7 +8,6 @@
 #' @export
 #'
 #' @examples
-#'
 #' \dontrun{
 #' sn_search_wiki("Antonio Vivaldi") %>%
 #'   sn_filter_people()

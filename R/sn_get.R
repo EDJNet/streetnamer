@@ -15,47 +15,59 @@ sn_extract_streets <- function(countries) {
 
   fs::dir_create(path = fs::path(streetnamer::sn_get_cache_folder(), "streets_shp"))
 
-  purrr::walk(.x = tolower(countries),
-              .f = function(current_country) {
-                current_country_zip_folder <- fs::path(streetnamer::sn_get_cache_folder(),
-                                                   "countries_shp_zip",
-                                                   current_country)
-                if (fs::file_exists(current_country_zip_folder)==FALSE) {
-                  usethis::ui_info(glue::glue("'{current_country}' is not available locally. You can download it with 'sn_download_osm('{current_country}')'."))
-                  usethis::ui_stop(glue::glue("{current_country} not available."))
-                } else {
-                  local_files <- fs::dir_ls(path = current_country_zip_folder,
-                                            recurse = FALSE,
-                                            type = "file",
-                                            glob = "*.shp.zip")
+  purrr::walk(
+    .x = tolower(countries),
+    .f = function(current_country) {
+      current_country_zip_folder <- fs::path(
+        streetnamer::sn_get_cache_folder(),
+        "countries_shp_zip",
+        current_country
+      )
+      if (fs::file_exists(current_country_zip_folder) == FALSE) {
+        usethis::ui_info(glue::glue("'{current_country}' is not available locally. You can download it with 'sn_download_osm('{current_country}')'."))
+        usethis::ui_stop(glue::glue("{current_country} not available."))
+      } else {
+        local_files <- fs::dir_ls(
+          path = current_country_zip_folder,
+          recurse = FALSE,
+          type = "file",
+          glob = "*.shp.zip"
+        )
 
 
 
-                  purrr::walk(.x = local_files,
-                              .f = function(current_zip_file) {
+        purrr::walk(
+          .x = local_files,
+          .f = function(current_zip_file) {
+            files_to_extract <- unzip(
+              zipfile = current_zip_file,
+              list = TRUE
+            ) %>%
+              tibble::as_tibble() %>%
+              dplyr::filter(stringr::str_detect(string = Name, pattern = "roads")) %>%
+              dplyr::pull(Name)
 
-                                files_to_extract <- unzip(zipfile = current_zip_file,
-                                                          list = TRUE) %>%
-                                  tibble::as_tibble() %>%
-                                  dplyr::filter(stringr::str_detect(string = Name, pattern = "roads")) %>%
-                                  dplyr::pull(Name)
-
-                                current_street_shp_folder <-
-                                  fs::path(streetnamer::sn_get_cache_folder(),
-                                           "streets_shp",
-                                           current_country,
-                                           current_zip_file %>%
-                                             fs::path_file() %>%
-                                             stringr::str_remove(pattern = "-latest-free.shp.zip"))
+            current_street_shp_folder <-
+              fs::path(
+                streetnamer::sn_get_cache_folder(),
+                "streets_shp",
+                current_country,
+                current_zip_file %>%
+                  fs::path_file() %>%
+                  stringr::str_remove(pattern = "-latest-free.shp.zip")
+              )
 
 
-                                unzip(zipfile = current_zip_file,
-                                      files = files_to_extract,
-                                      exdir = current_street_shp_folder)
-
-                  })
-                }
-              })
+            unzip(
+              zipfile = current_zip_file,
+              files = files_to_extract,
+              exdir = current_street_shp_folder
+            )
+          }
+        )
+      }
+    }
+  )
 }
 
 #' Extract shape files of roads from previously downloaded
@@ -74,19 +86,25 @@ sn_get_streets <- function(country) {
   country <- tolower(country)
 
   country_street_shp_folder <-
-    fs::path(streetnamer::sn_get_cache_folder(),
-             "streets_shp",
-             country)
-  if (fs::file_exists(country_street_shp_folder)==FALSE) {
+    fs::path(
+      streetnamer::sn_get_cache_folder(),
+      "streets_shp",
+      country
+    )
+  if (fs::file_exists(country_street_shp_folder) == FALSE) {
     sn_extract_streets(countries = country)
   }
 
-  street_folders <- fs::dir_ls(path = country_street_shp_folder,
-                               type = "directory",
-                               recurse = FALSE)
+  street_folders <- fs::dir_ls(
+    path = country_street_shp_folder,
+    type = "directory",
+    recurse = FALSE
+  )
 
-  purrr::map_dfr(.x = street_folders,
-                 .f = function(x) sf::st_read(dsn = x))
+  purrr::map_dfr(
+    .x = street_folders,
+    .f = function(x) sf::st_read(dsn = x)
+  )
 }
 
 #' Extract shape files of places from previously downloaded
@@ -102,8 +120,8 @@ sn_get_streets <- function(country) {
 #'
 
 sn_extract_places <- function(countries,
-                           export_rds = FALSE,
-                           export_csv = FALSE) {
+                              export_rds = FALSE,
+                              export_csv = FALSE) {
   dir.create(path = file.path("data", "places_shp"), showWarnings = FALSE)
   countries <- tolower(countries)
 
@@ -246,8 +264,8 @@ sn_get_city_boundaries <- function(city, country, admin_level = 6, administrativ
 #' @export
 #'
 sn_get_boundary_by_id <- function(id,
-                               type = "way",
-                               cache = TRUE) {
+                                  type = "way",
+                                  cache = TRUE) {
   fs::dir_create(
     path = file.path("data", "city_boundaries", "by_id"),
     recursive = TRUE
@@ -308,10 +326,10 @@ sn_get_boundary_by_id <- function(id,
 #' create_city_boundary_id_combo(id = 46663, type = "relation", city = "Trento", country = "Italy", )
 #' @export
 sn_create_city_boundary_id_combo <- function(id,
-                                          type,
-                                          city = NULL,
-                                          country = NULL,
-                                          cache = TRUE) {
+                                             type,
+                                             city = NULL,
+                                             country = NULL,
+                                             cache = TRUE) {
   combo <- list(
     city = city,
     country = country,
@@ -351,5 +369,5 @@ sn_create_city_boundary_id_combo <- function(id,
 #'
 sn_subset_streets <- function(boundary, streets) {
   streets[sf::st_within(streets, boundary) %>%
-            lengths() > 0, ]
+    lengths() > 0, ]
 }

@@ -19,34 +19,41 @@ sn_lau_by_nuts_df <- readr::read_csv(
     fid = col_character(),
     concordance = col_character(),
     pop_weighted = col_logical()
-  ))
+  )
+)
 
 
 library("latlon2map")
-options(timeout = 60000) # big timeout, as big downloads needed 
+options(timeout = 60000) # big timeout, as big downloads needed
 
-ll_set_folder(path = fs::path(fs::path_home_r(),
-                              "R",
-                              "ll_data"))
+ll_set_folder(path = fs::path(
+  fs::path_home_r(),
+  "R",
+  "ll_data"
+))
 
-sn_lau_by_nuts <- sn_lau_by_nuts_df %>% 
-  dplyr::mutate(country_name = countrycode::countrycode(sourcevar = country, origin = "eurostat", destination = "country.name.en")) %>% 
-  dplyr::select(gisco_id, country, country_name, nuts_2, nuts_3, lau_name) %>% 
-  left_join(y = ll_get_nuts_eu(level = 2, year = 2021) %>% 
-              sf::st_drop_geometry() %>% 
-              transmute(nuts_2 = NUTS_ID, nuts_2_name = NUTS_NAME, nuts_2_name_latin = NAME_LATN),
-            by = "nuts_2") %>% 
-  left_join(y = ll_get_nuts_eu(level = 3, year = 2021) %>% 
-              sf::st_drop_geometry() %>% 
-              transmute(nuts_3 = NUTS_ID, nuts_3_name = NUTS_NAME, nuts_3_name_latin = NAME_LATN),
-            by = "nuts_3") %>% 
-  dplyr::group_by(gisco_id) %>% 
-  dplyr::mutate(lau_label = paste0(lau_name, " (", nuts_3_name, ")")) %>% 
+sn_lau_by_nuts <- sn_lau_by_nuts_df %>%
+  dplyr::mutate(country_name = countrycode::countrycode(sourcevar = country, origin = "eurostat", destination = "country.name.en")) %>%
+  dplyr::select(gisco_id, country, country_name, nuts_2, nuts_3, lau_name) %>%
+  left_join(
+    y = ll_get_nuts_eu(level = 2, year = 2021) %>%
+      sf::st_drop_geometry() %>%
+      transmute(nuts_2 = NUTS_ID, nuts_2_name = NUTS_NAME, nuts_2_name_latin = NAME_LATN),
+    by = "nuts_2"
+  ) %>%
+  left_join(
+    y = ll_get_nuts_eu(level = 3, year = 2021) %>%
+      sf::st_drop_geometry() %>%
+      transmute(nuts_3 = NUTS_ID, nuts_3_name = NUTS_NAME, nuts_3_name_latin = NAME_LATN),
+    by = "nuts_3"
+  ) %>%
+  dplyr::group_by(gisco_id) %>%
+  dplyr::mutate(lau_label = paste0(lau_name, " (", nuts_3_name, ")")) %>%
   ungroup()
 
-sn_lau_by_nuts %>% 
-  anti_join(y = sn_lau_by_nuts %>% 
-  tidyr::drop_na(), by = "gisco_id")
+sn_lau_by_nuts %>%
+  anti_join(y = sn_lau_by_nuts %>%
+    tidyr::drop_na(), by = "gisco_id")
 
 sn_lau_by_nuts <- sn_lau_by_nuts %>% tidyr::drop_na()
 

@@ -30,19 +30,19 @@ sn_get_lau_street_names <- function(gisco_id,
     country = country,
     type = "osm_lau_street_names"
   )
-  
+
   table_name <- sn_get_db_table_name(
     type = "osm_lau_street_names",
     country = country
   )
-  
+
   if (DBI::dbExistsTable(conn = db, name = table_name) == FALSE) {
     if (disconnect_db == TRUE) {
       DBI::dbDisconnect(db)
     }
     return(NULL)
   }
-  
+
   db_result <- tryCatch(
     dplyr::tbl(src = db, table_name) %>%
       dplyr::filter(.data$gisco_id %in% stringr::str_to_upper(gisco_id)),
@@ -56,14 +56,14 @@ sn_get_lau_street_names <- function(gisco_id,
     }
     return(NULL)
   }
-  
+
   street_names_df <- db_result %>%
     tibble::as_tibble()
-  
+
   if (disconnect_db == TRUE) {
     DBI::dbDisconnect(db)
   }
-  
+
   street_names_df
 }
 
@@ -79,11 +79,11 @@ sn_get_lau_street_names <- function(gisco_id,
 #' @export
 #'
 #' @examples
-#' 
+#'
 #' sn_get_gisco_id(name = "Trento", country = "IT")
 sn_get_gisco_id <- function(name, country) {
-  ll_get_lau_eu() %>% 
-    sf::st_drop_geometry() %>% 
-    dplyr::filter(CNTR_CODE == country, LAU_NAME == name) %>% 
+  ll_get_lau_eu() %>%
+    sf::st_drop_geometry() %>%
+    dplyr::filter(CNTR_CODE == country, LAU_NAME == name) %>%
     dplyr::pull(GISCO_ID)
 }

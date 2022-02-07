@@ -80,15 +80,15 @@ sn_check_data_folder <- function() {
 #'
 #' sn_disconnect_from_db()
 sn_disconnect_from_db <- function(cache = NULL,
-                                     db_connection = NULL,
-                                     disconnect_db = TRUE,
+                                  db_connection = NULL,
+                                  disconnect_db = TRUE,
                                   country = NULL) {
   if (sn_check_db(cache) == TRUE) {
     db <- sn_connect_to_db(
       connection = db_connection,
-     country = country
+      country = country
     )
-    
+
     if (DBI::dbIsValid(dbObj = db)) {
       if (disconnect_db == TRUE) {
         DBI::dbDisconnect(db)
@@ -139,10 +139,12 @@ sn_get_db_file <- function(type = "osm",
 #' sn_get_db_table_name(type = "item", language = "en")
 sn_get_db_table_name <- function(type,
                                  country) {
-  stringr::str_c("sn_",
-                 stringr::str_to_lower(country),
-                 "_",
-                 stringr::str_to_lower(type))
+  stringr::str_c(
+    "sn_",
+    stringr::str_to_lower(country),
+    "_",
+    stringr::str_to_lower(type)
+  )
 }
 
 
@@ -150,8 +152,8 @@ sn_get_db_table_name <- function(type,
 #' Return a connection to be used for db
 #'
 #' @param connection Defaults to NULL. If NULL, uses local SQLite database. If given, must be a connection object (see example)
-#' @param country Defaults to NULL. 
-#' 
+#' @param country Defaults to NULL.
+#'
 #' @return A connection object.
 #' @export
 #'
