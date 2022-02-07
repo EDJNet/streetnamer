@@ -30,7 +30,8 @@ ll_set_folder(path = fs::path(fs::path_home_r(),
                               "ll_data"))
 
 sn_lau_by_nuts <- sn_lau_by_nuts_df %>% 
-  dplyr::select(gisco_id, country, nuts_2, nuts_3, lau_name) %>% 
+  dplyr::mutate(country_name = countrycode::countrycode(sourcevar = country, origin = "eurostat", destination = "country.name.en")) %>% 
+  dplyr::select(gisco_id, country, country_name, nuts_2, nuts_3, lau_name) %>% 
   left_join(y = ll_get_nuts_eu(level = 2, year = 2021) %>% 
               sf::st_drop_geometry() %>% 
               transmute(nuts_2 = NUTS_ID, nuts_2_name = NUTS_NAME, nuts_2_name_latin = NAME_LATN),
