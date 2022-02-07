@@ -16,3 +16,13 @@
 #' }
 #' @source \url{http://download.geofabrik.de/}
 "sn_osm_countries"
+
+
+#' A dataset with all European LAUs, with the correspondent NUTS regions
+#'
+#' Based on 2020 LAUs and 2021 NUTS regions.
+#' 
+#' For details, see https://edjnet.github.io/lau_centres/
+#'
+#' @source \url{https://edjnet.github.io/lau_centres/}
+"sn_lau_by_nuts"
