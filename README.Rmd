@@ -56,6 +56,32 @@ sn_set_data_folder(fs::path(fs::path_home_r(),
 sn_run_app()
 ```
 
+## Function naming conventions
+
+`streetnamer` has two main types of functions:
+
+- a set of functions used to facilitate processing, that can conventionally be used from the command line, or internally by the Shiny app: they all start with `sn_` followed by a verb, e.g. `sn_get_lau_street_names()`
+- a set of functions that are in effect Shiny modules (see below). They typically start with `mod_sn_` and are currently not exported (as is customary for non-exported functions, they can be used with the triple `:`, e.g. `streetnamer:::mod_sn_street_info_app`) .
+
+
+## Shiny modules
+
+In order to facilitate development, as well as to allow integration of component parts of this app in spin-off projects, key components of the Shiny app have been developed as modules and can be tested independently.
+
+
+See for example (currently not working due to refactoring):
+
+```{r eval=FALSE}
+streetnamer:::mod_sn_street_info_app(street_name = "Belvedere San Francesco",
+                                     gisco_id = "IT_022205")
+```
+
+
+## Caching
+
+Rather than adopting a separate caching infrastrucutre, `streetnamer` relies on the caching infrastructure of `tidywikidatar`. In briefl, it generates separate tables with non-conflicting names in the same database used by `tidywikidatar` (be it a local SQLite or another odbc-compliant servers such as SQL)
+
+
 
 ## Data sources
 
@@ -78,6 +104,10 @@ It should be possible deal with the following circumstances:
 ## On naming things
 
 OpenStreetMap groups all sorts of roads, streets, squares, and paths under the confusing label of "highway". Within this package, the generic word used in function and documentation will be "streets", as the package is expected to be used chiefly in reference to urban centres.
+
+## Contributing
+
+Suggestions and contributions are welcome; they can be discussed via GitHub issues. 
 
 ## Copyright and credits
 
