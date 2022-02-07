@@ -46,7 +46,10 @@ sn_app_server <- function( input, output, session ) {
   observeEvent(input$current_gisco_id, 
                {
                  output$current_city_title <- renderUI({
-                   h2(input$current_gisco_id)
+                   golem::get_golem_options("lau_by_nuts") %>%
+                     dplyr::filter(gisco_id==input$current_gisco_id) %>% 
+                     dplyr::pull(.data$lau_label) %>% 
+                     shiny::h2()
                  })
                })
 
