@@ -20,7 +20,6 @@ A data frame with three columns, `id`, `label`, and `description`; all rows refe
 Filter search result and keep only people
 }
 \examples{
-
 \dontrun{
 sn_search_wiki("Antonio Vivaldi") \%>\%
   sn_filter_people()

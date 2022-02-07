@@ -30,12 +30,16 @@ Retrieve combination of municipality/street name/wikidata id and category from d
 
 
 sn_set_data_folder(path = tempdir())
-sn_write_street_name_wikidata_id(gisco_id = "IT_022205",
-                                 street_name = "Belvedere San Francesco",
-                                 wikidata_id = "Q676555",
-                                 category = NA,
-                                 checked = TRUE)
+sn_write_street_name_wikidata_id(
+  gisco_id = "IT_022205",
+  street_name = "Belvedere San Francesco",
+  wikidata_id = "Q676555",
+  category = NA,
+  checked = TRUE
+)
 
-sn_get_street_name_wikidata_id(gisco_id = "IT_022205",
-                               street_name = "Belvedere San Francesco")
+sn_get_street_name_wikidata_id(
+  gisco_id = "IT_022205",
+  street_name = "Belvedere San Francesco"
+)
 }

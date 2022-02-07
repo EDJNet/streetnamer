@@ -24,7 +24,6 @@ sn_search_wiki(search, language = "en", limit = 10, wait = 1, cache = TRUE)
 Search string in Wikidata and return Wikidata id, label, and description.
 }
 \examples{
-
 \dontrun{
 sn_search_wiki(search = "Mihai Eminescu", language = "en")
 sn_search_wiki(search = "Mihai Eminescu", language = "ro")

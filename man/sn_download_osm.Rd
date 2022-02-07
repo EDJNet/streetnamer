@@ -20,7 +20,6 @@ For a full list of available "countries" as made available by Geofabrik, see the
 Be considered in downloading file.
 }
 \examples{
-
 \dontrun{
 sn_download_osm(countries = "Romania")
 sn_download_osm(countries = c("chile", "colombia"))

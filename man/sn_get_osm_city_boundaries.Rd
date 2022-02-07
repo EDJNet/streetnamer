@@ -32,5 +32,4 @@ Get city boundaries
 \examples{
 
 sn_get_osm_city_boundaries(search = "Sibiu, Romania")
-
 }
