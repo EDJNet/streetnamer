@@ -53,7 +53,7 @@ z-index: 1000;"
           )
         ),
         column(
-          width = 2,
+          width = 3,
           shiny::conditionalPanel(
             condition = "input.current_country_name != ''&&current_country_name != ' '",
             shiny::selectInput(
@@ -61,12 +61,13 @@ z-index: 1000;"
               label = "Select municipality",
               choices = NULL,
               selected = FALSE,
-              selectize = TRUE
+              selectize = TRUE,
+              width = "100%"
             )
           )
         ),
         column(
-          width = 3,
+          width = 2,
           offset = 5,
           h1("streetnamer")
         ),
