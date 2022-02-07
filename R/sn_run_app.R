@@ -1,14 +1,17 @@
 #' Run the Shiny Application
 #'
-#' @param ... arguments to pass to golem_opts. 
-#' See `?golem::get_golem_options` for more details.
+#' @param lau_by_nuts A list of municipalities passed to the app. Defaults to
+#'   `sn_lau_by_nuts`. If given, typically a filtered version of
+#'   `sn_lau_by_nuts`, or a data frame with the same columns.
+#' @param ... arguments to pass to golem_opts. See `?golem::get_golem_options`
+#'   for more details.
 #' @inheritParams shiny::shinyApp
 #'
 #' @export
 #' @importFrom shiny shinyApp
-#' @importFrom golem with_golem_options 
+#' @importFrom golem with_golem_options
 sn_run_app <- function(
-  cities = sn_lau_by_country, 
+  lau_by_nuts = sn_lau_by_nuts, 
   onStart = NULL,
   options = list(), 
   enableBookmarking = NULL,
@@ -24,6 +27,6 @@ sn_run_app <- function(
       enableBookmarking = enableBookmarking, 
       uiPattern = uiPattern
     ), 
-    golem_opts = list(cities = cities)
+    golem_opts = list(lau_by_nuts = lau_by_nuts)
   )
 }

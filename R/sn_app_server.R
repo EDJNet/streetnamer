@@ -17,9 +17,17 @@ sn_app_server <- function( input, output, session ) {
     } else if (input$current_country_name=="-") {
       return(NULL)
     } else {
-        streetnamer::sn_lau_by_country %>%
-          dplyr::filter(CNTR_NAME==input$current_country_name) %>%
-          dplyr::pull(LAU_NAME)
+      current_country_df <- golem::get_golem_options("lau_by_nuts") %>%
+        dplyr::filter(country_name==input$current_country_name) %>% 
+        dplyr::select(gisco_id, lau_label)
+      
+      current_country_gisco_v <- current_country_df %>% 
+        dplyr::pull(gisco_id)
+      
+      names(current_country_gisco_v) <- current_country_df %>% 
+        dplyr::pull(lau_label)
+      
+      return(current_country_gisco_v)
     }
   })
   
@@ -27,7 +35,7 @@ sn_app_server <- function( input, output, session ) {
   observeEvent(eventExpr = input$current_country_name,
                handlerExpr = {
                  updateSelectizeInput(session = session,
-                                      inputId = "current_city_name",
+                                      inputId = "current_gisco_id",
                                       selected = character(0),
                                       choices = cities_in_current_country(),
                                       server = TRUE)
@@ -35,10 +43,10 @@ sn_app_server <- function( input, output, session ) {
 
   #### reactive UI #####
   
-  observeEvent(input$current_city_name, 
+  observeEvent(input$current_gisco_id, 
                {
                  output$current_city_title <- renderUI({
-                   h2(input$current_city_name)
+                   h2(input$current_gisco_id)
                  })
                })
 
@@ -47,20 +55,19 @@ sn_app_server <- function( input, output, session ) {
   
   
   current_streets_sf_r <- shiny::eventReactive(
-    eventExpr = input$current_city_name,
+    eventExpr = input$current_gisco_id,
     valueExpr = {
-      if (is.null(input$current_city_name)) {
+      if (is.null(input$current_gisco_id)) {
         return(NULL)
       }
       
-      if (input$current_city_name==" ") {
+      if (input$current_gisco_id==" ") {
         return(NULL)
       }                                 
       
-      current_gisco_id <- streetnamer::sn_lau_by_country %>% 
-        dplyr::filter(CNTR_NAME == input$current_country_name,
-                      LAU_NAME == input$current_city_name) %>% 
-        dplyr::pull(GISCO_ID)
+      current_gisco_id <- golem::get_golem_options("lau_by_nuts") %>% 
+        dplyr::filter(gisco_id == input$current_gisco_id) %>% 
+        dplyr::pull(gisco_id)
       
       
       ll_osm_lau_streets(gisco_id  = current_gisco_id,
@@ -83,11 +90,11 @@ sn_app_server <- function( input, output, session ) {
   
   
   # current_streets_df_r <- eventReactive(
-  #   eventExpr = input$current_city_name,
+  #   eventExpr = input$current_gisco_id,
   #   valueExpr = {
   #     current_gisco_id <- streetnamer::sn_lau_by_country %>% 
   #       dplyr::filter(CNTR_NAME == input$current_country_name,
-  #                     LAU_NAME == input$current_city_name) %>% 
+  #                     LAU_NAME == input$current_gisco_id) %>% 
   #       dplyr::pull(GISCO_ID)
   #     
   #     current_country_code <- stringr::str_extract(string = current_gisco_id,

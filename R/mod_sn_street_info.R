@@ -20,8 +20,8 @@ mod_sn_street_info_ui <- function(id){
 mod_sn_street_info_server <- function(id, street_name, gisco_id){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
-    current_lau <- streetnamer::sn_lau_by_country %>% 
-      dplyr::filter(GISCO_ID == gisco_id)
+    current_lau <- streetnamer::sn_lau_by_nuts %>% 
+      dplyr::filter(country_name == gisco_id)
     
     # check if street in database
     details_from_db <- sn_get_street_name_wikidata_id(gisco_id = gisco_id,

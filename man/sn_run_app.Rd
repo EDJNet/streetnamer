@@ -5,7 +5,7 @@
 \title{Run the Shiny Application}
 \usage{
 sn_run_app(
-  cities = sn_lau_by_country,
+  lau_by_nuts = sn_lau_by_nuts,
   onStart = NULL,
   options = list(),
   enableBookmarking = NULL,
@@ -14,6 +14,10 @@ sn_run_app(
 )
 }
 \arguments{
+\item{lau_by_nuts}{A list of municipalities passed to the app. Defaults to
+`sn_lau_by_nuts`. If given, typically a filtered version of
+`sn_lau_by_nuts`, or a data frame with the same columns.}
+
 \item{onStart}{A function that will be called before the app is actually run.
 This is only needed for \code{shinyAppObj}, since in the \code{shinyAppDir}
 case, a \code{global.R} file can be used for this purpose.}
@@ -34,8 +38,8 @@ request to determine whether the \code{ui} should be used to handle the
 request. Note that the entire request path must match the regular
 expression in order for the match to be considered successful.}
 
-\item{...}{arguments to pass to golem_opts. 
-See `?golem::get_golem_options` for more details.}
+\item{...}{arguments to pass to golem_opts. See `?golem::get_golem_options`
+for more details.}
 }
 \description{
 Run the Shiny Application

@@ -35,19 +35,24 @@ z-index: 1000;"
       ),
       fluidRow(
         column(width = 2,
-                      shiny::selectInput(inputId = "current_country_name",
-                                         label = "Select country",
-                                         choices = c("", golem::get_golem_options("cities") %>% dplyr::distinct(CNTR_NAME) %>% dplyr::pull(CNTR_NAME)),
-                                         selected = FALSE,
-                                         selectize = TRUE)
-      ),
+               shiny::selectInput(
+                 inputId = "current_country_name",
+                 label = "Select country",
+                 choices = c("",
+                             golem::get_golem_options("lau_by_nuts") %>%
+                               dplyr::distinct(country_name) %>%
+                               dplyr::pull(country_name)),
+                 selected = FALSE,
+                 selectize = TRUE)
+        ),
       column(width = 2,
-             shiny::conditionalPanel(condition = "input.current_country_name != ''&&current_country_name != ' '",
-                                     shiny::selectInput(inputId = "current_city_name",
-                                                        label = "Select municipality",
-                                                        choices = NULL,
-                                                        selected = FALSE,
-                                                        selectize = TRUE))),
+             shiny::conditionalPanel(
+               condition = "input.current_country_name != ''&&current_country_name != ' '",
+               shiny::selectInput(inputId = "current_gisco_id",
+                                  label = "Select municipality",
+                                  choices = NULL,
+                                  selected = FALSE,
+                                  selectize = TRUE))),
       column(width = 3,
              offset = 5,
              h1("streetnamer")
