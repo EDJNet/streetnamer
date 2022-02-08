@@ -22,11 +22,18 @@ You can install the development version of `streetnamer` with:
 
 ``` r
 remotes::install_github("giocomai/latlon2map") # required dependency not on CRAN
+remotes::install_github("EDJNet/tidywikidatar") # available on CRAN, but some features used by `streetnamer` may be added to the development version
 remotes::install_github("giocomai/streetnamer")
 ```
 
 This package relies heavily on
 [`tidywikidatar`](https://edjnet.github.io/tidywikidatar).
+
+Since all three packages (`streetnamer`, `latlon2map`, and
+`tidywikidatar`) are being developed concurrently, leaving to each a
+separate group of tasks, at this stage updates impacting the app may
+occur to any of them. Hence, if anything is not working as expected, you
+are invited to update those packages before reporting.
 
 ## How does it work?
 
@@ -51,6 +58,11 @@ ll_set_folder(path = fs::path(fs::path_home_r(),
 sn_set_data_folder(fs::path(fs::path_home_r(),
                             "R",
                             "sn_data"))
+
+# if using rstudio, I'd suggest you set open this in your default browser
+# rather than in rstudio's enabling the following option
+# options(shiny.launch.browser = .rs.invokeShinyWindowExternal)
+
 sn_run_app()
 ```
 

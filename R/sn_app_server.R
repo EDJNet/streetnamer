@@ -76,10 +76,27 @@ sn_app_server <- function(input, output, session) {
       current_gisco_id <- golem::get_golem_options("lau_by_nuts") %>%
         dplyr::filter(gisco_id == input$current_gisco_id) %>%
         dplyr::pull(gisco_id)
+      
+      current_country_code <- stringr::str_extract(string = current_gisco_id,
+                                                   pattern =  "[A-Z][A-Z]")
+      
+      if (current_country_code == "UK") {
+        # check if northern ireland
+        if (stringr::str_starts(string = current_gisco_id, pattern = "UK_N")) {
+          current_country_name <- "ireland-and-northern-ireland"
+        } else {
+          current_country_name <- "great-britain"
+        }
+      } else if (current_country_code == "IE") {
+        current_country_name <- "ireland-and-northern-ireland"
+      } else {
+        current_country_name <- NULL
+      }
 
 
-      ll_osm_lau_streets(
+      ll_osm_get_lau_streets(
         gisco_id = current_gisco_id,
+        country = current_country_name,
         unnamed_streets = FALSE
       )
     },
