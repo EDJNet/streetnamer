@@ -73,9 +73,7 @@ sn_app_server <- function(input, output, session) {
         return(NULL)
       }
 
-      current_gisco_id <- golem::get_golem_options("lau_by_nuts") %>%
-        dplyr::filter(gisco_id == input$current_gisco_id) %>%
-        dplyr::pull(gisco_id)
+      current_gisco_id <- input$current_gisco_id
       
       current_country_code <- stringr::str_extract(string = current_gisco_id,
                                                    pattern =  "[A-Z][A-Z]")

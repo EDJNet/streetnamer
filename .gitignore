@@ -4,3 +4,7 @@
 .Ruserdata
 inst/doc
 dev
+tw_data
+ll_data
+osm_countries_shp_zip
+automatic_matching_csv

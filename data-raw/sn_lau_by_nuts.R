@@ -32,9 +32,9 @@ ll_set_folder(path = fs::path(
   "ll_data"
 ))
 
-sn_lau_by_nuts <- sn_lau_by_nuts_df %>%
+sn_lau_by_nuts_pre_df <- sn_lau_by_nuts_df %>%
   dplyr::mutate(country_name = countrycode::countrycode(sourcevar = country, origin = "eurostat", destination = "country.name.en")) %>%
-  dplyr::select(gisco_id, country, country_name, nuts_2, nuts_3, lau_name) %>%
+  dplyr::select(gisco_id, country, country_name, nuts_2, nuts_3, lau_name, population, longitude, latitude) %>%
   left_join(
     y = ll_get_nuts_eu(level = 2, year = 2021) %>%
       sf::st_drop_geometry() %>%
@@ -48,13 +48,24 @@ sn_lau_by_nuts <- sn_lau_by_nuts_df %>%
     by = "nuts_3"
   ) %>%
   dplyr::group_by(gisco_id) %>%
-  dplyr::mutate(lau_label = paste0(lau_name, " (", nuts_3_name, ")")) %>%
+  dplyr::mutate(lau_label = dplyr::if_else(condition = lau_name == nuts_3_name,
+                                           true = lau_name,
+                                           false = paste0(lau_name, " (", nuts_3_name, ")"))) %>%
   ungroup()
 
-sn_lau_by_nuts %>%
-  anti_join(y = sn_lau_by_nuts %>%
-    tidyr::drop_na(), by = "gisco_id")
+sn_lau_by_nuts_pre_df %>%
+  anti_join(y = sn_lau_by_nuts_pre_df %>%
+    tidyr::drop_na(), by = "gisco_id") 
 
-sn_lau_by_nuts <- sn_lau_by_nuts %>% tidyr::drop_na()
+# checks
+sn_lau_by_nuts_pre_df %>% 
+  group_by(country) %>% 
+  arrange(country, desc(population)) %>% 
+  filter(country == "CH") 
+
+sn_lau_by_nuts <- sn_lau_by_nuts_pre_df %>% 
+  group_by(country) %>% 
+  arrange(country, desc(population)) %>% 
+  ungroup()
 
 usethis::use_data(sn_lau_by_nuts, overwrite = TRUE)
