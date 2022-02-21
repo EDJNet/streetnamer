@@ -7,16 +7,23 @@
 sn_write_street_name_wikidata_id(
   gisco_id,
   street_name,
+  country,
   wikidata_id,
+  person,
   gender,
   category,
   checked,
+  session,
+  time,
   overwrite = FALSE,
+  append = TRUE,
   connection = NULL,
   disconnect_db = TRUE
 )
 }
 \arguments{
+\item{country}{Two letter country code.}
+
 \item{overwrite}{Logical, defaults to FALSE. If TRUE, it first deletes all rows associated with the item(s) included in `item_df`. Useful if the original Wikidata object has been updated.}
 
 \item{connection}{Defaults to NULL. If NULL, and caching is enabled, `streetnamer` will use a local sqlite database. A custom connection to other databases can be given (see vignette `caching` for details).}
@@ -24,8 +31,6 @@ sn_write_street_name_wikidata_id(
 \item{disconnect_db}{Defaults to TRUE. If FALSE, leaves the connection to cache open.}
 
 \item{df}{A data frame with two columns: gisco_id and name.}
-
-\item{country}{Two letter country code.}
 }
 \value{
 Nothing, used for its side effects.

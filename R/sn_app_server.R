@@ -269,5 +269,22 @@ sn_app_server <- function(input, output, session) {
       )
   })
 
+  
+  ##### Wikidata street name module #####
+  
+  shiny::observeEvent(eventExpr = street_selected()$name,
+                      handlerExpr = {
+    mod_sn_street_info_server(
+      id = "snm_street_info_ui_1",
+      street_name = street_selected()$name,
+      gisco_id = input$current_gisco_id,
+      country = stringr::str_extract(string = input$current_gisco_id,
+                                     pattern =  "[A-Z][A-Z]")
+    )
+  },
+  ignoreNULL = TRUE,
+  ignoreInit = TRUE)
+
+  
   waiter::waiter_hide()
 }

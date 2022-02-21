@@ -55,7 +55,7 @@ sn_write_lau_street_names <- function(df,
     country = country
   )
 
-  if (DBI::dbExistsTable(conn = db, name = table_name) == FALSE) {
+  if (pool::dbExistsTable(conn = db, name = table_name) == FALSE) {
     # do nothing: if table does not exist, previous data cannot be there
   } else {
     previously_available <- dplyr::tbl(src = db, table_name) %>%

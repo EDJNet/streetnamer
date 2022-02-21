@@ -27,38 +27,47 @@
 #' )
 sn_write_street_name_wikidata_id <- function(gisco_id,
                                              street_name,
+                                             country,
                                              wikidata_id,
+                                             person,
                                              gender,
                                              category,
                                              checked,
+                                             session, 
+                                             time,
                                              overwrite = FALSE,
+                                             append = TRUE,
                                              connection = NULL,
                                              disconnect_db = TRUE) {
+  
   gisco_id <- stringr::str_to_upper(gisco_id)
-  country <- stringr::str_extract(string = gisco_id, pattern = "[A-Z][A-Z]")
+  country <- stringr::str_to_upper(country)
 
-  db <- sn_connect_to_db(
-    connection = connection,
-    country = stringr::str_to_lower(country),
-    type = "street_name_wikidata_id"
-  )
-
-  df <- tibble::tibble(
-    gisco_id = as.character(gisco_id),
-    street_name = as.character(street_name),
-    wikidata_id = as.character(wikidata_id),
-    gender = as.character(gender),
-    category = as.character(category),
-    checked = as.integer(checked)
-  )
-
+  db <- tidywikidatar::tw_connect_to_cache(connection = connection,
+                                           language = language,
+                                           cache = TRUE)
+  
   table_name <- sn_get_db_table_name(
     type = "street_name_wikidata_id",
     country = country
   )
 
-  if (DBI::dbExistsTable(conn = db, name = table_name) == FALSE) {
-    if (overwrite == TRUE) {
+  df <- tibble::tibble(
+    gisco_id = as.character(gisco_id),
+    street_name = as.character(street_name),
+    country = as.character(country),
+    wikidata_id = as.character(wikidata_id),
+    person = as.integer(person),
+    gender = as.character(gender),
+    category = as.character(category),
+    checked = as.integer(checked),
+    session = as.character(session), 
+    time = time
+  )
+
+
+  if (pool::dbExistsTable(conn = db, name = table_name) == FALSE) {
+    if (overwrite == TRUE|append==TRUE) {
       DBI::dbWriteTable(db,
         name = table_name,
         value = df,
@@ -101,20 +110,23 @@ sn_write_street_name_wikidata_id <- function(gisco_id,
           append = TRUE
         )
       } else {
-        # do nothing if data already present and overwrite is set to FALSE
+        # do nothing if data already present and both overwrite and append are set to FALSE
       }
     }
   }
 
-  if (disconnect_db == TRUE) {
-    DBI::dbDisconnect(db)
-  }
+  tidywikidatar::tw_disconnect_from_cache(cache = TRUE,
+                                          cache_connection = db,
+                                          disconnect_db = disconnect_db,
+                                          language = language)
+  df
 }
 
 
 #' Retrieve combination of municipality/street name/wikidata id and category from database.
 #'
-#' @param id A characther vector, must start with Q, e.g. "Q180099" for the anthropologist Margaret Mead. Can also be a data frame of one row, typically generated with `tw_search()` or a combination of `tw_search()` and `tw_filter_first()`.
+#' @param gisco_id A characther vector of length one, must correpond to a gisco id. See `sn_lau_by_nuts` for available values.
+#' @param country A two letter country code. See `sn_lau_by_nuts` for available values.
 #' @param language Defaults to language set with `tw_set_language()`; if not set, "en". Use "all_available" to keep all languages. For available language values, see https://www.wikidata.org/wiki/Help:Wikimedia_language_codes/lists/all
 #' @param connection Defaults to NULL. If NULL, and caching is enabled, `streetnamer` will use a local sqlite database. A custom connection to other databases can be given (see vignette `caching` for details).
 #' @param disconnect_db Defaults to TRUE. If FALSE, leaves the connection open.
@@ -130,36 +142,44 @@ sn_write_street_name_wikidata_id <- function(gisco_id,
 #'   gisco_id = "IT_022205",
 #'   street_name = "Belvedere San Francesco",
 #'   wikidata_id = "Q676555",
+#'   country = "IT", 
+#'   person = TRUE,
 #'   category = NA,
+#'   session = as.character(floor(runif(1)*1e20)), 
+#'   time = Sys.time(),
 #'   checked = TRUE
 #' )
 #'
 #' sn_get_street_name_wikidata_id(
 #'   gisco_id = "IT_022205",
-#'   street_name = "Belvedere San Francesco"
+#'   street_name = "Belvedere San Francesco",
+#'   country = "IT"
 #' )
 sn_get_street_name_wikidata_id <- function(gisco_id,
                                            street_name,
+                                           country,
+                                           language = tidywikidatar::tw_get_language(),
                                            connection = NULL,
                                            disconnect_db = TRUE) {
   gisco_id <- stringr::str_to_upper(gisco_id)
-  country <- stringr::str_extract(string = gisco_id, pattern = "[A-Z][A-Z]")
+  country <- stringr::str_to_upper(country)
 
-  db <- sn_connect_to_db(
-    connection = connection,
-    country = country,
-    type = "street_name_wikidata_id"
-  )
+  db <- tidywikidatar::tw_connect_to_cache(connection = connection,
+                                           language = language,
+                                           cache = TRUE)
+
 
   table_name <- sn_get_db_table_name(
     type = "street_name_wikidata_id",
     country = country
   )
 
-  if (DBI::dbExistsTable(conn = db, name = table_name) == FALSE) {
-    if (disconnect_db == TRUE) {
-      DBI::dbDisconnect(db)
-    }
+
+  if (pool::dbExistsTable(conn = db, name = table_name) == FALSE) {
+    tidywikidatar::tw_disconnect_from_cache(cache = TRUE,
+                                            cache_connection = db,
+                                            disconnect_db = disconnect_db,
+                                            language = language)
     return(NULL)
   }
 
@@ -173,19 +193,23 @@ sn_get_street_name_wikidata_id <- function(gisco_id,
       logical(1L)
     }
   )
+  
   if (isFALSE(db_result)) {
-    if (disconnect_db == TRUE) {
-      DBI::dbDisconnect(db)
-    }
+    tidywikidatar::tw_disconnect_from_cache(cache = TRUE,
+                                            cache_connection = db,
+                                            disconnect_db = disconnect_db,
+                                            language = language)
     return(NULL)
   }
 
   street_names_df <- db_result %>%
+    dplyr::collect() %>% 
     tibble::as_tibble()
 
-  if (disconnect_db == TRUE) {
-    DBI::dbDisconnect(db)
-  }
+  tidywikidatar::tw_disconnect_from_cache(cache = TRUE,
+                                          cache_connection = db,
+                                          disconnect_db = disconnect_db,
+                                          language = language)
 
   street_names_df
 }

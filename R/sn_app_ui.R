@@ -104,14 +104,15 @@ z-index: 1000;"
         mainPanel = mainPanel(
           tabsetPanel(
             type = "tabs",
+            tabPanel("Contribute", mod_sn_street_info_ui("snm_street_info_ui_1")),
             tabPanel(
-              "Overview", shiny::uiOutput(outputId = "current_city_title"),
+              "Overview",
+              shiny::uiOutput(outputId = "current_city_title"),
               leaflet::leafletOutput(
                 outputId = "current_city_map_leaflet",
                 height = "600px"
               )
             ),
-            tabPanel("Contribute", HTML("...")),
             tabPanel("Deduplicate", HTML("..."))
           )
         )

@@ -36,7 +36,7 @@ sn_get_lau_street_names <- function(gisco_id,
     country = country
   )
 
-  if (DBI::dbExistsTable(conn = db, name = table_name) == FALSE) {
+  if (pool::dbExistsTable(conn = db, name = table_name) == FALSE) {
     if (disconnect_db == TRUE) {
       DBI::dbDisconnect(db)
     }

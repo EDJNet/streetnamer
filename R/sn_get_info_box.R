@@ -115,8 +115,8 @@ sn_get_info_box <- function(wikidata_id,
   }
 
   shiny::tagList(
-    shiny::h5(label),
-    shiny::HTML(subtitle),
+    shiny::h3(label),
+    shiny::p(subtitle),
     shiny::tags$i(description)
   )
 }

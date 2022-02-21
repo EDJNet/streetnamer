@@ -7,18 +7,22 @@
 sn_get_street_name_wikidata_id(
   gisco_id,
   street_name,
+  country,
+  language = tidywikidatar::tw_get_language(),
   connection = NULL,
   disconnect_db = TRUE
 )
 }
 \arguments{
+\item{gisco_id}{A characther vector of length one, must correpond to a gisco id. See `sn_lau_by_nuts` for available values.}
+
+\item{country}{A two letter country code. See `sn_lau_by_nuts` for available values.}
+
+\item{language}{Defaults to language set with `tw_set_language()`; if not set, "en". Use "all_available" to keep all languages. For available language values, see https://www.wikidata.org/wiki/Help:Wikimedia_language_codes/lists/all}
+
 \item{connection}{Defaults to NULL. If NULL, and caching is enabled, `streetnamer` will use a local sqlite database. A custom connection to other databases can be given (see vignette `caching` for details).}
 
 \item{disconnect_db}{Defaults to TRUE. If FALSE, leaves the connection open.}
-
-\item{id}{A characther vector, must start with Q, e.g. "Q180099" for the anthropologist Margaret Mead. Can also be a data frame of one row, typically generated with `tw_search()` or a combination of `tw_search()` and `tw_filter_first()`.}
-
-\item{language}{Defaults to language set with `tw_set_language()`; if not set, "en". Use "all_available" to keep all languages. For available language values, see https://www.wikidata.org/wiki/Help:Wikimedia_language_codes/lists/all}
 }
 \value{
 If data present in cache, returns a data frame with cached data.
@@ -34,12 +38,17 @@ sn_write_street_name_wikidata_id(
   gisco_id = "IT_022205",
   street_name = "Belvedere San Francesco",
   wikidata_id = "Q676555",
+  country = "IT", 
+  person = TRUE,
   category = NA,
+  session = as.character(floor(runif(1)*1e20)), 
+  time = Sys.time(),
   checked = TRUE
 )
 
 sn_get_street_name_wikidata_id(
   gisco_id = "IT_022205",
-  street_name = "Belvedere San Francesco"
+  street_name = "Belvedere San Francesco",
+  country = "IT"
 )
 }

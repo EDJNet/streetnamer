@@ -58,7 +58,7 @@ sn_check_data_folder <- function() {
   if (fs::file_exists(sn_get_data_folder()) == FALSE) {
     usethis::ui_stop(paste(
       "Cache folder does not exist. Set it with",
-      usethis::ui_code("sn_get_data_folder()"),
+      usethis::ui_code("sn_set_data_folder()"),
       "and create it with",
       usethis::ui_code("sn_create_data_folder()")
     ))
@@ -181,6 +181,7 @@ sn_connect_to_db <- function(connection = NULL,
       type = type,
       country = country
     )
+
     db <- DBI::dbConnect(
       drv = RSQLite::SQLite(),
       db_file
