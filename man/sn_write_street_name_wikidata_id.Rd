@@ -12,6 +12,7 @@ sn_write_street_name_wikidata_id(
   person,
   gender,
   category,
+  tag,
   checked,
   session,
   time,
@@ -41,16 +42,27 @@ Writes wikidata id for given street name
 \examples{
 
 sn_set_data_folder(path = tempdir())
+
 sn_write_street_name_wikidata_id(
   gisco_id = "IT_022205",
+  country = "IT",
   street_name = "Belvedere San Francesco",
+  person = TRUE, 
   wikidata_id = "Q676555",
-  category = NA,
-  checked = TRUE
+  gender = "male",
+  category = "religion",
+  tag = "",
+  checked = TRUE,
+  session = "testing",
+  time = Sys.time(),
+  append = TRUE,
+  overwrite = FALSE,
+  disconnect_db = TRUE
 )
-
 sn_get_street_name_wikidata_id(
   gisco_id = "IT_022205",
-  street_name = "Belvedere San Francesco"
+  street_name = "Belvedere San Francesco",
+  country = "IT"
 )
+
 }

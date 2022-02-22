@@ -5,18 +5,20 @@
 \title{Retrieve combination of municipality/street name/wikidata id and category from database.}
 \usage{
 sn_get_street_name_wikidata_id(
-  gisco_id,
-  street_name,
   country,
+  gisco_id = NULL,
+  street_name = NULL,
   language = tidywikidatar::tw_get_language(),
   connection = NULL,
   disconnect_db = TRUE
 )
 }
 \arguments{
+\item{country}{A two letter country code. See `unique(sn_lau_by_nuts$country)` for available values.}
+
 \item{gisco_id}{A characther vector of length one, must correpond to a gisco id. See `sn_lau_by_nuts` for available values.}
 
-\item{country}{A two letter country code. See `sn_lau_by_nuts` for available values.}
+\item{street_name}{A characther vector of length one, a street name.}
 
 \item{language}{Defaults to language set with `tw_set_language()`; if not set, "en". Use "all_available" to keep all languages. For available language values, see https://www.wikidata.org/wiki/Help:Wikimedia_language_codes/lists/all}
 
@@ -28,7 +30,7 @@ sn_get_street_name_wikidata_id(
 If data present in cache, returns a data frame with cached data.
 }
 \description{
-Retrieve combination of municipality/street name/wikidata id and category from database.
+Country must always be given, other parameters optional.
 }
 \examples{
 
