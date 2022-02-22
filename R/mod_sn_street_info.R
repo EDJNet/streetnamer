@@ -53,12 +53,18 @@ mod_sn_street_info_server <- function(id,
 
       # fix guesser by language
       
-      search_df <- stringr::str_remove(
+      search_string_v <- stringr::str_remove(
         string = street_name,
         pattern = "^\\S*\\b"
       ) %>%
-        stringr::str_squish() %>%
-        tidywikidatar::tw_search(language = search_language)
+        stringr::str_squish()
+      
+      if (nchar(search_string_v)<=1) {
+        search_string_v <- street_name
+      }
+        
+      search_df  <- tidywikidatar::tw_search(search = search_string_v, 
+                                             language = search_language)
 
       
       if (nrow(search_df) > 0) {
@@ -104,6 +110,8 @@ mod_sn_street_info_server <- function(id,
     #                                                   overwrite = TRUE
     #     )
     #   }, ignoreNULL = TRUE, ignoreInit = TRUE)
+    
+    
     gisco_id_v <- gisco_id
     
     lau_label_v_pre <- sn_lau_by_nuts %>% 
@@ -113,6 +121,17 @@ mod_sn_street_info_server <- function(id,
     lau_label_v <- dplyr::if_else(condition = length(lau_label_v_pre)==1,
                                   true = lau_label_v_pre, 
                                   false = gisco_id)
+    checked_lv <- details_from_db$checked
+    if (is.null(details_from_db$checked)) {
+      checked_lv <- FALSE
+    } else {
+      checked_lv <- as.logical(checked_lv)
+    }
+      
+    
+    status_v <- dplyr::case_when(guessing ~ "Automatic guess",
+                                 checked_lv ~ "Manually checked",
+                                 TRUE ~ "Undetermined")
     
     
     ## store data when "confirm" is clicked
@@ -144,7 +163,15 @@ mod_sn_street_info_server <- function(id,
     output$street_name_info_box <- renderUI(tagList(
       shiny::h3(street_name),
       shiny::p(lau_label_v),
+      shiny::p("Status: ", shiny::strong(status_v)),
       shiny::hr(),
+      
+      shiny::p("Named after:"),
+
+      sn_get_info_box(wikidata_id = wikidata_id_selected),
+      
+      shiny::hr(),
+      
       shinyWidgets::switchInput(
         inputId = ns("checked_switch"),
         label = "Manually checked?",
@@ -159,7 +186,7 @@ mod_sn_street_info_server <- function(id,
       shiny::tags$b(ifelse(guessing, "N.B. Showing first Wikipedia match, review carefully", "")),
       shinyWidgets::switchInput(
         inputId = ns("person_switch"),
-        label = "Is it dedicated to a person?",
+        label = "Is it a person?",
         onLabel = "Yes",
         offLabel = "No",
         size = "large",
@@ -200,8 +227,6 @@ mod_sn_street_info_server <- function(id,
           checkIcon = list(yes = icon("ok", lib = "glyphicon")),
           justified = TRUE
         )),
-      
-      sn_get_info_box(wikidata_id = wikidata_id_selected),
       
       shinyWidgets::switchInput(
         inputId = ns("wikidata_panel_switch"),
