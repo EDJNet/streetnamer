@@ -47,7 +47,7 @@ sn_get_info_box <- function(wikidata_id,
 
   if (nrow(instance_of_df) == 0) {
     subtitle <- ""
-  } else if (instance_of_df$value %in% "Q5") {
+  } else if ("Q5" %in% instance_of_df$value) {
     # it's a human!
     year_of_birth_df <- item_df %>%
       dplyr::filter(.data$property == "P569")
@@ -116,17 +116,19 @@ sn_get_info_box <- function(wikidata_id,
 
   wikidata_link <- htmltools::a(href = stringr::str_c("https://www.wikidata.org/wiki/", wikidata_id), "Wikidata", target = "_blank", .noWS = "outside")
   wikipedia_link <- tw_get_wikipedia(id = wikidata_id, id_df = item_df, language = language)
-  
-  if (is.na(wikipedia_link)==TRUE) {
+
+  if (is.na(wikipedia_link) == TRUE) {
     link_tag <- stringr::str_c("View on ", as.character(wikidata_link))
   } else {
-    link_tag <- htmltools::tagList("View on ",
-                               wikidata_link,
-                               " / ",
-                               htmltools::a(href = wikipedia_link, "Wikipedia", target = "_blank", .noWS = "outside"))
+    link_tag <- htmltools::tagList(
+      "View on ",
+      wikidata_link,
+      " / ",
+      htmltools::a(href = wikipedia_link, "Wikipedia", target = "_blank", .noWS = "outside")
+    )
   }
-  
-    
+
+
   shiny::tagList(
     shiny::h3(label),
     shiny::p(subtitle),

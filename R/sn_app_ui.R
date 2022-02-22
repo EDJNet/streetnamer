@@ -27,7 +27,7 @@ sn_app_ui <- function(request) {
         title = "footer",
         align = "right",
         style = "
-position:absolute;
+position:fixed;
 bottom:0;
 width:100%;
 height:30px; /* Height of the footer */
@@ -67,9 +67,9 @@ z-index: 1000;"
           )
         ),
         column(
-          width = 2,
-          offset = 5,
-          h1("streetnamer")
+          width = 3,
+          offset = 3,
+          htmltools::h1("Mapping diversity", style = "text-align:right;")
         ),
       ),
       sidebarLayout(
@@ -113,7 +113,12 @@ z-index: 1000;"
                 height = "600px"
               )
             ),
-            tabPanel("Deduplicate", HTML("..."))
+            tabPanel("Deduplicate", HTML("...")),
+            tabPanel(
+              "Export",
+              shinyauthr::loginUI(id = "login"),
+              mod_sn_export_ui("snm_export_ui_1")
+            )
           )
         )
       )

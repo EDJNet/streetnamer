@@ -11,6 +11,7 @@
 #' @importFrom shiny shinyApp
 #' @importFrom golem with_golem_options
 sn_run_app <- function(lau_by_nuts = sn_lau_by_nuts,
+                       user_base = NULL,
                        onStart = NULL,
                        options = list(),
                        enableBookmarking = NULL,
@@ -25,6 +26,9 @@ sn_run_app <- function(lau_by_nuts = sn_lau_by_nuts,
       enableBookmarking = enableBookmarking,
       uiPattern = uiPattern
     ),
-    golem_opts = list(lau_by_nuts = lau_by_nuts)
+    golem_opts = list(
+      lau_by_nuts = lau_by_nuts,
+      user_base = user_base
+    )
   )
 }

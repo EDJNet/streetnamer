@@ -6,6 +6,46 @@
 #' @noRd
 sn_app_server <- function(input, output, session) {
 
+  #### authentication ####
+
+  # if user base not given, then default to valid user
+  if (is.null(golem::get_golem_options("user_base"))) {
+    credentials <- reactive({
+      list(user_auth = TRUE)
+    })
+  } else {
+    credentials <- shinyauthr::loginServer(
+      id = "login",
+      data = golem::get_golem_options("user_base"),
+      user_col = user,
+      pwd_col = password,
+      log_out = reactive(logout_init())
+    )
+  }
+
+  logout_init <- shinyauthr::logoutServer(
+    id = "logout",
+    active = reactive(credentials()$user_auth)
+  )
+
+  #### end of authentication #####
+
+
+  #### modules #####
+
+  observeEvent(credentials()$user_auth, {
+    mod_sn_export_server(
+      id = "snm_export_ui_1",
+      gisco_id = input$current_gisco_id,
+      country = stringr::str_extract(
+        string = input$current_gisco_id,
+        pattern = "[A-Z][A-Z]"
+      ),
+      enable = credentials()$user_auth
+    )
+  })
+
+  #### end of modules #####
 
   #### city selector ####
 
@@ -74,10 +114,12 @@ sn_app_server <- function(input, output, session) {
       }
 
       current_gisco_id <- input$current_gisco_id
-      
-      current_country_code <- stringr::str_extract(string = current_gisco_id,
-                                                   pattern =  "[A-Z][A-Z]")
-      
+
+      current_country_code <- stringr::str_extract(
+        string = current_gisco_id,
+        pattern = "[A-Z][A-Z]"
+      )
+
       if (current_country_code == "UK") {
         # check if northern ireland
         if (stringr::str_starts(string = current_gisco_id, pattern = "UK_N")) {
@@ -269,22 +311,26 @@ sn_app_server <- function(input, output, session) {
       )
   })
 
-  
-  ##### Wikidata street name module #####
-  
-  shiny::observeEvent(eventExpr = street_selected()$name,
-                      handlerExpr = {
-    mod_sn_street_info_server(
-      id = "snm_street_info_ui_1",
-      street_name = street_selected()$name,
-      gisco_id = input$current_gisco_id,
-      country = stringr::str_extract(string = input$current_gisco_id,
-                                     pattern =  "[A-Z][A-Z]")
-    )
-  },
-  ignoreNULL = TRUE,
-  ignoreInit = TRUE)
 
-  
+  ##### Wikidata street name module #####
+
+  shiny::observeEvent(
+    eventExpr = street_selected()$name,
+    handlerExpr = {
+      mod_sn_street_info_server(
+        id = "snm_street_info_ui_1",
+        street_name = street_selected()$name,
+        gisco_id = input$current_gisco_id,
+        country = stringr::str_extract(
+          string = input$current_gisco_id,
+          pattern = "[A-Z][A-Z]"
+        )
+      )
+    },
+    ignoreNULL = TRUE,
+    ignoreInit = TRUE
+  )
+
+
   waiter::waiter_hide()
 }

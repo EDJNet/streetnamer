@@ -49,23 +49,24 @@ sn_lau_by_nuts_pre_df <- sn_lau_by_nuts_df %>%
   ) %>%
   dplyr::group_by(gisco_id) %>%
   dplyr::mutate(lau_label = dplyr::if_else(condition = lau_name == nuts_3_name,
-                                           true = lau_name,
-                                           false = paste0(lau_name, " (", nuts_3_name, ")"))) %>%
+    true = lau_name,
+    false = paste0(lau_name, " (", nuts_3_name, ")")
+  )) %>%
   ungroup()
 
 sn_lau_by_nuts_pre_df %>%
   anti_join(y = sn_lau_by_nuts_pre_df %>%
-    tidyr::drop_na(), by = "gisco_id") 
+    tidyr::drop_na(), by = "gisco_id")
 
 # checks
-sn_lau_by_nuts_pre_df %>% 
-  group_by(country) %>% 
-  arrange(country, desc(population)) %>% 
-  filter(country == "CH") 
+sn_lau_by_nuts_pre_df %>%
+  group_by(country) %>%
+  arrange(country, desc(population)) %>%
+  filter(country == "CH")
 
-sn_lau_by_nuts <- sn_lau_by_nuts_pre_df %>% 
-  group_by(country) %>% 
-  arrange(country, desc(population)) %>% 
+sn_lau_by_nuts <- sn_lau_by_nuts_pre_df %>%
+  group_by(country) %>%
+  arrange(country, desc(population)) %>%
   ungroup()
 
 usethis::use_data(sn_lau_by_nuts, overwrite = TRUE)

@@ -6,6 +6,7 @@
 \usage{
 sn_run_app(
   lau_by_nuts = sn_lau_by_nuts,
+  user_base = NULL,
   onStart = NULL,
   options = list(),
   enableBookmarking = NULL,
