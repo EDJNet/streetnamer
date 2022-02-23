@@ -24,7 +24,7 @@ sn_app_ui <- function(request) {
           ital = 1
         )
       ),
-      title = "streetnamer",
+      title = "Mapping Diversity - European Data Journalism Network",
       tags$footer(
         title = "footer",
         align = "right",
@@ -91,10 +91,12 @@ z-index: 1000;"
             condition = "input.current_city_name != ''&&input.current_city_name != '-'",
             shiny::radioButtons(
               inputId = "streets_to_show_in_dt",
-              label = "List...", choices = c(
+              label = "List...",
+              choices = c(
                 "All streets",
                 "Not yet checked",
-                "Not yet checked in this municipality"
+                "Not yet checked in this municipality",
+                "All streets (including ignored)"
               )
             ),
             shiny::tagList(

@@ -8,6 +8,8 @@ sn_get_street_name_wikidata_id(
   country,
   gisco_id = NULL,
   street_name = NULL,
+  only_checked = FALSE,
+  only_ignore = FALSE,
   language = tidywikidatar::tw_get_language(),
   connection = NULL,
   disconnect_db = TRUE

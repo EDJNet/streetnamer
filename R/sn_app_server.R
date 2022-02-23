@@ -161,9 +161,32 @@ sn_app_server <- function(input, output, session) {
       return(NULL)
     }
 
-    current_streets_sf_r() %>%
-      sf::st_drop_geometry() %>%
-      dplyr::distinct(name)
+    if (input$streets_to_show_in_dt=="All streets (including ignored)") {
+      current_streets_sf_r() %>%
+        sf::st_drop_geometry() %>%
+        dplyr::distinct(name)
+    } else if (input$streets_to_show_in_dt=="All streets") {
+      current_streets_sf_r() %>%
+        sf::st_drop_geometry() %>%
+        dplyr::distinct(name) %>% 
+        dplyr::anti_join(y = sn_get_street_name_wikidata_id(
+          gisco_id = input$current_gisco_id,
+          country = stringr::str_extract(
+            string = input$current_gisco_id,
+            pattern = "[A-Z][A-Z]"
+          ),
+          only_ignore = TRUE
+        ) %>% 
+          dplyr::distinct(street_name) %>% 
+          dplyr::rename(name = street_name),
+        by = "name")
+    } else {
+      current_streets_sf_r() %>%
+        sf::st_drop_geometry() %>%
+        dplyr::distinct(name)
+    }
+    
+
   })
 
 

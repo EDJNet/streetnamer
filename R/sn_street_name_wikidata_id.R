@@ -190,6 +190,8 @@ sn_write_street_name_wikidata_id <- function(gisco_id,
 sn_get_street_name_wikidata_id <- function(country,
                                            gisco_id = NULL,
                                            street_name = NULL,
+                                           only_checked = FALSE, 
+                                           only_ignore = FALSE,
                                            language = tidywikidatar::tw_get_language(),
                                            connection = NULL,
                                            disconnect_db = TRUE) {
@@ -275,6 +277,16 @@ sn_get_street_name_wikidata_id <- function(country,
     return(NULL)
   }
 
+  if (only_ignore==TRUE) {
+    db_result <- db_result %>% 
+      dplyr::filter(ignore == 1)
+  }
+  
+  if (only_checked==TRUE) {
+    db_result <- db_result %>% 
+      dplyr::filter(checked == 1)
+  }
+  
   street_names_df <- db_result %>%
     dplyr::collect() %>%
     tibble::as_tibble()
