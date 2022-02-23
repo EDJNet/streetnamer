@@ -40,10 +40,10 @@ sn_write_street_name_wikidata_id(
   gisco_id = "IT_022205",
   street_name = "Belvedere San Francesco",
   wikidata_id = "Q676555",
-  country = "IT", 
+  country = "IT",
   person = TRUE,
   category = NA,
-  session = as.character(floor(runif(1)*1e20)), 
+  session = as.character(floor(runif(1) * 1e20)),
   time = Sys.time(),
   checked = TRUE
 )

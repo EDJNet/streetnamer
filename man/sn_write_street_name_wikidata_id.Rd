@@ -47,7 +47,7 @@ sn_write_street_name_wikidata_id(
   gisco_id = "IT_022205",
   country = "IT",
   street_name = "Belvedere San Francesco",
-  person = TRUE, 
+  person = TRUE,
   wikidata_id = "Q676555",
   gender = "male",
   category = "religion",
@@ -64,5 +64,4 @@ sn_get_street_name_wikidata_id(
   street_name = "Belvedere San Francesco",
   country = "IT"
 )
-
 }

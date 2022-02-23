@@ -11,10 +11,6 @@ mod_sn_export_app(
 )
 }
 \arguments{
-\item{country}{}
-
-\item{gisco_id}{}
-
 \item{language}{}
 }
 \value{
@@ -26,9 +22,9 @@ A minimal shiny app used for categorising streets
 \examples{
 
 if (interactive) {
- mod_sn_export_app(country = "IT",
-                   gisco_id = "IT_022205",
-                   )
+  mod_sn_export_app(
+    country = "IT",
+    gisco_id = "IT_022205",
+  )
 }
-
 }

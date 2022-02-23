@@ -233,7 +233,7 @@ sn_app_server <- function(input, output, session) {
         page = input$current_city_sn_dt_rows_selected %/% input$current_city_sn_dt_state$length + 1
       )
     },
-    ignoreNULL = TRUE,
+    ignoreNULL = FALSE,
     ignoreInit = TRUE
   )
 
@@ -253,6 +253,25 @@ sn_app_server <- function(input, output, session) {
     ignoreInit = TRUE
   )
 
+  observeEvent(list(input$ignore_street),
+               {
+                 DT::selectRows(
+                   DTproxy,
+                   sum(input$current_city_sn_dt_rows_selected, 1)
+                 )
+                 
+                 DT::selectPage(
+                   proxy = DTproxy,
+                   page = input$current_city_sn_dt_rows_selected %/% input$current_city_sn_dt_state$length + 1
+                 )
+                 # TODO introduce ignore action
+                 
+
+               },
+               ignoreNULL = TRUE,
+               ignoreInit = TRUE
+  )
+  
   street_selected <- shiny::eventReactive(
     list(input$current_city_sn_dt_rows_selected),
     {
@@ -280,6 +299,13 @@ sn_app_server <- function(input, output, session) {
 
   #### Add details about streets #####
 
+  # output$street_buttons_UI <- shiny::renderUI({
+  #   if (is.null(street_selected()) == TRUE) {
+  #     return(NULL)
+  #   }
+  # 
+  #   
+  # })
 
   output$current_street_box_UI <- shiny::renderUI({
     if (is.null(street_selected()) == TRUE) {

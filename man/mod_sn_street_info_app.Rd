@@ -12,12 +12,6 @@ mod_sn_street_info_app(
 )
 }
 \arguments{
-\item{street_name}{}
-
-\item{gisco_id}{}
-
-\item{country}{}
-
 \item{language}{}
 }
 \value{
@@ -29,9 +23,10 @@ A minimal shiny app used for categorising streets
 \examples{
 
 if (interactive) {
- mod_sn_street_info_app(street_name = "Belvedere San Francesco",
-                        gisco_id = "IT_022205",
-                        country = "IT")
+  mod_sn_street_info_app(
+    street_name = "Belvedere San Francesco",
+    gisco_id = "IT_022205",
+    country = "IT"
+  )
 }
-
 }
