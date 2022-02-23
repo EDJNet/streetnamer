@@ -5,3 +5,6 @@
 * municipalities have the nuts_3 (province) they belong to within brackets, unless their name corresponds to nuts_3 name
 * early integration of Wikidata infobox
 * enable export for authenticated users
+* Fix "mapping diversity" title
+* enable default country selection at startup
+* introduce custom_head_html for analytics

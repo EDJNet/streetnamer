@@ -9,7 +9,9 @@ sn_app_ui <- function(request) {
     # Leave this function for adding external resources
     golem_add_external_resources(),
     waiter::use_waiter(),
+    cicerone::use_cicerone(),
     waiter::waiter_show_on_load(html = waiter::spin_wandering_cubes()),
+    tags$head(shiny::HTML(golem::get_golem_options("custom_head_html"))),
 
     # Your application UI logic
     fluidPage(

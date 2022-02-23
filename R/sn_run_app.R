@@ -17,6 +17,7 @@
 sn_run_app <- function(lau_by_nuts = sn_lau_by_nuts,
                        country_name = NULL,
                        user_base = NULL,
+                       custom_head_html = "", 
                        onStart = NULL,
                        options = list(),
                        enableBookmarking = NULL,
@@ -34,7 +35,8 @@ sn_run_app <- function(lau_by_nuts = sn_lau_by_nuts,
     golem_opts = list(
       lau_by_nuts = lau_by_nuts,
       country_name = country_name,
-      user_base = user_base
+      user_base = user_base,
+      custom_head_html = custom_head_html
     )
   )
 }
