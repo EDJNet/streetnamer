@@ -48,6 +48,7 @@ z-index: 1000;"
               "",
               golem::get_golem_options("lau_by_nuts") %>%
                 dplyr::distinct(country_name) %>%
+                dplyr::arrange(country_name) %>% 
                 dplyr::pull(country_name)
             ),
             selected = ifelse(is.null(golem::get_golem_options("country_name")),
