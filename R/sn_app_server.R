@@ -6,6 +6,14 @@
 #' @noRd
 sn_app_server <- function(input, output, session) {
 
+  #### Cicerone ####
+  
+  
+  observeEvent(eventExpr = input$take_a_tour, handlerExpr = {
+    guide <- sn_cicerone()
+    guide$init()$start()
+  })
+
   #### authentication ####
 
   # if user base not given, then default to valid user
@@ -80,7 +88,7 @@ sn_app_server <- function(input, output, session) {
       updateSelectizeInput(
         session = session,
         inputId = "current_gisco_id",
-        selected = character(0),
+       # selected = character(0),
         choices = cities_in_current_country(),
         server = TRUE
       )

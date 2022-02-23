@@ -72,8 +72,16 @@ z-index: 1000;"
           )
         ),
         column(
+          width = 2,
+          offset = 0,
+          shiny::actionButton(inputId = "take_a_tour",
+                              label = "Take a tour of the app",
+                              icon = shiny::icon("info"),
+                              style = "margin-top:32px;")
+        ),
+        column(
           width = 3,
-          offset = 3,
+          offset = 1,
           htmltools::h1("Mapping diversity", style = "text-align:right;")
         ),
       ),

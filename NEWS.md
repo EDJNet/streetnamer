@@ -8,3 +8,4 @@
 * Fix "mapping diversity" title
 * enable default country selection at startup
 * introduce custom_head_html for analytics
+* introduce early app tour with Cicerone

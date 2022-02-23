@@ -8,6 +8,7 @@ sn_run_app(
   lau_by_nuts = sn_lau_by_nuts,
   country_name = NULL,
   user_base = NULL,
+  custom_head_html = "",
   onStart = NULL,
   options = list(),
   enableBookmarking = NULL,
