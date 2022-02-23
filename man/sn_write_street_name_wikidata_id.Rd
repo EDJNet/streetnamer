@@ -14,6 +14,7 @@ sn_write_street_name_wikidata_id(
   category,
   tag,
   checked,
+  ignore,
   session,
   time,
   overwrite = FALSE,

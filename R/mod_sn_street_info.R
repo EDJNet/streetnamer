@@ -155,6 +155,7 @@ mod_sn_street_info_server <- function(id,
           category = as.character(input$category_radio),
           tag = as.character(input$tag_selectize),
           checked = as.integer(TRUE),
+          ignore = as.integer(FALSE),
           session = session$token,
           time = Sys.time(),
           append = TRUE

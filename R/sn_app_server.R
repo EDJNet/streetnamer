@@ -254,24 +254,41 @@ sn_app_server <- function(input, output, session) {
   )
 
   observeEvent(list(input$ignore_street),
-               {
-                 DT::selectRows(
-                   DTproxy,
-                   sum(input$current_city_sn_dt_rows_selected, 1)
-                 )
-                 
-                 DT::selectPage(
-                   proxy = DTproxy,
-                   page = input$current_city_sn_dt_rows_selected %/% input$current_city_sn_dt_state$length + 1
-                 )
-                 # TODO introduce ignore action
-                 
+    {
+      streetnamer::sn_write_street_name_wikidata_id(
+        country = stringr::str_extract(
+          string = input$current_gisco_id,
+          pattern = "[A-Z][A-Z]"
+        ),
+        gisco_id = input$current_gisco_id,
+        street_name = street_selected()$name,
+        wikidata_id = as.character(NA),
+        person = as.integer(NA),
+        gender = as.character(NA),
+        category = as.character(NA),
+        tag = as.character(NA),
+        checked = as.integer(TRUE),
+        ignore = as.integer(TRUE),
+        session = session$token,
+        time = Sys.time(),
+        append = TRUE
+      )
 
-               },
-               ignoreNULL = TRUE,
-               ignoreInit = TRUE
+
+      DT::selectRows(
+        DTproxy,
+        sum(input$current_city_sn_dt_rows_selected, 1)
+      )
+
+      DT::selectPage(
+        proxy = DTproxy,
+        page = input$current_city_sn_dt_rows_selected %/% input$current_city_sn_dt_state$length + 1
+      )
+    },
+    ignoreNULL = TRUE,
+    ignoreInit = TRUE
   )
-  
+
   street_selected <- shiny::eventReactive(
     list(input$current_city_sn_dt_rows_selected),
     {
@@ -303,8 +320,8 @@ sn_app_server <- function(input, output, session) {
   #   if (is.null(street_selected()) == TRUE) {
   #     return(NULL)
   #   }
-  # 
-  #   
+  #
+  #
   # })
 
   output$current_street_box_UI <- shiny::renderUI({

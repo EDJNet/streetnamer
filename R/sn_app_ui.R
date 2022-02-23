@@ -48,9 +48,10 @@ z-index: 1000;"
                 dplyr::distinct(country_name) %>%
                 dplyr::pull(country_name)
             ),
-            selected = ifelse(is.null(golem::get_golem_options("country_name")), 
-                                      FALSE, 
-                                      golem::get_golem_options("country_name")),
+            selected = ifelse(is.null(golem::get_golem_options("country_name")),
+              FALSE,
+              golem::get_golem_options("country_name")
+            ),
             selectize = TRUE
           )
         ),
@@ -86,9 +87,11 @@ z-index: 1000;"
                 "Not yet checked in this municipality"
               )
             ),
-            shiny::tagList(shiny::actionButton(inputId = "previous_row", label = "Previous street"),
-                           shiny::actionButton(inputId = "next_row", label = "Next street"),
-                           shiny::actionButton(inputId = "ignore_street", label = "Ignore street!")),
+            shiny::tagList(
+              shiny::actionButton(inputId = "previous_row", label = "Previous street"),
+              shiny::actionButton(inputId = "next_row", label = "Next street"),
+              shiny::actionButton(inputId = "ignore_street", label = "Ignore street!")
+            ),
             # shiny::uiOutput(outputId = "street_buttons_UI"),
             shiny::hr()
           ),
