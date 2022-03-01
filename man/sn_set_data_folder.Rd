@@ -13,7 +13,7 @@ sn_get_data_folder(path = NULL)
 \item{path}{A path to a location used for caching data. If the folder does not exist, it will be created.}
 }
 \value{
-The path to the caching folder, if previously set; the same path as given to the function; or the default, `tw_data` is none is given.
+The path to the caching folder, if previously set; the same path as given to the function; or the default, `sn_data` is none is given.
 }
 \description{
 Consider using a folder out of your current project directory, e.g. `sn_set_data_folder("~/R/sn_data/")`: you will be able to use the same cache in different projects, and prevent cached files from being sync-ed if you use services such as Nextcloud or Dropbox.

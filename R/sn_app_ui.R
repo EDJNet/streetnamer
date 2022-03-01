@@ -48,7 +48,7 @@ z-index: 1000;"
               "",
               golem::get_golem_options("lau_by_nuts") %>%
                 dplyr::distinct(country_name) %>%
-                dplyr::arrange(country_name) %>% 
+                dplyr::arrange(country_name) %>%
                 dplyr::pull(country_name)
             ),
             selected = ifelse(is.null(golem::get_golem_options("country_name")),
@@ -75,10 +75,12 @@ z-index: 1000;"
         column(
           width = 2,
           offset = 0,
-          shiny::actionButton(inputId = "take_a_tour",
-                              label = "Take a tour of the app",
-                              icon = shiny::icon("info"),
-                              style = "margin-top:32px;")
+          shiny::actionButton(
+            inputId = "take_a_tour",
+            label = "Take a tour of the app",
+            icon = shiny::icon("info"),
+            style = "margin-top:32px;"
+          )
         ),
         column(
           width = 3,
@@ -101,15 +103,17 @@ z-index: 1000;"
               )
             ),
             shiny::tagList(
-              shiny::actionButton(inputId = "previous_row", label = "Previous street"),
-              shiny::actionButton(inputId = "next_row", label = "Next street"),
-              shiny::actionButton(inputId = "ignore_street", label = "Ignore street!")
+              shiny::actionButton(inputId = "previous_row", label = "Previous"),
+              shiny::actionButton(inputId = "next_row", label = "Next"),
+              shiny::actionButton(inputId = "confirm_match", label = "Confirm"),
+              shiny::actionButton(inputId = "ignore_street", label = "Ignore")
             ),
             # shiny::uiOutput(outputId = "street_buttons_UI"),
             shiny::hr()
           ),
           DT::DTOutput(outputId = "current_city_sn_dt"),
-          shiny::uiOutput(outputId = "current_street_box_UI")
+          shiny::uiOutput(outputId = "current_street_box_UI"),
+          #   shiny::uiOutput(outputId = "wikidata_id_selected_output")
           # ,
           # shinyWidgets::switchInput(inputId = "checked_switch",
           #                           label = "Manually checked?",
@@ -163,7 +167,7 @@ golem_add_external_resources <- function() {
     favicon(ext = "png"),
     bundle_resources(
       path = app_sys("app/www"),
-      app_title = "streetnamer"
+      app_title = "Mapping Diversity - European Data Journalism Network"
     )
     # Add here other external resources
     # for example, you can add shinyalert::useShinyalert()

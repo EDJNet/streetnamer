@@ -9,3 +9,4 @@ ll_data
 osm_countries_shp_zip
 automatic_matching_csv
 Dockerfile_temp
+connection.rds

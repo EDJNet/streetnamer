@@ -5,6 +5,10 @@
 #'   `sn_lau_by_nuts`, or a data frame with the same columns.
 #' @param country_name Full name of country to be used as default. Full country
 #'   name. See `unique(sn_lau_by_nuts$country_name)` for valid values.
+#' @param connection A database connection or connection parameters compatible
+#'   with `tidywikidatar` to be use by both `tidywikidatar` and `streetnamer`.
+#'   Necessary for deployed apps, as environment parameters are stripped by
+#'   Shiny server.
 #' @param user_base A data frame with users and passwords in the format used by
 #'   the package `shinyauthr`.
 #' @param ... arguments to pass to golem_opts. See `?golem::get_golem_options`
@@ -16,8 +20,10 @@
 #' @importFrom golem with_golem_options
 sn_run_app <- function(lau_by_nuts = sn_lau_by_nuts,
                        country_name = NULL,
+                       connection = NULL,
+                       sn_data_folder = NULL,
                        user_base = NULL,
-                       custom_head_html = "", 
+                       custom_head_html = "",
                        onStart = NULL,
                        options = list(),
                        enableBookmarking = NULL,
@@ -35,6 +41,8 @@ sn_run_app <- function(lau_by_nuts = sn_lau_by_nuts,
     golem_opts = list(
       lau_by_nuts = lau_by_nuts,
       country_name = country_name,
+      connection = connection,
+      sn_data_folder = sn_data_folder,
       user_base = user_base,
       custom_head_html = custom_head_html
     )

@@ -96,10 +96,17 @@ streetnamer:::mod_sn_street_info_app(street_name = "Belvedere San Francesco",
 ## Caching
 
 Rather than adopting a separate caching infrastrucutre, `streetnamer`
-relies on the caching infrastructure of `tidywikidatar`. In briefl, it
+relies on the caching infrastructure of `tidywikidatar`. In brief, it
 generates separate tables with non-conflicting names in the same
 database used by `tidywikidatar` (be it a local SQLite or another
 odbc-compliant servers such as SQL)
+
+## Deployed shiny app
+
+Given that Shiny Server limits access to environment variables, for the
+deployed app a connection must be directly passed to `sn_run_app()`, and
+cannot be simply be set before startup (which works fine when running
+the app locally).
 
 ## Data sources
 

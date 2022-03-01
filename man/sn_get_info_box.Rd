@@ -4,12 +4,14 @@
 \alias{sn_get_info_box}
 \title{Get data from Wikidata and generate a box with key information}
 \usage{
-sn_get_info_box(wikidata_id, language = "en")
+sn_get_info_box(wikidata_id, language = "en", connection = NULL)
 }
 \arguments{
 \item{wikidata_id}{A wikidata identifiers, must start with "Q".}
 
 \item{language}{Defaults to "en". Must correspond to a two letter-code recognised by Wikidata.}
+
+\item{connection}{A database connection, or a list of parameters compatible with `tidywikidatar`.}
 }
 \value{
 A Shiny taglist / HTML code.

@@ -20,6 +20,7 @@ sn_write_street_name_wikidata_id(
   overwrite = FALSE,
   append = TRUE,
   connection = NULL,
+  language = tidywikidatar::tw_get_language(),
   disconnect_db = TRUE
 )
 }

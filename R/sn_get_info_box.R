@@ -2,6 +2,7 @@
 #'
 #' @param wikidata_id A wikidata identifiers, must start with "Q".
 #' @param language Defaults to "en". Must correspond to a two letter-code recognised by Wikidata.
+#' @param connection A database connection, or a list of parameters compatible with `tidywikidatar`.
 #'
 #' @return A Shiny taglist / HTML code.
 #' @export
@@ -10,12 +11,18 @@
 #'
 #' sn_get_info_box("Q676555")
 sn_get_info_box <- function(wikidata_id,
-                            language = "en") {
+                            language = "en",
+                            connection = NULL) {
   if (is.na(wikidata_id)) {
     return(shiny::tagList())
   }
 
-  item_df <- tidywikidatar::tw_get(id = wikidata_id)
+  item_df <- tidywikidatar::tw_get(
+    id = wikidata_id,
+    language = language,
+    cache_connection = connection,
+    cache = TRUE
+  )
 
   label_df <- item_df %>%
     dplyr::filter(
@@ -80,7 +87,9 @@ sn_get_info_box <- function(wikidata_id,
   } else {
     # not a human!
     instance_of_label <- tidywikidatar::tw_get_label(instance_of_df$value[1],
-      language = language
+      language = language,
+      cache_connection = connection,
+      cache = TRUE
     )
 
     if (is.na(instance_of_label)) {
@@ -114,8 +123,21 @@ sn_get_info_box <- function(wikidata_id,
     description <- as.character("")
   }
 
-  wikidata_link <- htmltools::a(href = stringr::str_c("https://www.wikidata.org/wiki/", wikidata_id), "Wikidata", target = "_blank", style = "text-decoration: underline;", .noWS = "outside")
-  wikipedia_link <- tw_get_wikipedia(id = wikidata_id, id_df = item_df, language = language)
+  wikidata_link <- htmltools::a(
+    href = stringr::str_c("https://www.wikidata.org/wiki/", wikidata_id),
+    "Wikidata",
+    target = "_blank",
+    style = "text-decoration: underline;",
+    .noWS = "outside"
+  )
+
+  wikipedia_link <- tidywikidatar::tw_get_wikipedia(
+    id = wikidata_id,
+    id_df = item_df,
+    language = language,
+    cache_connection = connection,
+    cache = TRUE
+  )
 
   if (is.na(wikipedia_link) == TRUE) {
     link_tag <- htmltools::tagList(

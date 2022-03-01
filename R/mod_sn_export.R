@@ -21,6 +21,7 @@ mod_sn_export_server <- function(id,
                                  country,
                                  gisco_id,
                                  language = tidywikidatar::tw_get_language(),
+                                 connection = NULL,
                                  enable = TRUE) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
@@ -47,7 +48,8 @@ mod_sn_export_server <- function(id,
       content = function(con) {
         download_df <- sn_get_street_name_wikidata_id(
           country = country,
-          language = language
+          language = language,
+          connection = connection
         )
 
         readr::write_csv(download_df, con)

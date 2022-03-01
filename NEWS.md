@@ -10,3 +10,4 @@
 * introduce custom_head_html for analytics
 * introduce early app tour with Cicerone
 * introduce functioning ignore streets filter
+* introduce parameter for passing database connection in deployed environments

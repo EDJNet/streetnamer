@@ -5,10 +5,12 @@
 #' @import shiny
 #' @noRd
 sn_app_server <- function(input, output, session) {
+  sn_set_data_folder(path = golem::get_golem_options("sn_data_folder"))
+  tw_set_cache_db(db_settings = golem::get_golem_options("connection"))
+  tw_enable_cache(SQLite = FALSE)
 
   #### Cicerone ####
-  
-  
+
   observeEvent(eventExpr = input$take_a_tour, handlerExpr = {
     guide <- sn_cicerone()
     guide$init()$start()
@@ -49,7 +51,8 @@ sn_app_server <- function(input, output, session) {
         string = input$current_gisco_id,
         pattern = "[A-Z][A-Z]"
       ),
-      enable = credentials()$user_auth
+      enable = credentials()$user_auth,
+      connection = golem::get_golem_options("connection")
     )
   })
 
@@ -88,7 +91,7 @@ sn_app_server <- function(input, output, session) {
       updateSelectizeInput(
         session = session,
         inputId = "current_gisco_id",
-       # selected = character(0),
+        # selected = character(0),
         choices = cities_in_current_country(),
         server = TRUE
       )
@@ -161,32 +164,33 @@ sn_app_server <- function(input, output, session) {
       return(NULL)
     }
 
-    if (input$streets_to_show_in_dt=="All streets (including ignored)") {
+    if (input$streets_to_show_in_dt == "All streets (including ignored)") {
       current_streets_sf_r() %>%
         sf::st_drop_geometry() %>%
         dplyr::distinct(name)
-    } else if (input$streets_to_show_in_dt=="All streets") {
+    } else if (input$streets_to_show_in_dt == "All streets") {
       current_streets_sf_r() %>%
         sf::st_drop_geometry() %>%
-        dplyr::distinct(name) %>% 
-        dplyr::anti_join(y = sn_get_street_name_wikidata_id(
-          gisco_id = input$current_gisco_id,
-          country = stringr::str_extract(
-            string = input$current_gisco_id,
-            pattern = "[A-Z][A-Z]"
-          ),
-          only_ignore = TRUE
-        ) %>% 
-          dplyr::distinct(street_name) %>% 
-          dplyr::rename(name = street_name),
-        by = "name")
+        dplyr::distinct(name) %>%
+        dplyr::anti_join(
+          y = sn_get_street_name_wikidata_id(
+            gisco_id = input$current_gisco_id,
+            country = stringr::str_extract(
+              string = input$current_gisco_id,
+              pattern = "[A-Z][A-Z]"
+            ),
+            connection = golem::get_golem_options("connection"),
+            only_ignore = TRUE
+          ) %>%
+            dplyr::distinct(street_name) %>%
+            dplyr::rename(name = street_name),
+          by = "name"
+        )
     } else {
       current_streets_sf_r() %>%
         sf::st_drop_geometry() %>%
         dplyr::distinct(name)
     }
-    
-
   })
 
 
@@ -302,10 +306,51 @@ sn_app_server <- function(input, output, session) {
         ignore = as.integer(TRUE),
         session = session$token,
         time = Sys.time(),
-        append = TRUE
+        append = TRUE,
+        connection = golem::get_golem_options("connection")
       )
 
 
+      DT::selectRows(
+        DTproxy,
+        sum(input$current_city_sn_dt_rows_selected, 1)
+      )
+
+      DT::selectPage(
+        proxy = DTproxy,
+        page = input$current_city_sn_dt_rows_selected %/% input$current_city_sn_dt_state$length + 1
+      )
+    },
+    ignoreNULL = TRUE,
+    ignoreInit = TRUE
+  )
+
+  observeEvent(list(input$confirm_match),
+
+    # TODO
+
+    {
+      #   streetnamer::sn_write_street_name_wikidata_id(
+      #     country = stringr::str_extract(
+      #       string = input$current_gisco_id,
+      #       pattern = "[A-Z][A-Z]"
+      #     ),
+      #     gisco_id = input$current_gisco_id,
+      #     street_name = street_selected()$name,
+      #     wikidata_id = as.character(NA),
+      #     person = as.integer(NA),
+      #     gender = as.character(NA),
+      #     category = as.character(NA),
+      #     tag = as.character(NA),
+      #     checked = as.integer(TRUE),
+      #     ignore = as.integer(TRUE),
+      #     session = session$token,
+      #     time = Sys.time(),
+      #     append = TRUE,
+      #     connection = golem::get_golem_options("connection")
+      #   )
+      #
+      #
       DT::selectRows(
         DTproxy,
         sum(input$current_city_sn_dt_rows_selected, 1)
@@ -391,20 +436,24 @@ sn_app_server <- function(input, output, session) {
   shiny::observeEvent(
     eventExpr = street_selected()$name,
     handlerExpr = {
-      mod_sn_street_info_server(
+      wikidata_id_selected_r <- mod_sn_street_info_server(
         id = "snm_street_info_ui_1",
         street_name = street_selected()$name,
         gisco_id = input$current_gisco_id,
         country = stringr::str_extract(
           string = input$current_gisco_id,
           pattern = "[A-Z][A-Z]"
-        )
+        ),
+        connection = golem::get_golem_options("connection")
       )
     },
     ignoreNULL = TRUE,
     ignoreInit = TRUE
   )
 
+  # output$wikidata_id_selected_output <- shiny::renderUI(
+  #   shiny::p(wikidata_id_selected_r())
+  # )
 
   waiter::waiter_hide()
 }

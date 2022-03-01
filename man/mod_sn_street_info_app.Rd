@@ -8,6 +8,7 @@ mod_sn_street_info_app(
   street_name,
   gisco_id,
   country,
+  connection = NULL,
   language = tidywikidatar::tw_get_language()
 )
 }

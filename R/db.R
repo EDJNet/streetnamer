@@ -4,7 +4,7 @@
 #'
 #' @param path A path to a location used for caching data. If the folder does not exist, it will be created.
 #'
-#' @return The path to the caching folder, if previously set; the same path as given to the function; or the default, `tw_data` is none is given.
+#' @return The path to the caching folder, if previously set; the same path as given to the function; or the default, `sn_data` is none is given.
 #' @export
 
 #' @examples
@@ -49,13 +49,13 @@ sn_get_data_folder <- sn_set_data_folder
 #' # Create cache folder
 #' sn_set_data_folder(path = fs::path(
 #'   tempdir(),
-#'   "tw_cache_folder"
+#'   "sn_data_folder"
 #' ))
 #' sn_create_data_folder(ask = FALSE)
 #'
 #' sn_check_data_folder()
-sn_check_data_folder <- function() {
-  if (fs::file_exists(sn_get_data_folder()) == FALSE) {
+sn_check_data_folder <- function(path = NULL) {
+  if (fs::file_exists(sn_get_data_folder(path = path)) == FALSE) {
     usethis::ui_stop(paste(
       "Cache folder does not exist. Set it with",
       usethis::ui_code("sn_set_data_folder()"),

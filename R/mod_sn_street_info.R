@@ -21,6 +21,7 @@ mod_sn_street_info_server <- function(id,
                                       street_name,
                                       gisco_id,
                                       country,
+                                      connection = NULL,
                                       language = tidywikidatar::tw_get_language()) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
@@ -32,7 +33,8 @@ mod_sn_street_info_server <- function(id,
       gisco_id = gisco_id,
       street_name = street_name,
       country = country,
-      language = language
+      language = language,
+      connection = connection
     )
 
     if (is.null(details_from_db) == FALSE && nrow(details_from_db) == 1) {
@@ -65,7 +67,9 @@ mod_sn_street_info_server <- function(id,
 
       search_df <- tidywikidatar::tw_search(
         search = search_string_v,
-        language = search_language
+        language = search_language,
+        cache_connection = connection,
+        cache = TRUE
       )
 
 
@@ -76,7 +80,9 @@ mod_sn_street_info_server <- function(id,
           p = "P21",
           preferred = TRUE,
           only_first = TRUE,
-          language = language
+          language = language,
+          cache_connection = connection,
+          cache = TRUE
         )
         if (is.na(gender_id)) {
           gender_selected <- as.character(NA)
@@ -138,6 +144,76 @@ mod_sn_street_info_server <- function(id,
       TRUE ~ "Undetermined"
     )
 
+    #### Search Wikidata box #####
+
+
+    search_results <- eventReactive(input$wikidata_search, {
+      if (is.null(input$wikidata_search)) {
+        return(NULL)
+      }
+      if (input$wikidata_search == "") {
+        return(NULL)
+      }
+      # print(input$wikidata_search)
+      tidywikidatar::tw_search(
+        search = input$wikidata_search,
+        language = search_language,
+        cache = TRUE,
+        cache_connection = connection
+      )
+    })
+
+
+    output$search_results_dt <- DT::renderDT(
+      expr = {
+        if (is.null(search_results())) {
+          return(NULL)
+        }
+        search_results_df <- search_results()
+
+        if (nrow(search_results_df) == 0) {
+          DT::datatable(
+            data = tibble::tibble(`No results` = ""),
+            options = list(
+              dom = "t",
+              pageLength = 1
+            ),
+            rownames = FALSE,
+            escape = FALSE,
+            selection = "single"
+          )
+        } else {
+          DT::datatable(
+            data = search_results_df %>%
+              head(5) %>%
+              dplyr::mutate(id = glue::glue("<a href='https://www.wikidata.org/wiki/{id}' target=\"_blank\">{id}</a>")),
+            options = list(
+              dom = "t",
+              pageLength = 10
+            ),
+            rownames = FALSE,
+            escape = FALSE,
+            selection = "single"
+          )
+        }
+      },
+      server = TRUE
+    )
+
+    observeEvent(input$search_results_dt_rows_selected,
+      {
+        shiny::updateTextInput(
+          inputId = ns("wikidata_new_id"),
+          value = search_results()$id[input$search_results_dt_rows_selected],
+          session = session
+        )
+      },
+      ignoreNULL = TRUE
+    )
+
+
+    #### End of search Wikidata box #####
+
 
     ## store data when "confirm" is clicked
 
@@ -158,13 +234,39 @@ mod_sn_street_info_server <- function(id,
           ignore = as.integer(FALSE),
           session = session$token,
           time = Sys.time(),
-          append = TRUE
+          append = TRUE,
+          connection = connection
         )
       }, ignoreNULL = TRUE,
       ignoreInit = TRUE
     )
 
-
+    ## store data when "set id" is clicked
+    
+    
+    shiny::observeEvent(
+      eventExpr = input$set_id,
+      handlerExpr = {
+        streetnamer::sn_write_street_name_wikidata_id(
+          gisco_id = gisco_id,
+          street_name = street_name,
+          country = country,
+          wikidata_id = as.character(wikidata_id_selected),
+          person = as.integer(input$person_switch),
+          gender = as.character(input$gender_radio),
+          category = as.character(input$category_radio),
+          tag = as.character(input$tag_selectize),
+          checked = as.integer(TRUE),
+          ignore = as.integer(FALSE),
+          session = session$token,
+          time = Sys.time(),
+          append = TRUE,
+          connection = connection
+        )
+      }, ignoreNULL = TRUE,
+      ignoreInit = TRUE
+    )
+    
 
     ### Prepare output
     output$street_name_info_box <- renderUI(tagList(
@@ -287,10 +389,10 @@ mod_sn_street_info_server <- function(id,
           inputId = ns("wikidata_search"),
           label = "Search on Wikidata",
           placeholder = "search...",
-          value = "placeholder_default_search",
+          value = street_name,
           width = "100%"
         ),
-        DT::DTOutput(outputId = "search_results_dt"),
+        DT::DTOutput(outputId = ns("search_results_dt")),
         shiny::textInput(
           inputId = ns("wikidata_new_id"),
           label = "or enter custom Wikidata id",
@@ -306,6 +408,9 @@ mod_sn_street_info_server <- function(id,
         label = "Confirm!"
       )
     ))
+
+    ## Return
+    wikidata_id_selected
   })
 }
 
@@ -338,6 +443,7 @@ mod_sn_street_info_server <- function(id,
 mod_sn_street_info_app <- function(street_name,
                                    gisco_id,
                                    country,
+                                   connection = NULL,
                                    language = tidywikidatar::tw_get_language()) {
   ui <- shiny::fluidPage(
     mod_sn_street_info_ui("snm_street_info_ui_1")
@@ -348,6 +454,7 @@ mod_sn_street_info_app <- function(street_name,
       street_name = street_name,
       gisco_id = gisco_id,
       country = country,
+      connection = connection,
       language = language
     )
   }

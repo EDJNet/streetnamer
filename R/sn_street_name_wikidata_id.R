@@ -50,13 +50,14 @@ sn_write_street_name_wikidata_id <- function(gisco_id,
                                              overwrite = FALSE,
                                              append = TRUE,
                                              connection = NULL,
+                                             language = tidywikidatar::tw_get_language(),
                                              disconnect_db = TRUE) {
   gisco_id <- stringr::str_to_upper(gisco_id)
   country <- stringr::str_to_upper(country)
 
   db <- tidywikidatar::tw_connect_to_cache(
     connection = connection,
-    language = tidywikidatar::tw_get_language(),
+    language = language,
     cache = TRUE
   )
 
@@ -190,7 +191,7 @@ sn_write_street_name_wikidata_id <- function(gisco_id,
 sn_get_street_name_wikidata_id <- function(country,
                                            gisco_id = NULL,
                                            street_name = NULL,
-                                           only_checked = FALSE, 
+                                           only_checked = FALSE,
                                            only_ignore = FALSE,
                                            language = tidywikidatar::tw_get_language(),
                                            connection = NULL,
@@ -204,7 +205,7 @@ sn_get_street_name_wikidata_id <- function(country,
   db <- tidywikidatar::tw_connect_to_cache(
     connection = connection,
     language = language,
-    cache = TRUE
+    cache = TRUE,
   )
 
 
@@ -220,7 +221,8 @@ sn_get_street_name_wikidata_id <- function(country,
       disconnect_db = disconnect_db,
       language = language
     )
-    return(NULL)
+
+    return(sn_empty_street_name_wikidata_id)
   }
 
   if (is.null(street_name) == FALSE & is.null(gisco_id) == FALSE) {
@@ -274,19 +276,19 @@ sn_get_street_name_wikidata_id <- function(country,
       disconnect_db = disconnect_db,
       language = language
     )
-    return(NULL)
+    return(sn_empty_street_name_wikidata_id)
   }
 
-  if (only_ignore==TRUE) {
-    db_result <- db_result %>% 
+  if (only_ignore == TRUE) {
+    db_result <- db_result %>%
       dplyr::filter(ignore == 1)
   }
-  
-  if (only_checked==TRUE) {
-    db_result <- db_result %>% 
+
+  if (only_checked == TRUE) {
+    db_result <- db_result %>%
       dplyr::filter(checked == 1)
   }
-  
+
   street_names_df <- db_result %>%
     dplyr::collect() %>%
     tibble::as_tibble()
