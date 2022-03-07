@@ -409,10 +409,19 @@ sn_app_server <- function(input, output, session) {
     )
   })
 
+  ####  Wikidata search module ####
+
+  selected_wikidata_id_from_search_r <- mod_sn_search_wikidata_server(
+    id = "sn_search_wikidata_ui_1",
+    search_string = street_selected()$name,
+    search_language = "en",
+    cache = TRUE,
+    connection = golem::get_golem_options("connection")
+  )
 
 
 
-  ##### leaflet map #####
+  #### leaflet map ####
 
   output$current_city_map_leaflet <- leaflet::renderLeaflet({
     if (is.null(current_streets_sf_r())) {

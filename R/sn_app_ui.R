@@ -128,7 +128,29 @@ z-index: 1000;"
         mainPanel = mainPanel(
           tabsetPanel(
             type = "tabs",
-            tabPanel("Contribute", mod_sn_street_info_ui("snm_street_info_ui_1")),
+            tabPanel(
+              title = "Contribute",
+              mod_sn_street_info_ui("snm_street_info_ui_1"),
+              shinyWidgets::switchInput(
+                inputId = "wikidata_panel_switch",
+                label = "Change Wikidata id?",
+                onLabel = "Yes",
+                offLabel = "No",
+                size = "large",
+                value = FALSE,
+                labelWidth = "280px",
+                handleWidth = "80px",
+                width = "90%"
+              ),
+              conditionalPanel(
+                condition = "input.wikidata_panel_switch == true",
+                mod_sn_search_wikidata_ui(id = "sn_search_wikidata_ui_1"),
+                actionButton(
+                  inputId = "set_id",
+                  label = "Set new id!"
+                )
+              )
+            ),
             tabPanel(
               "Overview",
               shiny::uiOutput(outputId = "current_city_title"),

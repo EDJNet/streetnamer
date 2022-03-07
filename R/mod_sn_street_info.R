@@ -242,8 +242,8 @@ mod_sn_street_info_server <- function(id,
     )
 
     ## store data when "set id" is clicked
-    
-    
+
+
     shiny::observeEvent(
       eventExpr = input$set_id,
       handlerExpr = {
@@ -266,7 +266,7 @@ mod_sn_street_info_server <- function(id,
       }, ignoreNULL = TRUE,
       ignoreInit = TRUE
     )
-    
+
 
     ### Prepare output
     output$street_name_info_box <- renderUI(tagList(
@@ -369,38 +369,6 @@ mod_sn_street_info_server <- function(id,
             "animal"
           ),
           options = list(create = TRUE)
-        )
-      ),
-      shinyWidgets::switchInput(
-        inputId = ns("wikidata_panel_switch"),
-        label = "Change Wikidata id?",
-        onLabel = "Yes",
-        offLabel = "No",
-        size = "large",
-        value = FALSE,
-        labelWidth = "280px",
-        handleWidth = "80px",
-        width = "90%"
-      ),
-      conditionalPanel(
-        condition = "input.wikidata_panel_switch == true",
-        ns = ns,
-        shiny::textInput(
-          inputId = ns("wikidata_search"),
-          label = "Search on Wikidata",
-          placeholder = "search...",
-          value = street_name,
-          width = "100%"
-        ),
-        DT::DTOutput(outputId = ns("search_results_dt")),
-        shiny::textInput(
-          inputId = ns("wikidata_new_id"),
-          label = "or enter custom Wikidata id",
-          width = "100%"
-        ),
-        actionButton(
-          inputId = ns("set_id"),
-          label = "Set new id!"
         )
       ),
       shiny::actionButton(
