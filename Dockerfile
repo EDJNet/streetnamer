@@ -15,11 +15,12 @@ RUN Rscript -e 'remotes::install_version("DBI",upgrade="never", version = "1.1.2
 RUN Rscript -e 'remotes::install_version("dplyr",upgrade="never", version = "1.0.8")'
 RUN Rscript -e 'remotes::install_version("knitr",upgrade="never", version = "1.37")'
 RUN Rscript -e 'remotes::install_version("usethis",upgrade="never", version = "2.1.5")'
-RUN Rscript -e 'remotes::install_version("attempt",upgrade="never", version = "0.3.1")'
 RUN Rscript -e 'remotes::install_version("RSQLite",upgrade="never", version = "2.2.10")'
+RUN Rscript -e 'remotes::install_version("tidyr",upgrade="never", version = "1.2.0")'
 RUN Rscript -e 'remotes::install_version("config",upgrade="never", version = "0.3.1")'
+RUN Rscript -e 'remotes::install_version("attempt",upgrade="never", version = "0.3.1")'
 RUN Rscript -e 'remotes::install_version("odbc",upgrade="never", version = "1.3.3")'
-RUN Rscript -e 'remotes::install_version("rmarkdown",upgrade="never", version = "2.11")'
+RUN Rscript -e 'remotes::install_version("rmarkdown",upgrade="never", version = "2.12")'
 RUN Rscript -e 'remotes::install_version("dbplyr",upgrade="never", version = "2.1.1")'
 RUN Rscript -e 'remotes::install_version("leaflet",upgrade="never", version = "2.1.0")'
 RUN Rscript -e 'remotes::install_version("cicerone",upgrade="never", version = "1.0.4")'
@@ -32,7 +33,7 @@ RUN Rscript -e 'remotes::install_version("golem",upgrade="never", version = "0.3
 RUN Rscript -e 'remotes::install_version("DT",upgrade="never", version = "0.21")'
 RUN Rscript -e 'remotes::install_github("TS404/WikidataR@4f9da67b800bf1c6fc3a3bff1366c56b6e7403da")'
 RUN Rscript -e 'remotes::install_github("giocomai/latlon2map@16f80b9ebd2f9171dee99b7f0304bd939c62c621")'
-RUN Rscript -e 'remotes::install_github("EDJNet/tidywikidatar",upgrade="never", ref = "40246865bcd3dbb5d8ff0524c62fa6845aab38c2")'
+RUN Rscript -e 'remotes::install_github("EDJNet/tidywikidatar",upgrade="never", ref = "6cbbe5373fbc85912da79e480b9140a88b1db124")'
 
 
 # ODBC driver
