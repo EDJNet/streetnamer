@@ -8,8 +8,8 @@
 #'
 #' @importFrom shiny NS tagList 
 mod_sn_search_wikidata_ui <- function(id, search_string = ""){
-  ns <- NS(id)
-  tagList(
+  ns <- shiny::NS(id)
+  shiny::tagList(
     shiny::textInput(
       inputId = ns("wikidata_search"),
       label = "Search on Wikidata",
@@ -24,7 +24,7 @@ mod_sn_search_wikidata_ui <- function(id, search_string = ""){
       label = "or enter custom Wikidata id",
       width = "100%"
     ),
-    actionButton(
+    shiny::actionButton(
       inputId = ns("set_id"),
       label = "Set new id!"
     )
@@ -40,37 +40,22 @@ mod_sn_search_wikidata_server <- function(id,
                                           cache = FALSE){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
-    
-    # if (is.null(input$wikidata_search)) {
-    #   return(NULL)
-    # }
-    # if (input$wikidata_search == "") {
-    #   return(NULL)
-    # }
-    # print(input$wikidata_search)
-    
-    
-    output$repeat_input_ui <- renderUI({
-      shiny::p(input$wikidata_search)
+  
+    search_results_df_r <- reactive({
+      search_results_df <- tidywikidatar::tw_search(
+        search = input$wikidata_search,
+        language = search_language,
+        cache = cache,
+        cache_connection = connection
+      ) %>% 
+        tidyr::drop_na()
     })
     
-
+    
     output$search_results_dt <- DT::renderDT(
       expr = {
-
-        search_results_df <- tidywikidatar::tw_search(
-          search = input$wikidata_search,
-          language = search_language,
-          cache = cache,
-          cache_connection = connection
-        )
-
-        search_results_df <- tidywikidatar::tw_search(
-          search = "example",
-          language = "en",
-          cache = TRUE,
-          cache_connection = connection
-        )
+        
+        search_results_df <- search_results_df_r()
         
         if (nrow(search_results_df) == 0) {
           DT::datatable(
@@ -86,7 +71,7 @@ mod_sn_search_wikidata_server <- function(id,
         } else {
           DT::datatable(
             data = search_results_df %>%
-              head(5) %>%
+        #      head(5) %>%
               dplyr::mutate(id = glue::glue("<a href='https://www.wikidata.org/wiki/{id}' target=\"_blank\">{id}</a>")),
             options = list(
               dom = "t",
@@ -101,22 +86,9 @@ mod_sn_search_wikidata_server <- function(id,
       server = TRUE
     )
 
-    
-    
-    # 
-    # observeEvent(input$search_results_dt_rows_selected,
-    #              {
-    #                shiny::updateTextInput(
-    #                  inputId = ns("wikidata_new_id"),
-    #                  value = search_results()$id[input$search_results_dt_rows_selected],
-    #                  session = session
-    #                )
-    #              },
-    #              ignoreNULL = TRUE
-    # )
-    # 
-    # 
-    # 
+
+
+    shiny::reactive(search_results_df_r()$id[input$search_results_dt_rows_selected])
     
   })
 }
@@ -131,10 +103,15 @@ mod_sn_search_wikidata_server <- function(id,
 mod_sn_search_app <- function(search_string, 
                               search_language,
                               cache = FALSE, 
-                              connection = NULL) {
+                              connection = NULL,
+                              testing = FALSE) {
   ui <- shiny::fluidPage(
     mod_sn_search_wikidata_ui(id = "sn_search_wikidata_ui_1",
                               search_string = search_string)
+    # ,
+    # shiny::uiOutput(outputId = "selected_wikidata_id")
+    
+    
   )
   server <- function(input, output, session) {
     selected_wikidata_id <- mod_sn_search_wikidata_server(id = "sn_search_wikidata_ui_1",
@@ -142,11 +119,12 @@ mod_sn_search_app <- function(search_string,
                                                           cache = cache, 
                                                           connection = connection)
     
-    output$selected_wikidata_id <- renderUI({
-      shiny::p(selected_wikidata_id())
-    })
-  }
-  shinyApp(ui, server)  
+    
+  #   output$selected_wikidata_id <- shiny::renderUI({
+  #     shiny::p(selected_wikidata_id())
+  #   })
+   }
+  shiny::shinyApp(ui, server)  
 }
 
-# mod_sn_search_app(search_string = "example", search_language = "en", cache = FALSE, connection = connection)
+# mod_sn_search_app(search_string = "example", search_language = "en", cache = TRUE, connection = connection, testing = TRUE)
