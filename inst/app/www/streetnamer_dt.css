@@ -2,3 +2,8 @@
     background-color: #ff5454 !important;
     color: white !important;
 }
+
+.table.dataTable tbody td.active, .table.dataTable tbody tr.active td a {
+    background-color: #ff5454 !important;
+    color: white !important;
+}
