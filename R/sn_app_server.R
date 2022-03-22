@@ -5,10 +5,6 @@
 #' @import shiny
 #' @noRd
 sn_app_server <- function(input, output, session) {
-  sn_set_data_folder(path = golem::get_golem_options("sn_data_folder"))
-  tw_set_cache_db(db_settings = golem::get_golem_options("connection"))
-  tw_enable_cache(SQLite = FALSE)
-
   #### Cicerone ####
 
   observeEvent(eventExpr = input$take_a_tour, handlerExpr = {
