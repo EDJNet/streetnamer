@@ -18,10 +18,6 @@ mod_sn_search_wikidata_ui <- function(id) {
       inputId = ns("wikidata_new_id"),
       label = "or enter custom Wikidata id",
       width = "100%"
-    ),
-    shiny::actionButton(
-      inputId = ns("set_id"),
-      label = "Set new id!"
     )
   )
 }
@@ -32,10 +28,14 @@ mod_sn_search_wikidata_ui <- function(id) {
 mod_sn_search_wikidata_server <- function(id,
                                           search_string = "",
                                           search_language,
+                                          languages = streetnamer::sn_available_languages,
                                           connection = NULL,
                                           cache = FALSE) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
+    
+    languages_v <- languages$language_code
+    names(languages_v) <- languages$language_name
 
     search_results_df_r <- shiny::reactive({
       if (length(input$wikidata_search) == 0) {
@@ -49,25 +49,31 @@ mod_sn_search_wikidata_server <- function(id,
       } else if (nchar(input$wikidata_search) > 0) {
         search_results_df <- tidywikidatar::tw_search(
           search = input$wikidata_search,
-          language = search_language,
+          language = dplyr::if_else(is.null(input$language_selector), search_language, input$language_selector),
           cache = cache,
           cache_connection = connection
         ) %>%
           tidyr::drop_na()
       }
-
       search_results_df
     })
 
 
     output$search_input_box_ui <- shiny::renderUI({
+      shiny::tagList(
       shiny::textInput(
         inputId = ns("wikidata_search"),
         label = "Search on Wikidata",
         placeholder = "search...",
         value = search_string,
         width = "100%"
-      )
+      ),
+      shiny::selectInput(inputId = ns("language_selector"),
+                         label = "Search language",
+                         choices = languages_v,
+                         selected = search_language,
+                         multiple = FALSE,
+                         selectize = TRUE))
     })
 
     output$search_results_dt <- DT::renderDT(
@@ -122,13 +128,14 @@ mod_sn_search_wikidata_server <- function(id,
 
 mod_sn_search_app <- function(search_string,
                               search_language,
+                              languages = streetnamer::sn_available_languages,
                               cache = FALSE,
                               connection = NULL,
                               testing = FALSE) {
   ui <- shiny::fluidPage(
     mod_sn_search_wikidata_ui(id = "sn_search_wikidata_ui_1")
-    # ,
-    # shiny::uiOutput(outputId = "selected_wikidata_id")
+    ,
+    shiny::uiOutput(outputId = "selected_wikidata_id")
   )
 
   server <- function(input, output, session) {
@@ -136,14 +143,15 @@ mod_sn_search_app <- function(search_string,
       id = "sn_search_wikidata_ui_1",
       search_string = search_string,
       search_language = search_language,
+      languages = languages,
       cache = cache,
       connection = connection
     )
 
 
-    #   output$selected_wikidata_id <- shiny::renderUI({
-    #     shiny::p(selected_wikidata_id())
-    #   })
+      output$selected_wikidata_id <- shiny::renderUI({
+        shiny::p(selected_wikidata_id())
+      })
   }
   shiny::shinyApp(ui, server)
 }

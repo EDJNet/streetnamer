@@ -320,38 +320,22 @@ sn_app_server <- function(input, output, session) {
     ignoreNULL = TRUE,
     ignoreInit = TRUE
   )
-
-  observeEvent(list(input$confirm_match),
-
-    # TODO
-
+  
+  observeEvent(
+    list(input$confirm_match),
+    
     {
-      #   streetnamer::sn_write_street_name_wikidata_id(
-      #     country = stringr::str_extract(
-      #       string = input$current_gisco_id,
-      #       pattern = "[A-Z][A-Z]"
-      #     ),
-      #     gisco_id = input$current_gisco_id,
-      #     street_name = street_selected()$name,
-      #     wikidata_id = as.character(NA),
-      #     person = as.integer(NA),
-      #     gender = as.character(NA),
-      #     category = as.character(NA),
-      #     tag = as.character(NA),
-      #     checked = as.integer(TRUE),
-      #     ignore = as.integer(TRUE),
-      #     session = session$token,
-      #     time = Sys.time(),
-      #     append = TRUE,
-      #     connection = golem::get_golem_options("connection")
-      #   )
-      #
-      #
+      streetnamer::sn_write_street_name_wikidata_id(
+        df_to_write =  selected_df_rv$df(),
+        connection = golem::get_golem_options("connection")
+      )
+      
+      
       DT::selectRows(
         DTproxy,
         sum(input$current_city_sn_dt_rows_selected, 1)
       )
-
+      
       DT::selectPage(
         proxy = DTproxy,
         page = input$current_city_sn_dt_rows_selected %/% input$current_city_sn_dt_state$length + 1
@@ -360,7 +344,7 @@ sn_app_server <- function(input, output, session) {
     ignoreNULL = TRUE,
     ignoreInit = TRUE
   )
-
+  
   street_selected <- shiny::eventReactive(
     list(input$current_city_sn_dt_rows_selected),
     {
@@ -438,10 +422,13 @@ sn_app_server <- function(input, output, session) {
 
   ##### Wikidata street name module #####
 
+  selected_df_rv <- reactiveValues(df = NULL)
+
+  
   shiny::observeEvent(
     eventExpr = street_selected()$name,
     handlerExpr = {
-      wikidata_id_selected_r <- mod_sn_street_info_server(
+      selected_df_rv$df <- mod_sn_street_info_server(
         id = "snm_street_info_ui_1",
         street_name = street_selected()$name,
         gisco_id = input$current_gisco_id,
@@ -456,8 +443,36 @@ sn_app_server <- function(input, output, session) {
     ignoreInit = TRUE
   )
 
+  shiny::observeEvent(
+    eventExpr = selected_wikidata_id_from_search_r(),
+    handlerExpr = {
+      
+      if (length(selected_wikidata_id_from_search_r())==0) {
+        return(NULL)
+      }
+      selected_df_rv$df <- mod_sn_street_info_server(
+        id = "snm_street_info_ui_1",
+        street_name = street_selected()$name,
+        gisco_id = input$current_gisco_id,
+        country = stringr::str_extract(
+          string = input$current_gisco_id,
+          pattern = "[A-Z][A-Z]"
+        ),
+        wikidata_id = selected_wikidata_id_from_search_r(),
+        connection = golem::get_golem_options("connection")
+      )
+    },
+    ignoreNULL = TRUE,
+    ignoreInit = TRUE
+  )
+   
+  
+  
+  
+  
+  
   # output$wikidata_id_selected_output <- shiny::renderUI(
-  #   shiny::p(wikidata_id_selected_r())
+  #   shiny::p(selected_df_r())
   # )
 
   waiter::waiter_hide()
