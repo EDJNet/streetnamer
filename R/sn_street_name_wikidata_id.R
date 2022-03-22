@@ -35,26 +35,52 @@
 #'   street_name = "Belvedere San Francesco",
 #'   country = "IT"
 #' )
-sn_write_street_name_wikidata_id <- function(gisco_id,
-                                             street_name,
-                                             country,
-                                             wikidata_id,
-                                             person,
-                                             gender,
-                                             category,
-                                             tag,
-                                             checked,
-                                             ignore,
-                                             session,
-                                             time,
+sn_write_street_name_wikidata_id <- function(gisco_id = NULL,
+                                             street_name = NULL,
+                                             country = NULL,
+                                             wikidata_id = NULL,
+                                             person = NULL,
+                                             gender = NULL,
+                                             category = NULL,
+                                             tag = NULL,
+                                             checked = NULL,
+                                             ignore = NULL,
+                                             session = NULL,
+                                             time = NULL,
                                              overwrite = FALSE,
                                              append = TRUE,
                                              connection = NULL,
                                              language = tidywikidatar::tw_get_language(),
-                                             disconnect_db = TRUE) {
+                                             disconnect_db = TRUE,
+                                             return_df_only = FALSE, 
+                                             df_to_write = NULL) {
   gisco_id <- stringr::str_to_upper(gisco_id)
   country <- stringr::str_to_upper(country)
 
+  if (is.null(df_to_write)==FALSE&is.data.frame(df_to_write)==TRUE) {
+    df <- df_to_write
+  } else {
+    df <- tibble::tibble(
+      gisco_id = as.character(gisco_id),
+      street_name = as.character(street_name),
+      country = as.character(country),
+      wikidata_id = as.character(wikidata_id),
+      person = as.integer(person),
+      gender = as.character(gender),
+      category = as.character(category),
+      checked = as.integer(checked),
+      ignore = as.integer(ignore),
+      tag = as.character(tag),
+      session = as.character(session),
+      time = time
+    )
+  }
+ 
+  
+  if (return_df_only == TRUE) {
+    return(df)
+  }
+  
   db <- tidywikidatar::tw_connect_to_cache(
     connection = connection,
     language = language,
@@ -65,22 +91,6 @@ sn_write_street_name_wikidata_id <- function(gisco_id,
     type = "street_name_wikidata_id",
     country = country
   )
-
-  df <- tibble::tibble(
-    gisco_id = as.character(gisco_id),
-    street_name = as.character(street_name),
-    country = as.character(country),
-    wikidata_id = as.character(wikidata_id),
-    person = as.integer(person),
-    gender = as.character(gender),
-    category = as.character(category),
-    checked = as.integer(checked),
-    ignore = as.integer(ignore),
-    tag = as.character(tag),
-    session = as.character(session),
-    time = time
-  )
-
 
   if (pool::dbExistsTable(conn = db, name = table_name) == FALSE) {
     # if table does not exist...

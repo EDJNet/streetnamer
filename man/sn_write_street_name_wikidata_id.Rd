@@ -5,23 +5,25 @@
 \title{Writes wikidata id for given street name}
 \usage{
 sn_write_street_name_wikidata_id(
-  gisco_id,
-  street_name,
-  country,
-  wikidata_id,
-  person,
-  gender,
-  category,
-  tag,
-  checked,
-  ignore,
-  session,
-  time,
+  gisco_id = NULL,
+  street_name = NULL,
+  country = NULL,
+  wikidata_id = NULL,
+  person = NULL,
+  gender = NULL,
+  category = NULL,
+  tag = NULL,
+  checked = NULL,
+  ignore = NULL,
+  session = NULL,
+  time = NULL,
   overwrite = FALSE,
   append = TRUE,
   connection = NULL,
   language = tidywikidatar::tw_get_language(),
-  disconnect_db = TRUE
+  disconnect_db = TRUE,
+  return_df_only = FALSE,
+  df_to_write = NULL
 )
 }
 \arguments{
