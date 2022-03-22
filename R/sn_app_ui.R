@@ -105,8 +105,8 @@ sn_app_ui <- function(request) {
             shiny::tagList(
               shiny::actionButton(inputId = "previous_row", label = "Previous"),
               shiny::actionButton(inputId = "next_row", label = "Next"),
-              shiny::actionButton(inputId = "confirm_match", label = "Confirm"),
-              shiny::actionButton(inputId = "ignore_street", label = "Ignore")
+              shiny::actionButton(inputId = "ignore_street", label = "Ignore"),
+              shiny::actionButton(inputId = "confirm_match", label = "Confirm")
             ),
             # shiny::uiOutput(outputId = "street_buttons_UI"),
             shiny::hr()

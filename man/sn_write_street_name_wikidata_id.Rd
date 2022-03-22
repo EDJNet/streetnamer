@@ -16,7 +16,6 @@ sn_write_street_name_wikidata_id(
   checked = NULL,
   ignore = NULL,
   session = NULL,
-  time = NULL,
   overwrite = FALSE,
   append = TRUE,
   connection = NULL,
@@ -58,7 +57,6 @@ sn_write_street_name_wikidata_id(
   tag = "",
   checked = TRUE,
   session = "testing",
-  time = Sys.time(),
   append = TRUE,
   overwrite = FALSE,
   disconnect_db = TRUE

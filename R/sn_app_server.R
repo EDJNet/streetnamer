@@ -286,7 +286,7 @@ sn_app_server <- function(input, output, session) {
 
   observeEvent(list(input$ignore_street),
     {
-      streetnamer::sn_write_street_name_wikidata_id(
+      sn_write_street_name_wikidata_id(
         country = stringr::str_extract(
           string = input$current_gisco_id,
           pattern = "[A-Z][A-Z]"
@@ -301,7 +301,6 @@ sn_app_server <- function(input, output, session) {
         checked = as.integer(TRUE),
         ignore = as.integer(TRUE),
         session = session$token,
-        time = Sys.time(),
         append = TRUE,
         connection = golem::get_golem_options("connection")
       )
@@ -325,9 +324,10 @@ sn_app_server <- function(input, output, session) {
     list(input$confirm_match),
     
     {
-      streetnamer::sn_write_street_name_wikidata_id(
-        df_to_write =  selected_df_rv$df(),
-        connection = golem::get_golem_options("connection")
+      sn_write_street_name_wikidata_id(
+        df_to_write = selected_df_rv$df(),
+        connection = golem::get_golem_options("connection"),
+        append = TRUE
       )
       
       

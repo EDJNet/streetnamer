@@ -107,21 +107,6 @@ mod_sn_street_info_server <- function(id,
     category <- as.character(NA)
     
     
-    # shiny::observeEvent(
-    #   eventExpr = input$checked_switch,
-    #   handlerExpr = {
-    #     print("check")
-    #
-    #     streetnamer::sn_write_street_name_wikidata_id(gisco_id = gisco_id,
-    #                                                   street_name = street_name,
-    #                                                   wikidata_id = as.character(wikidata_id),
-    #                                                   category = as.character(category),
-    #                                                   checked = input$checked_switch,
-    #                                                   overwrite = TRUE
-    #     )
-    #   }, ignoreNULL = TRUE, ignoreInit = TRUE)
-    
-    
     gisco_id_v <- gisco_id
     
     lau_label_v_pre <- sn_lau_by_nuts %>%
@@ -146,62 +131,6 @@ mod_sn_street_info_server <- function(id,
       checked_lv ~ "Manually checked",
       TRUE ~ "Undetermined"
     )
-    
-    
-    ## store data when "confirm" is clicked
-    # 
-    # 
-    # shiny::observeEvent(
-    #   eventExpr = input$confirm_action,
-    #   handlerExpr = {
-    #     streetnamer::sn_write_street_name_wikidata_id(
-    #       gisco_id = gisco_id,
-    #       street_name = street_name,
-    #       country = country,
-    #       wikidata_id = as.character(wikidata_id_selected),
-    #       person = as.integer(input$person_switch),
-    #       gender = as.character(input$gender_radio),
-    #       category = as.character(input$category_radio),
-    #       tag = as.character(input$tag_selectize),
-    #       checked = as.integer(TRUE),
-    #       ignore = as.integer(FALSE),
-    #       session = session$token,
-    #       time = Sys.time(),
-    #       append = TRUE,
-    #       connection = connection
-    #     )
-    #   },
-    #   ignoreNULL = TRUE,
-    #   ignoreInit = TRUE
-    # )
-    # 
-    # ## store data when "set id" is clicked
-    # 
-    # 
-    # shiny::observeEvent(
-    #   eventExpr = input$set_id,
-    #   handlerExpr = {
-    #     streetnamer::sn_write_street_name_wikidata_id(
-    #       gisco_id = gisco_id,
-    #       street_name = street_name,
-    #       country = country,
-    #       wikidata_id = as.character(wikidata_id_selected),
-    #       person = as.integer(input$person_switch),
-    #       gender = as.character(input$gender_radio),
-    #       category = as.character(input$category_radio),
-    #       tag = as.character(input$tag_selectize),
-    #       checked = as.integer(TRUE),
-    #       ignore = as.integer(FALSE),
-    #       session = session$token,
-    #       time = Sys.time(),
-    #       append = TRUE,
-    #       connection = connection
-    #     )
-    #   },
-    #   ignoreNULL = TRUE,
-    #   ignoreInit = TRUE
-    # )
-    # 
     
     ### Prepare output
     output$street_name_info_box <- shiny::renderUI(
@@ -327,13 +256,12 @@ mod_sn_street_info_server <- function(id,
           country = country,
           wikidata_id = as.character(wikidata_id_selected),
           person = as.integer(input$person_switch),
-          gender = as.character(input$gender_radio),
+          gender = gender_selected,
           category = as.character(input$category_radio),
           tag = as.character(input$tag_selectize),
           checked = as.integer(input$checked_switch),
           ignore = as.integer(FALSE),
           session = session$token,
-          time = Sys.time(),
           append = TRUE,
           connection = connection,
           return_df_only = TRUE
