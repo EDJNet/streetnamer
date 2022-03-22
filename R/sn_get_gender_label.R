@@ -18,6 +18,9 @@ sn_get_gender_label <- function(wikidata_id,
                                 cache_connection = NULL, 
                                 cache = TRUE
 ) {
+  if (is.null(wikidata_id)) {
+    return(NULL)
+  }
   gender_id <- tidywikidatar::tw_get_property_same_length(
     id = wikidata_id,
     p = "P21",
