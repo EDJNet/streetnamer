@@ -144,11 +144,7 @@ sn_app_ui <- function(request) {
               ),
               conditionalPanel(
                 condition = "input.wikidata_panel_switch == true",
-                mod_sn_search_wikidata_ui(id = "sn_search_wikidata_ui_1"),
-                actionButton(
-                  inputId = "set_id",
-                  label = "Set new id!"
-                )
+                mod_sn_search_wikidata_ui(id = "sn_search_wikidata_ui_1")
               )
             ),
             tabPanel(
