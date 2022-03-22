@@ -25,19 +25,19 @@ sn_app_ui <- function(request) {
         )
       ),
       title = "Mapping Diversity - European Data Journalism Network",
-      tags$footer(
-        title = "footer",
-        align = "right",
-        style = "
-position:fixed;
-bottom:0;
-width:100%;
-height:30px; /* Height of the footer */
-color: white;
-margin-left: -15px;
-background-color: #ff5454;
-z-index: 1000;"
-      ),
+#       tags$footer(
+#         title = "footer",
+#         align = "right",
+#         style = "
+# position:fixed;
+# bottom:0;
+# width:100%;
+# height:30px
+# color: white;
+# margin-left: -15px;
+# background-color: #ff5454;
+# z-index: 1000;"
+#       ),
       fluidRow(
         column(
           width = 2,
