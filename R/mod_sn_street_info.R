@@ -201,7 +201,7 @@ mod_sn_street_info_server <- function(id,
             width = "98%"
           ),
           shiny::selectizeInput(
-            inputId = ns("tag_selectize"),
+            inputId = ns("tag_selectize_person"),
             label = "Add a tag",
             choices = c(
               "",
@@ -227,7 +227,7 @@ mod_sn_street_info_server <- function(id,
           #   justified = TRUE
           # ),
           shiny::selectizeInput(
-            inputId = ns("selectize_tag"),
+            inputId = ns("tag_selectize_not_person"),
             label = "Add a tag",
             choices = c(
               "",
@@ -250,6 +250,13 @@ mod_sn_street_info_server <- function(id,
     ## Return
     selected_df_r <- shiny::reactive(
       {
+        
+        if (as.integer(input$person_switch)==1) {
+          tag_v <- input$tag_selectize_person
+        } else {
+          tag_v <- input$tag_selectize_not_person
+        }
+        
         sn_write_street_name_wikidata_id(
           gisco_id = gisco_id,
           street_name = street_name,
@@ -258,7 +265,7 @@ mod_sn_street_info_server <- function(id,
           person = as.integer(input$person_switch),
           gender = gender_selected,
           category = as.character(input$category_radio),
-          tag = as.character(input$tag_selectize),
+          tag = tag_v,
           checked = as.integer(input$checked_switch),
           ignore = as.integer(FALSE),
           session = session$token,
