@@ -14,11 +14,7 @@ mod_sn_search_wikidata_ui <- function(id) {
     shiny::uiOutput(outputId = ns("search_input_box_ui")),
     shiny::uiOutput(outputId = ns("repeat_input_ui")),
     DT::DTOutput(outputId = ns("search_results_dt")),
-    shiny::textInput(
-      inputId = ns("wikidata_new_id"),
-      label = "or enter custom Wikidata id",
-      width = "100%"
-    )
+    shiny::uiOutput(outputId = ns("search_language_ui"))
   )
 }
 
@@ -49,7 +45,9 @@ mod_sn_search_wikidata_server <- function(id,
       } else if (nchar(input$wikidata_search) > 0) {
         search_results_df <- tidywikidatar::tw_search(
           search = input$wikidata_search,
-          language = dplyr::if_else(is.null(input$language_selector), search_language, input$language_selector),
+          language = dplyr::if_else(is.null(input$language_selector),
+                                    search_language,
+                                    input$language_selector),
           cache = cache,
           cache_connection = connection
         ) %>%
@@ -61,21 +59,27 @@ mod_sn_search_wikidata_server <- function(id,
 
     output$search_input_box_ui <- shiny::renderUI({
       shiny::tagList(
-      shiny::textInput(
-        inputId = ns("wikidata_search"),
-        label = "Search on Wikidata",
-        placeholder = "search...",
-        value = search_string,
-        width = "100%"
-      ),
-      shiny::selectInput(inputId = ns("language_selector"),
-                         label = "Search language",
-                         choices = languages_v,
-                         selected = search_language,
-                         multiple = FALSE,
-                         selectize = TRUE))
+        shiny::textInput(
+          inputId = ns("wikidata_search"),
+          label = "Search on Wikidata",
+          placeholder = "search...",
+          value = search_string,
+          width = "100%"
+        )
+      )
     })
-
+    
+    output$search_language_ui <- shiny::renderUI({
+      tagList(
+        shiny::selectInput(inputId = ns("language_selector"),
+                           label = "Search language",
+                           choices = languages_v,
+                           selected = search_language,
+                           multiple = FALSE,
+                           selectize = TRUE)
+      )
+    })
+    
     output$search_results_dt <- DT::renderDT(
       expr = {
         search_results_df <- search_results_df_r()
