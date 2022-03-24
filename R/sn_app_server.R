@@ -404,26 +404,22 @@ sn_app_server <- function(input, output, session) {
 
   ####  Wikidata search module ####
   
-  shiny::observeEvent(eventExpr = street_selected()$name, {
-    output$wikidata_search_panel_ui <- renderUI(tagList(
-      shinyWidgets::switchInput(
-        inputId = "wikidata_search_panel_switch",
-        label = "Change Wikidata id?",
-        onLabel = "Yes",
-        offLabel = "No",
-        size = "large",
-        value = FALSE,
-        labelWidth = "280px",
-        handleWidth = "80px",
-        width = "90%"
-      ),
-      conditionalPanel(
-        condition = "input.wikidata_search_panel_switch == true",
-        mod_sn_search_wikidata_ui(id = "sn_search_wikidata_ui_1")
+  shiny::observeEvent(
+    list(street_selected()$name, 
+         input$wikidata_search_panel_switch),
+    {
+      selected_wikidata_id_from_search_r <- mod_sn_search_wikidata_server(
+        id = "sn_search_wikidata_ui_1",
+        search_string = street_selected()$name,
+        search_language = "en",
+        cache = TRUE,
+        connection = golem::get_golem_options("connection")
       )
-    ))
-  })
-
+      
+    },
+    ignoreNULL = TRUE,
+    ignoreInit = TRUE)
+  
   selected_wikidata_id_from_search_r <- mod_sn_search_wikidata_server(
     id = "sn_search_wikidata_ui_1",
     search_string = street_selected()$name,
@@ -431,6 +427,7 @@ sn_app_server <- function(input, output, session) {
     cache = TRUE,
     connection = golem::get_golem_options("connection")
   )
+  
 
 
 

@@ -136,7 +136,21 @@ sn_app_ui <- function(request) {
                        mod_sn_street_info_ui("snm_street_info_ui_1")
                 ), 
                 column(6, 
-                       uiOutput(outputId = "wikidata_search_panel_ui")
+                       shinyWidgets::switchInput(
+                         inputId = "wikidata_search_panel_switch",
+                         label = "Change Wikidata id?",
+                         onLabel = "Yes",
+                         offLabel = "No",
+                         size = "large",
+                         value = FALSE,
+                         labelWidth = "280px",
+                         handleWidth = "80px",
+                         width = "90%"
+                       ),
+                       conditionalPanel(
+                         condition = "input.wikidata_search_panel_switch == true",
+                         mod_sn_search_wikidata_ui(id = "sn_search_wikidata_ui_1")
+                       )
                 )
               )
             ),
