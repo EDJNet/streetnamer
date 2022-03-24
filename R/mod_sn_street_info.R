@@ -185,14 +185,12 @@ mod_sn_street_info_server <- function(id,
           shiny::p("Select scope:"),
           shinyWidgets::radioGroupButtons(
             inputId = ns("category_radio"),
-            selected = "other",
+            selected = "NA",
             choices = c(
-              "",
               "religion",
               "military",
               "politics",
               "culture",
-              "other",
               "NA"
             ),
             individual = TRUE,

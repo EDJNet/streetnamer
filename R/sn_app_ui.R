@@ -113,6 +113,7 @@ sn_app_ui <- function(request) {
           ),
           DT::DTOutput(outputId = "current_city_sn_dt"),
           shiny::uiOutput(outputId = "current_street_box_UI"),
+          width = 3
           #   shiny::uiOutput(outputId = "wikidata_id_selected_output")
           # ,
           # shinyWidgets::switchInput(inputId = "checked_switch",
@@ -153,7 +154,8 @@ sn_app_ui <- function(request) {
               shinyauthr::loginUI(id = "login"),
               mod_sn_export_ui("snm_export_ui_1")
             )
-          )
+          ),
+          width = 9
         )
       )
     )
