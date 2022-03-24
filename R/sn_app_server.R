@@ -263,6 +263,9 @@ sn_app_server <- function(input, output, session) {
         proxy = DTproxy,
         page = input$current_city_sn_dt_rows_selected %/% input$current_city_sn_dt_state$length + 1
       )
+      
+      shinyWidgets::updateSwitchInput(inputId = "wikidata_search_panel_switch",
+                                      value = FALSE)
     },
     ignoreNULL = FALSE,
     ignoreInit = TRUE
@@ -279,6 +282,9 @@ sn_app_server <- function(input, output, session) {
         proxy = DTproxy,
         page = input$current_city_sn_dt_rows_selected %/% input$current_city_sn_dt_state$length + 1
       )
+      
+      shinyWidgets::updateSwitchInput(inputId = "wikidata_search_panel_switch",
+                                      value = FALSE)
     },
     ignoreNULL = TRUE,
     ignoreInit = TRUE
@@ -315,6 +321,9 @@ sn_app_server <- function(input, output, session) {
         proxy = DTproxy,
         page = input$current_city_sn_dt_rows_selected %/% input$current_city_sn_dt_state$length + 1
       )
+      
+      shinyWidgets::updateSwitchInput(inputId = "wikidata_search_panel_switch",
+                                      value = FALSE)
     },
     ignoreNULL = TRUE,
     ignoreInit = TRUE
@@ -394,6 +403,26 @@ sn_app_server <- function(input, output, session) {
   })
 
   ####  Wikidata search module ####
+  
+  shiny::observeEvent(eventExpr = street_selected()$name, {
+    output$wikidata_search_panel_ui <- renderUI(tagList(
+      shinyWidgets::switchInput(
+        inputId = "wikidata_search_panel_switch",
+        label = "Change Wikidata id?",
+        onLabel = "Yes",
+        offLabel = "No",
+        size = "large",
+        value = FALSE,
+        labelWidth = "280px",
+        handleWidth = "80px",
+        width = "90%"
+      ),
+      conditionalPanel(
+        condition = "input.wikidata_search_panel_switch == true",
+        mod_sn_search_wikidata_ui(id = "sn_search_wikidata_ui_1")
+      )
+    ))
+  })
 
   selected_wikidata_id_from_search_r <- mod_sn_search_wikidata_server(
     id = "sn_search_wikidata_ui_1",
