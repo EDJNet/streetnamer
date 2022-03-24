@@ -132,7 +132,7 @@ sn_app_ui <- function(request) {
               title = "Contribute",
               mod_sn_street_info_ui("snm_street_info_ui_1"),
               shinyWidgets::switchInput(
-                inputId = "wikidata_panel_switch",
+                inputId = "wikidata_search_panel_switch",
                 label = "Change Wikidata id?",
                 onLabel = "Yes",
                 offLabel = "No",
@@ -143,7 +143,7 @@ sn_app_ui <- function(request) {
                 width = "90%"
               ),
               conditionalPanel(
-                condition = "input.wikidata_panel_switch == true",
+                condition = "input.wikidata_search_panel_switch == true",
                 mod_sn_search_wikidata_ui(id = "sn_search_wikidata_ui_1")
               )
             ),

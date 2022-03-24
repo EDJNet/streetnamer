@@ -340,6 +340,10 @@ sn_app_server <- function(input, output, session) {
         proxy = DTproxy,
         page = input$current_city_sn_dt_rows_selected %/% input$current_city_sn_dt_state$length + 1
       )
+      
+      shinyWidgets::updateSwitchInput(inputId = "wikidata_search_panel_switch",
+                                      value = FALSE)
+      
     },
     ignoreNULL = TRUE,
     ignoreInit = TRUE
