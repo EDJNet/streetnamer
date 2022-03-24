@@ -96,9 +96,9 @@ sn_app_ui <- function(request) {
               inputId = "streets_to_show_in_dt",
               label = "List...",
               choices = c(
-                "All streets",
                 "Not yet checked",
                 "Not yet checked in this municipality",
+                "All streets",
                 "All streets (including ignored)"
               )
             ),
@@ -114,17 +114,6 @@ sn_app_ui <- function(request) {
           DT::DTOutput(outputId = "current_city_sn_dt"),
           shiny::uiOutput(outputId = "current_street_box_UI"),
           width = 3
-          #   shiny::uiOutput(outputId = "wikidata_id_selected_output")
-          # ,
-          # shinyWidgets::switchInput(inputId = "checked_switch",
-          #                           label = "Manually checked?",
-          #                           onLabel = "Yes",
-          #                           offLabel = "No",
-          #                           size = "large",
-          #                           value = TRUE,
-          #                           labelWidth = "280px",
-          #                           handleWidth = "80px",
-          #                           width = "90%")
         ),
         mainPanel = mainPanel(
           tabsetPanel(
