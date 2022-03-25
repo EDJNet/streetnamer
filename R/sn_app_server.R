@@ -469,6 +469,7 @@ sn_app_server <- function(input, output, session) {
     id = "sn_search_wikidata_ui_1",
     search_string = street_selected()$name,
     search_language = "en",
+    description_language = "en",
     cache = TRUE,
     connection = golem::get_golem_options("connection")
   )
