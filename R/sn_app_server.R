@@ -443,10 +443,20 @@ sn_app_server <- function(input, output, session) {
     list(street_selected()$name, 
          input$wikidata_search_panel_switch),
     {
+      current_default_search_language_v <- sn_language_defaults_by_country %>% 
+        dplyr::filter(country == input$current_country_name) %>% 
+        dplyr::pull(language_code)
+      
+      if (length(current_default_search_language_v)==0) {
+        current_default_search_language_v <- "en"
+      }
+      
+      
       selected_wikidata_id_from_search_r <- mod_sn_search_wikidata_server(
         id = "sn_search_wikidata_ui_1",
         search_string = street_selected()$name,
-        search_language = "en",
+        search_language = current_default_search_language_v,
+        description_language = "en",
         cache = TRUE,
         connection = golem::get_golem_options("connection")
       )

@@ -24,6 +24,7 @@ mod_sn_search_wikidata_ui <- function(id) {
 mod_sn_search_wikidata_server <- function(id,
                                           search_string = "",
                                           search_language,
+                                          description_language,
                                           languages = streetnamer::sn_available_languages,
                                           connection = NULL,
                                           cache = FALSE) {
@@ -48,6 +49,7 @@ mod_sn_search_wikidata_server <- function(id,
           language = dplyr::if_else(is.null(input$language_selector),
                                     search_language,
                                     input$language_selector),
+          response_language = input$language_description_selector,
           cache = cache,
           cache_connection = connection
         ) %>%
@@ -71,12 +73,25 @@ mod_sn_search_wikidata_server <- function(id,
     
     output$search_language_ui <- shiny::renderUI({
       tagList(
-        shiny::selectInput(inputId = ns("language_selector"),
-                           label = "Search language",
-                           choices = languages_v,
-                           selected = search_language,
-                           multiple = FALSE,
-                           selectize = TRUE)
+        fluidRow(
+          column(width = 6,
+                 shiny::selectInput(inputId = ns("language_selector"),
+                                    label = "Search language",
+                                    choices = languages_v,
+                                    selected = search_language,
+                                    multiple = FALSE,
+                                    selectize = TRUE)
+                 ),
+          column(width = 6,
+          shiny::selectInput(inputId = ns("language_description_selector"),
+                             label = "Description language",
+                             choices = languages_v,
+                             selected = description_language,
+                             multiple = FALSE,
+                             selectize = TRUE)
+        )
+        )
+        
       )
     })
     
