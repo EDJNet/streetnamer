@@ -269,7 +269,24 @@ sn_app_server <- function(input, output, session) {
   )
 
   DTproxy <- DT::dataTableProxy("current_city_sn_dt")
-
+  
+  ### if no street is selected, and there is something in the table, then select first row
+  
+  observeEvent(input$current_city_sn_dt_rows_selected, {
+    if (is.null(current_streets_df_r()) == TRUE) {
+      return(NULL)
+    } else if (nrow(current_streets_df_r()) == 0) {
+      return(NULL)
+    } else if (nrow(current_streets_df_r()) > 0) {
+      if (length(input$current_city_sn_dt_rows_selected)==0) {
+        DT::selectRows(
+          DTproxy,
+          1
+        )
+      }
+    }
+  }, ignoreNULL = FALSE)
+  
   observeEvent(list(input$next_row),
     {
       DT::selectRows(
