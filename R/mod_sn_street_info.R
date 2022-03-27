@@ -144,17 +144,17 @@ mod_sn_street_info_server <- function(id,
                                      language = language,
                                      connection = connection),
         shiny::hr(),
-        shinyWidgets::switchInput(
-          inputId = ns("checked_switch"),
-          label = "Manually checked?",
-          onLabel = "Yes",
-          offLabel = "No",
-          size = "large",
-          value = checked_switch_selected,
-          labelWidth = "280px",
-          handleWidth = "80px",
-          width = "90%"
-        ),
+        # shinyWidgets::switchInput(
+        #   inputId = ns("checked_switch"),
+        #   label = "Manually checked?",
+        #   onLabel = "Yes",
+        #   offLabel = "No",
+        #   size = "large",
+        #   value = checked_switch_selected,
+        #   labelWidth = "280px",
+        #   handleWidth = "80px",
+        #   width = "90%"
+        # ),
         shiny::tags$b(ifelse(guessing,
                              "N.B. Showing first Wikipedia match, review carefully",
                              "")),
@@ -239,9 +239,16 @@ mod_sn_street_info_server <- function(id,
           )
         )
         # ,
-        # shiny::actionButton(
-        #   inputId = ns("confirm_action"),
-        #   label = "Confirm!"
+        # shinyWidgets::switchInput(
+        #   inputId = ns("exists_on_wikidata_switch"),
+        #   label = "Does it exists on Wikidata?",
+        #   onLabel = "Yes",
+        #   offLabel = "No",
+        #   size = "large",
+        #   value = dplyr::if_else(is.na(wikidata_id_selected), FALSE, TRUE),
+        #   labelWidth = "280px",
+        #   handleWidth = "80px",
+        #   width = "90%"
         # )
       ))
     
@@ -264,7 +271,7 @@ mod_sn_street_info_server <- function(id,
           gender = gender_selected,
           category = as.character(input$category_radio),
           tag = tag_v,
-          checked = as.integer(input$checked_switch),
+          checked = as.integer(TRUE),
           ignore = as.integer(FALSE),
           session = session$token,
           append = TRUE,
