@@ -366,7 +366,7 @@ sn_app_server <- function(input, output, session) {
   
   observeEvent(
     list(input$confirm_match),
-    
+
     {
       sn_write_street_name_wikidata_id(
         df_to_write = selected_df_rv$df(),
@@ -387,7 +387,7 @@ sn_app_server <- function(input, output, session) {
       
       shinyWidgets::updateSwitchInput(inputId = "wikidata_search_panel_switch",
                                       value = FALSE)
-      
+
     },
     ignoreNULL = TRUE,
     ignoreInit = TRUE
@@ -519,6 +519,36 @@ sn_app_server <- function(input, output, session) {
     ignoreInit = TRUE
   )
 
+  
+  shiny::observeEvent(
+    eventExpr = input$drop_wikidata_id_switch,
+    handlerExpr = {
+      if (input$drop_wikidata_id_switch==TRUE) {
+        selected_df_rv$df <- mod_sn_street_info_server(
+          id = "snm_street_info_ui_1",
+          street_name = street_selected()$name,
+          gisco_id = input$current_gisco_id,
+          country = stringr::str_extract(
+            string = input$current_gisco_id,
+            pattern = "[A-Z][A-Z]"
+          ),
+          wikidata_id = "drop",
+          connection = golem::get_golem_options("connection")
+        )
+        
+        
+        shinyWidgets::updateSwitchInput(inputId = "drop_wikidata_id_switch",
+                                        value = FALSE)
+        
+        
+      }
+      
+    },
+    ignoreNULL = TRUE,
+    ignoreInit = TRUE
+  )
+  
+  
   shiny::observeEvent(
     eventExpr = selected_wikidata_id_from_search_r(),
     handlerExpr = {

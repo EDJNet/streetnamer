@@ -32,13 +32,28 @@ mod_sn_street_info_server <- function(id,
     checked_lv <- NULL
     
     if (is.null(wikidata_id)==FALSE) {
-      guessing <- FALSE
-      checked_switch_selected <- TRUE
-      wikidata_id_selected <- wikidata_id
-      gender_selected <- sn_get_gender_label(wikidata_id = wikidata_id_selected,
-                                             language = language,
-                                             cache_connection = connection,
-                                             cache = TRUE)
+      if (is.na(wikidata_id)) {
+        wikidata_id_selected <- as.character(NA) 
+        gender_selected <- as.character(NA)
+        checked_switch_selected <- TRUE
+        guessing <- FALSE       
+      } else if (wikidata_id == "drop") {
+        wikidata_id_selected <- as.character(NA) 
+        gender_selected <- as.character(NA)
+        checked_switch_selected <- TRUE
+        guessing <- FALSE
+      } else {
+        guessing <- FALSE
+        checked_switch_selected <- TRUE
+        wikidata_id_selected <- wikidata_id
+        gender_selected <- sn_get_gender_label(wikidata_id = wikidata_id_selected,
+                                               language = language,
+                                               cache_connection = connection,
+                                               cache = TRUE)
+      }
+      
+      
+
     } else {
       # check if street in database
       details_from_db <- sn_get_street_name_wikidata_id(
