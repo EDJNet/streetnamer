@@ -7,3 +7,7 @@
     background-color: #ff5454 !important;
     color: white !important;
 }
+
+.pagination {
+  text-size: 11px;
+}
