@@ -30,8 +30,8 @@ sn_search_dedicated_to <- function(gisco_id,
                                                     country = country_name))
   
   search_results_df <- tidywikidatar::tw_search(search = current_street_names_df[["name_clean"]],
-                                               language = "de",
-                                               include_search = TRUE) %>% 
+                                                language = search_language,
+                                                include_search = TRUE) %>% 
     dplyr::group_by(search) %>% 
     dplyr::slice(1) %>%
     dplyr::ungroup() %>% 
