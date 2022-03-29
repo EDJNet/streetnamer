@@ -8,6 +8,7 @@ sn_language_defaults_by_country <- tibble::tribble(
   "Czechia", "CZ", "Czech", "cs", "Q9056", 
   "France", "FR", "French", "fr", "Q150",
   "Germany", "DE", "German", "de", "Q188",
+  "Austria", "AT", "German", "de", "Q188",
   "Greece", "EL", "Greek", "el", "Q36510",
   "Italy", "IT", "Italian", "it", "Q652",
   "Portugal", "PT", "Portuguese", "pt", "Q5146",

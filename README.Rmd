@@ -77,13 +77,17 @@ sn_run_app()
 In order to facilitate development, as well as to allow integration of component parts of this app in spin-off projects, key components of the Shiny app have been developed as modules and can be tested independently.
 
 
-See for example (currently not working due to refactoring):
+### Module that shows info about Wikidata
 
 ```{r eval=FALSE}
 streetnamer:::mod_sn_street_info_app(street_name = "Belvedere San Francesco",
                                      gisco_id = "IT_022205")
 ```
 
+
+### Module for showing
+
+### Module for exporting data
 
 ## Caching
 
@@ -112,6 +116,11 @@ It should be possible deal with the following circumstances:
 - not a street / irrelevant
 - single street has more wikidata id (e.g. dedicated to two individuals)
 - add a tag for each street (maybe, free tag from a controlled vocabulary, e.g. to mark streets related to some issue that would not appear from relevant Wikidata identifier)
+
+## Checks for things that should work
+
+
+
 
 ## On naming things
 

@@ -32,8 +32,8 @@ RUN Rscript -e 'remotes::install_version("sf",upgrade="never", version = "1.0-6"
 RUN Rscript -e 'remotes::install_version("golem",upgrade="never", version = "0.3.1")'
 RUN Rscript -e 'remotes::install_version("DT",upgrade="never", version = "0.21")'
 RUN Rscript -e 'remotes::install_github("TS404/WikidataR@4f9da67b800bf1c6fc3a3bff1366c56b6e7403da")'
-RUN Rscript -e 'remotes::install_github("giocomai/latlon2map@16f80b9ebd2f9171dee99b7f0304bd939c62c621")'
-RUN Rscript -e 'remotes::install_github("EDJNet/tidywikidatar",upgrade="never", ref = "6cbbe5373fbc85912da79e480b9140a88b1db124")'
+RUN Rscript -e 'remotes::install_github("giocomai/latlon2map@08f51e30d49472b82cf61a244866dabf2b02a7fc")'
+RUN Rscript -e 'remotes::install_github("EDJNet/tidywikidatar",upgrade="never", ref = "9dc85c65d1bafe72488740455542b29fc9b4b75c")'
 
 
 # ODBC driver
