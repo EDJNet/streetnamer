@@ -40,5 +40,6 @@ sn_clean_street_name <- function(street_name,
   
   
   street_name %>% 
-    stringr::str_squish()
+    stringr::str_squish() %>% 
+    stringr::str_replace_all(pattern = stringr::fixed("//", pattern = "/"))
 }

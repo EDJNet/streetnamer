@@ -1,4 +1,5 @@
 ## code to prepare `sn_street_name_to_remove_df` dataset goes here
+library("dplyr")
 
 sn_street_name_to_remove_df <- dplyr::bind_rows(
   tibble::tibble(
@@ -36,6 +37,7 @@ sn_street_name_to_remove_df <- dplyr::bind_rows(
       "Vereda de los ",
       "Avenida de la ",
       "Avenida de los ",
+      "Avenida de las ",
       "Avenida del ",  
       "Avenida de ",
       "Avenida ",
