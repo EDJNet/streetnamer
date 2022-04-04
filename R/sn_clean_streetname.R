@@ -21,7 +21,7 @@ sn_clean_street_name <- function(street_name,
     country_name <- country
   }
   
-  if (country %in% unique(sn_street_name_to_remove_df[["country"]])) {
+  if (country %in% unique(sn_street_name_to_remove_df[["country_name"]])) {
     street_name <- stringr::str_remove_all(string = street_name,
                             pattern = sn_street_name_to_remove_df %>% 
                               dplyr::filter(country == country_name) %>% 
@@ -41,5 +41,5 @@ sn_clean_street_name <- function(street_name,
   
   street_name %>% 
     stringr::str_squish() %>% 
-    stringr::str_replace_all(pattern = stringr::fixed("//"), replacement = "/")
+    stringr::str_replace_all(pattern = stringr::fixed("\\"), replacement = " ")
 }
