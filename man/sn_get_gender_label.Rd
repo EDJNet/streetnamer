@@ -29,6 +29,6 @@ Get gender label based on a Wikidata Q identifier
 \examples{
 
 if (interactive()) {
-sn_get_gender_label("Q7186")
+  sn_get_gender_label("Q7186")
 }
 }

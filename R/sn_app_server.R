@@ -195,7 +195,7 @@ sn_app_server <- function(input, output, session) {
             ),
             connection = golem::get_golem_options("connection")
           ) %>%
-            dplyr::filter(checked == TRUE) %>% 
+            dplyr::filter(checked == TRUE) %>%
             dplyr::distinct(street_name) %>%
             dplyr::rename(name = street_name),
           by = "name"
@@ -269,24 +269,27 @@ sn_app_server <- function(input, output, session) {
   )
 
   DTproxy <- DT::dataTableProxy("current_city_sn_dt")
-  
+
   ### if no street is selected, and there is something in the table, then select first row
-  
-  observeEvent(input$current_city_sn_dt_rows_selected, {
-    if (is.null(current_streets_df_r()) == TRUE) {
-      return(NULL)
-    } else if (nrow(current_streets_df_r()) == 0) {
-      return(NULL)
-    } else if (nrow(current_streets_df_r()) > 0) {
-      if (length(input$current_city_sn_dt_rows_selected)==0) {
-        DT::selectRows(
-          DTproxy,
-          1
-        )
+
+  observeEvent(input$current_city_sn_dt_rows_selected,
+    {
+      if (is.null(current_streets_df_r()) == TRUE) {
+        return(NULL)
+      } else if (nrow(current_streets_df_r()) == 0) {
+        return(NULL)
+      } else if (nrow(current_streets_df_r()) > 0) {
+        if (length(input$current_city_sn_dt_rows_selected) == 0) {
+          DT::selectRows(
+            DTproxy,
+            1
+          )
+        }
       }
-    }
-  }, ignoreNULL = FALSE)
-  
+    },
+    ignoreNULL = FALSE
+  )
+
   observeEvent(list(input$next_row),
     {
       DT::selectRows(
@@ -298,9 +301,11 @@ sn_app_server <- function(input, output, session) {
         proxy = DTproxy,
         page = input$current_city_sn_dt_rows_selected %/% input$current_city_sn_dt_state$length + 1
       )
-      
-      shinyWidgets::updateSwitchInput(inputId = "wikidata_search_panel_switch",
-                                      value = FALSE)
+
+      shinyWidgets::updateSwitchInput(
+        inputId = "wikidata_search_panel_switch",
+        value = FALSE
+      )
     },
     ignoreNULL = FALSE,
     ignoreInit = TRUE
@@ -317,9 +322,11 @@ sn_app_server <- function(input, output, session) {
         proxy = DTproxy,
         page = input$current_city_sn_dt_rows_selected %/% input$current_city_sn_dt_state$length + 1
       )
-      
-      shinyWidgets::updateSwitchInput(inputId = "wikidata_search_panel_switch",
-                                      value = FALSE)
+
+      shinyWidgets::updateSwitchInput(
+        inputId = "wikidata_search_panel_switch",
+        value = FALSE
+      )
     },
     ignoreNULL = TRUE,
     ignoreInit = TRUE
@@ -356,43 +363,45 @@ sn_app_server <- function(input, output, session) {
         proxy = DTproxy,
         page = input$current_city_sn_dt_rows_selected %/% input$current_city_sn_dt_state$length + 1
       )
-      
-      shinyWidgets::updateSwitchInput(inputId = "wikidata_search_panel_switch",
-                                      value = FALSE)
+
+      shinyWidgets::updateSwitchInput(
+        inputId = "wikidata_search_panel_switch",
+        value = FALSE
+      )
     },
     ignoreNULL = TRUE,
     ignoreInit = TRUE
   )
-  
+
   observeEvent(
     list(input$confirm_match),
-
     {
       sn_write_street_name_wikidata_id(
         df_to_write = selected_df_rv$df(),
         connection = golem::get_golem_options("connection"),
         append = TRUE
       )
-      
-      
+
+
       DT::selectRows(
         DTproxy,
         sum(input$current_city_sn_dt_rows_selected, 1)
       )
-      
+
       DT::selectPage(
         proxy = DTproxy,
         page = input$current_city_sn_dt_rows_selected %/% input$current_city_sn_dt_state$length + 1
       )
-      
-      shinyWidgets::updateSwitchInput(inputId = "wikidata_search_panel_switch",
-                                      value = FALSE)
 
+      shinyWidgets::updateSwitchInput(
+        inputId = "wikidata_search_panel_switch",
+        value = FALSE
+      )
     },
     ignoreNULL = TRUE,
     ignoreInit = TRUE
   )
-  
+
   street_selected <- shiny::eventReactive(
     list(input$current_city_sn_dt_rows_selected),
     {
@@ -438,20 +447,22 @@ sn_app_server <- function(input, output, session) {
   })
 
   ####  Wikidata search module ####
-  
+
   shiny::observeEvent(
-    list(street_selected()$name, 
-         input$wikidata_search_panel_switch),
+    list(
+      street_selected()$name,
+      input$wikidata_search_panel_switch
+    ),
     {
-      current_default_search_language_v <- sn_language_defaults_by_country %>% 
-        dplyr::filter(country == input$current_country_name) %>% 
+      current_default_search_language_v <- sn_language_defaults_by_country %>%
+        dplyr::filter(country == input$current_country_name) %>%
         dplyr::pull(language_code)
-      
-      if (length(current_default_search_language_v)==0) {
+
+      if (length(current_default_search_language_v) == 0) {
         current_default_search_language_v <- "en"
       }
-      
-      
+
+
       selected_wikidata_id_from_search_r <- mod_sn_search_wikidata_server(
         id = "sn_search_wikidata_ui_1",
         search_string = street_selected()$name,
@@ -460,11 +471,11 @@ sn_app_server <- function(input, output, session) {
         cache = TRUE,
         connection = golem::get_golem_options("connection")
       )
-      
     },
     ignoreNULL = TRUE,
-    ignoreInit = TRUE)
-  
+    ignoreInit = TRUE
+  )
+
   selected_wikidata_id_from_search_r <- mod_sn_search_wikidata_server(
     id = "sn_search_wikidata_ui_1",
     search_string = street_selected()$name,
@@ -473,7 +484,7 @@ sn_app_server <- function(input, output, session) {
     cache = TRUE,
     connection = golem::get_golem_options("connection")
   )
-  
+
 
 
 
@@ -500,7 +511,7 @@ sn_app_server <- function(input, output, session) {
 
   selected_df_rv <- reactiveValues(df = NULL)
 
-  
+
   shiny::observeEvent(
     eventExpr = street_selected()$name,
     handlerExpr = {
@@ -519,11 +530,11 @@ sn_app_server <- function(input, output, session) {
     ignoreInit = TRUE
   )
 
-  
+
   shiny::observeEvent(
     eventExpr = input$drop_wikidata_id_switch,
     handlerExpr = {
-      if (input$drop_wikidata_id_switch==TRUE) {
+      if (input$drop_wikidata_id_switch == TRUE) {
         selected_df_rv$df <- mod_sn_street_info_server(
           id = "snm_street_info_ui_1",
           street_name = street_selected()$name,
@@ -535,25 +546,23 @@ sn_app_server <- function(input, output, session) {
           wikidata_id = "drop",
           connection = golem::get_golem_options("connection")
         )
-        
-        
-        shinyWidgets::updateSwitchInput(inputId = "drop_wikidata_id_switch",
-                                        value = FALSE)
-        
-        
+
+
+        shinyWidgets::updateSwitchInput(
+          inputId = "drop_wikidata_id_switch",
+          value = FALSE
+        )
       }
-      
     },
     ignoreNULL = TRUE,
     ignoreInit = TRUE
   )
-  
-  
+
+
   shiny::observeEvent(
     eventExpr = selected_wikidata_id_from_search_r(),
     handlerExpr = {
-      
-      if (length(selected_wikidata_id_from_search_r())==0) {
+      if (length(selected_wikidata_id_from_search_r()) == 0) {
         return(NULL)
       }
       selected_df_rv$df <- mod_sn_street_info_server(
@@ -571,12 +580,12 @@ sn_app_server <- function(input, output, session) {
     ignoreNULL = TRUE,
     ignoreInit = TRUE
   )
-   
-  
-  
-  
-  
-  
+
+
+
+
+
+
   # output$wikidata_id_selected_output <- shiny::renderUI(
   #   shiny::p(selected_df_r())
   # )

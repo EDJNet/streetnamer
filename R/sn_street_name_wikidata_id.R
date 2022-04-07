@@ -50,107 +50,120 @@ sn_write_street_name_wikidata_id <- function(gisco_id = NULL,
                                              connection = NULL,
                                              language = tidywikidatar::tw_get_language(),
                                              disconnect_db = TRUE,
-                                             return_df_only = FALSE, 
+                                             return_df_only = FALSE,
                                              df_to_write = NULL) {
-
   print(df_to_write)
-  if (is.null(df_to_write)==FALSE&is.data.frame(df_to_write)==TRUE) {
+  if (is.null(df_to_write) == FALSE & is.data.frame(df_to_write) == TRUE) {
     df <- df_to_write
-    
+
     if (is.null(country)) {
       country <- df$country
     }
-    
+
     if (is.null(street_name)) {
       street_name <- df$street_name
     }
-    
+
     if (is.null(gisco_id)) {
       gisco_id <- df$gisco_id
     }
-    
   } else {
     gisco_id <- stringr::str_to_upper(ifelse(is.null(gisco_id),
-                                             as.character(NA),
-                                             as.character(gisco_id)))
+      as.character(NA),
+      as.character(gisco_id)
+    ))
     country <- stringr::str_to_upper(ifelse(is.null(country),
-                                            as.character(NA),
-                                            as.character(country)))
-    
+      as.character(NA),
+      as.character(country)
+    ))
+
     df <- tibble::tibble(
       gisco_id = ifelse(is.null(gisco_id),
-                        as.character(NA),
-                        as.character(gisco_id)),
+        as.character(NA),
+        as.character(gisco_id)
+      ),
       street_name = ifelse(is.null(street_name),
-                           as.character(NA),
-                           as.character(street_name)),
+        as.character(NA),
+        as.character(street_name)
+      ),
       country = ifelse(is.null(country),
-                       as.character(NA),
-                       as.character(country)),
+        as.character(NA),
+        as.character(country)
+      ),
       wikidata_id = ifelse(is.null(wikidata_id),
-                           as.character(NA),
-                           as.character(wikidata_id)),
+        as.character(NA),
+        as.character(wikidata_id)
+      ),
       person = ifelse(is.null(person),
-                      as.integer(NA),
-                      as.integer(person)),
+        as.integer(NA),
+        as.integer(person)
+      ),
       gender = ifelse(is.null(gender),
-                      as.character(NA),
-                      as.character(gender)),
+        as.character(NA),
+        as.character(gender)
+      ),
       category = ifelse(is.null(category),
-                        as.character(NA),
-                        as.character(category)),
+        as.character(NA),
+        as.character(category)
+      ),
       checked = ifelse(is.null(checked),
-                       as.integer(NA),
-                       as.integer(checked)),
+        as.integer(NA),
+        as.integer(checked)
+      ),
       ignore = ifelse(is.null(ignore),
-                      as.integer(NA),
-                      as.integer(ignore)),
+        as.integer(NA),
+        as.integer(ignore)
+      ),
       tag = ifelse(is.null(tag),
-                   as.character(NA),
-                   as.character(tag)),
-      session =  ifelse(is.null(session),
-                        as.character(NA),
-                        as.character(session)),
+        as.character(NA),
+        as.character(tag)
+      ),
+      session = ifelse(is.null(session),
+        as.character(NA),
+        as.character(session)
+      ),
       time = Sys.time()
     )
   }
-  
-  
+
+
   if (return_df_only == TRUE) {
     return(df)
   }
-  
+
   db <- tidywikidatar::tw_connect_to_cache(
     connection = connection,
     language = language,
     cache = TRUE
   )
-  
+
   table_name <- sn_get_db_table_name(
     type = "street_name_wikidata_id",
     country = country
   )
-  
+
   if (pool::dbExistsTable(conn = db, name = table_name) == FALSE) {
     # if table does not exist...
     if (overwrite == TRUE | append == TRUE) {
       DBI::dbWriteTable(db,
-                        name = table_name,
-                        value = df,
-                        append = TRUE
+        name = table_name,
+        value = df,
+        append = TRUE
       )
     }
   } else {
     # if table exists...
     if (append == TRUE) {
       DBI::dbWriteTable(db,
-                        name = table_name,
-                        value = df,
-                        append = TRUE
+        name = table_name,
+        value = df,
+        append = TRUE
       )
     } else {
-      previously_available <- dplyr::tbl(src = db,
-                                         table_name) %>%
+      previously_available <- dplyr::tbl(
+        src = db,
+        table_name
+      ) %>%
         dplyr::filter(
           .data$gisco_id %in% stringr::str_c(gisco_id),
           .data$street_name %in% stringr::str_c(street_name)
@@ -158,32 +171,32 @@ sn_write_street_name_wikidata_id <- function(gisco_id = NULL,
         dplyr::pull(.data$street_name) %>%
         length() %>%
         as.logical()
-      
+
       if (previously_available == FALSE) {
         # if not previously available, then write to database
         if (overwrite == TRUE | append == TRUE) {
           DBI::dbWriteTable(db,
-                            name = table_name,
-                            value = df,
-                            append = TRUE
+            name = table_name,
+            value = df,
+            append = TRUE
           )
         }
       } else {
         if (overwrite == TRUE) {
           statement <- glue::glue_sql("DELETE FROM {`table_name`} WHERE gisco_id = {gisco_id*} AND street_name = {street_name*}",
-                                      gisco_id = unique(df$gisco_id),
-                                      table_name = table_name,
-                                      street_name = street_name,
-                                      .con = db
+            gisco_id = unique(df$gisco_id),
+            table_name = table_name,
+            street_name = street_name,
+            .con = db
           )
           result <- DBI::dbExecute(
             conn = db,
             statement = statement
           )
           DBI::dbWriteTable(db,
-                            name = table_name,
-                            value = df,
-                            append = TRUE
+            name = table_name,
+            value = df,
+            append = TRUE
           )
         } else {
           # do nothing if data already present and both overwrite and append are set to FALSE
@@ -191,8 +204,8 @@ sn_write_street_name_wikidata_id <- function(gisco_id = NULL,
       }
     }
   }
-  
-  
+
+
   tidywikidatar::tw_disconnect_from_cache(
     cache = TRUE,
     cache_connection = db,
@@ -249,21 +262,21 @@ sn_get_street_name_wikidata_id <- function(country,
   if (is.null(gisco_id) == FALSE) {
     gisco_id <- stringr::str_to_upper(gisco_id)
   }
-  
+
   country <- stringr::str_to_upper(country)
-  
+
   db <- tidywikidatar::tw_connect_to_cache(
     connection = connection,
     language = language,
     cache = TRUE,
   )
-  
-  
+
+
   table_name <- sn_get_db_table_name(
     type = "street_name_wikidata_id",
     country = country
   )
-  
+
   if (pool::dbExistsTable(conn = db, name = table_name) == FALSE) {
     tidywikidatar::tw_disconnect_from_cache(
       cache = TRUE,
@@ -271,10 +284,10 @@ sn_get_street_name_wikidata_id <- function(country,
       disconnect_db = disconnect_db,
       language = language
     )
-    
+
     return(sn_empty_street_name_wikidata_id)
   }
-  
+
   if (is.null(street_name) == FALSE & is.null(gisco_id) == FALSE) {
     # if both street and gisco given, return for current street only
     db_result <- tryCatch(
@@ -318,7 +331,7 @@ sn_get_street_name_wikidata_id <- function(country,
       }
     )
   }
-  
+
   if (isFALSE(db_result)) {
     tidywikidatar::tw_disconnect_from_cache(
       cache = TRUE,
@@ -328,27 +341,27 @@ sn_get_street_name_wikidata_id <- function(country,
     )
     return(sn_empty_street_name_wikidata_id)
   }
-  
+
   if (only_ignore == TRUE) {
     db_result <- db_result %>%
       dplyr::filter(ignore == 1)
   }
-  
+
   if (only_checked == TRUE) {
     db_result <- db_result %>%
       dplyr::filter(checked == 1)
   }
-  
+
   street_names_df <- db_result %>%
     dplyr::collect() %>%
     tibble::as_tibble()
-  
+
   tidywikidatar::tw_disconnect_from_cache(
     cache = TRUE,
     cache_connection = db,
     disconnect_db = disconnect_db,
     language = language
   )
-  
+
   street_names_df
 }

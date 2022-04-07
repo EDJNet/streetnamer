@@ -4,12 +4,14 @@
 \alias{sn_search_dedicated_to}
 \title{Try to guess to whom a street is dedicated to}
 \usage{
-sn_search_dedicated_to(gisco_id, search_language = NULL)
+sn_search_dedicated_to(gisco_id, search_language = NULL, streets_sf = NULL)
 }
 \arguments{
-\item{gisco_id}{}
-
 \item{search_language}{Defaults to NULL, guessed based on country.}
+
+\item{streets_sf}{Defaults to NULL. If given, used to speed up processing.
+Must be an sf object such as the ones output by `ll_osm_get_roads()`.
+Passed to `ll_osm_get_lau_streets()`.}
 }
 \value{
 

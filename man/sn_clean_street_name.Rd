@@ -19,9 +19,13 @@ Clean street name in order to keep only the
 }
 \examples{
 
-sn_clean_street_name(street_name = c("Adele-Schreiber-Krieger-Straße", 
-                                     "Achillesstraße",
-                                     "Adlerbrücke",
-                                     "Akazienweg"),
-                      country = "Germany")
+sn_clean_street_name(
+  street_name = c(
+    "Adele-Schreiber-Krieger-Straße",
+    "Achillesstraße",
+    "Adlerbrücke",
+    "Akazienweg"
+  ),
+  country = "Germany"
+)
 }

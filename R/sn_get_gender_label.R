@@ -9,15 +9,14 @@
 #' @export
 #'
 #' @examples
-#' 
+#'
 #' if (interactive()) {
-#' sn_get_gender_label("Q7186")
+#'   sn_get_gender_label("Q7186")
 #' }
-sn_get_gender_label <- function(wikidata_id, 
-                                language = tidywikidatar::tw_get_language(), 
-                                cache_connection = NULL, 
-                                cache = TRUE
-) {
+sn_get_gender_label <- function(wikidata_id,
+                                language = tidywikidatar::tw_get_language(),
+                                cache_connection = NULL,
+                                cache = TRUE) {
   if (is.null(wikidata_id)) {
     return(NULL)
   }

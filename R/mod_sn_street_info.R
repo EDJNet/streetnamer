@@ -20,7 +20,7 @@ mod_sn_street_info_ui <- function(id) {
 mod_sn_street_info_server <- function(id,
                                       street_name,
                                       gisco_id,
-                                      wikidata_id = NULL, 
+                                      wikidata_id = NULL,
                                       country,
                                       connection = NULL,
                                       language = tidywikidatar::tw_get_language()) {
@@ -28,17 +28,17 @@ mod_sn_street_info_server <- function(id,
     ns <- session$ns
     # current_lau <- streetnamer::sn_lau_by_nuts %>%
     #   dplyr::filter(country_name == gisco_id)
-    
+
     checked_lv <- NULL
-    
-    if (is.null(wikidata_id)==FALSE) {
+
+    if (is.null(wikidata_id) == FALSE) {
       if (is.na(wikidata_id)) {
-        wikidata_id_selected <- as.character(NA) 
+        wikidata_id_selected <- as.character(NA)
         gender_selected <- as.character(NA)
         checked_switch_selected <- TRUE
-        guessing <- FALSE       
+        guessing <- FALSE
       } else if (wikidata_id == "drop") {
-        wikidata_id_selected <- as.character(NA) 
+        wikidata_id_selected <- as.character(NA)
         gender_selected <- as.character(NA)
         checked_switch_selected <- TRUE
         guessing <- FALSE
@@ -46,14 +46,13 @@ mod_sn_street_info_server <- function(id,
         guessing <- FALSE
         checked_switch_selected <- TRUE
         wikidata_id_selected <- wikidata_id
-        gender_selected <- sn_get_gender_label(wikidata_id = wikidata_id_selected,
-                                               language = language,
-                                               cache_connection = connection,
-                                               cache = TRUE)
+        gender_selected <- sn_get_gender_label(
+          wikidata_id = wikidata_id_selected,
+          language = language,
+          cache_connection = connection,
+          cache = TRUE
+        )
       }
-      
-      
-
     } else {
       # check if street in database
       details_from_db <- sn_get_street_name_wikidata_id(
@@ -71,82 +70,83 @@ mod_sn_street_info_server <- function(id,
         checked_lv <- details_from_db$checked
       } else {
         guessing <- TRUE
-        
+
         checked_switch_selected <- FALSE
-        
+
         # try to guess wikidata id based on country
         if (country == "IT") {
           search_language <- "it"
         } else {
           search_language <- language
         }
-        
-        
+
+
         # fix guesser by language
-        
+
         search_string_v <- stringr::str_remove(
           string = street_name,
           pattern = "^\\S*\\b"
         ) %>%
           stringr::str_squish()
-        
+
         if (nchar(search_string_v) <= 1) {
           search_string_v <- street_name
         }
-        
+
         search_df <- tidywikidatar::tw_search(
           search = search_string_v,
           language = search_language,
           cache_connection = connection,
           cache = TRUE
         )
-        
-        
+
+
         if (nrow(search_df) > 0) {
           wikidata_id_selected <- search_df[["id"]][[1]]
-          gender_selected <- sn_get_gender_label(wikidata_id = wikidata_id_selected,
-                                                 language = language,
-                                                 cache_connection = connection,
-                                                 cache = TRUE)
-          
+          gender_selected <- sn_get_gender_label(
+            wikidata_id = wikidata_id_selected,
+            language = language,
+            cache_connection = connection,
+            cache = TRUE
+          )
         } else {
           wikidata_id_selected <- as.character(NA)
           gender_selected <- as.character(NA)
         }
       }
     }
-    
+
     ### Store data in database
-    
+
     # TODO Introduce category
     category <- as.character(NA)
-    
-    
+
+
     gisco_id_v <- gisco_id
-    
+
     lau_label_v_pre <- sn_lau_by_nuts %>%
       dplyr::filter(.data$gisco_id == gisco_id_v) %>%
       dplyr::pull(.data$lau_label)
-    
+
     lau_label_v <- dplyr::if_else(condition = length(lau_label_v_pre) == 1,
-                                  true = lau_label_v_pre,
-                                  false = gisco_id
+      true = lau_label_v_pre,
+      false = gisco_id
     )
-    
-    
+
+
     if (is.null(checked_lv)) {
       checked_lv <- FALSE
     } else {
       checked_lv <- as.logical(checked_lv)
     }
-    
-    
+
+
     status_v <- dplyr::case_when(
       guessing ~ "Automatic guess",
       checked_lv ~ "Manually checked",
       TRUE ~ "Undetermined"
     )
-    
+
     ### Prepare output
     output$street_name_info_box <- shiny::renderUI(
       shiny::tagList(
@@ -155,9 +155,11 @@ mod_sn_street_info_server <- function(id,
         shiny::p("Status: ", shiny::strong(status_v)),
         shiny::hr(),
         shiny::p("Named after:"),
-        streetnamer::sn_get_info_box(wikidata_id = wikidata_id_selected,
-                                     language = language,
-                                     connection = connection),
+        streetnamer::sn_get_info_box(
+          wikidata_id = wikidata_id_selected,
+          language = language,
+          connection = connection
+        ),
         shiny::hr(),
         # shinyWidgets::switchInput(
         #   inputId = ns("checked_switch"),
@@ -171,8 +173,9 @@ mod_sn_street_info_server <- function(id,
         #   width = "90%"
         # ),
         shiny::tags$b(ifelse(guessing,
-                             "N.B. Showing first Wikipedia match, review carefully",
-                             "")),
+          "N.B. Showing first Wikipedia match, review carefully",
+          ""
+        )),
         shinyWidgets::switchInput(
           inputId = ns("person_switch"),
           label = "Is it a person?",
@@ -265,39 +268,36 @@ mod_sn_street_info_server <- function(id,
         #   handleWidth = "80px",
         #   width = "90%"
         # )
-      ))
-    
-    ## Return
-    selected_df_r <- shiny::reactive(
-      {
-        
-        if (as.integer(input$person_switch)==1) {
-          tag_v <- input$tag_selectize_person
-        } else {
-          tag_v <- input$tag_selectize_not_person
-        }
-        
-        sn_write_street_name_wikidata_id(
-          gisco_id = gisco_id,
-          street_name = street_name,
-          country = country,
-          wikidata_id = as.character(wikidata_id_selected),
-          person = as.integer(input$person_switch),
-          gender = gender_selected,
-          category = as.character(input$category_radio),
-          tag = tag_v,
-          checked = as.integer(TRUE),
-          ignore = as.integer(FALSE),
-          session = session$token,
-          append = TRUE,
-          connection = connection,
-          return_df_only = TRUE
-        ) 
-      }
+      )
     )
-    
+
+    ## Return
+    selected_df_r <- shiny::reactive({
+      if (as.integer(input$person_switch) == 1) {
+        tag_v <- input$tag_selectize_person
+      } else {
+        tag_v <- input$tag_selectize_not_person
+      }
+
+      sn_write_street_name_wikidata_id(
+        gisco_id = gisco_id,
+        street_name = street_name,
+        country = country,
+        wikidata_id = as.character(wikidata_id_selected),
+        person = as.integer(input$person_switch),
+        gender = gender_selected,
+        category = as.character(input$category_radio),
+        tag = tag_v,
+        checked = as.integer(TRUE),
+        ignore = as.integer(FALSE),
+        session = session$token,
+        append = TRUE,
+        connection = connection,
+        return_df_only = TRUE
+      )
+    })
+
     shiny::reactive(selected_df_r())
-    
   })
 }
 
@@ -345,7 +345,7 @@ mod_sn_street_info_app <- function(street_name,
       connection = connection,
       language = language
     )
-    
+
     output$selected_df_ui <- shiny::renderTable({
       selected_df_r()
     })

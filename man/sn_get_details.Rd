@@ -17,10 +17,6 @@ sn_get_details(
 
 \item{collapse_lists}{Defaults to FALSE. If TRUE, collapses multiple values in a single string, with each value separated by ";". Useful for exports in tabular format.}
 
-\item{language}{}
-
-\item{connection}{}
-
 \item{cache}{Logical, defaults to TRUE.}
 }
 \value{
