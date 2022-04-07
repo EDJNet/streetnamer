@@ -4,7 +4,7 @@ library("dplyr")
 sn_street_name_to_remove_df <- dplyr::bind_rows(
   tibble::tibble(
     country = "Spain",
-    string = c(	
+    string = c(
       "Calle de las ",
       "Calle de la ",
       "Calle de los ",
@@ -38,12 +38,12 @@ sn_street_name_to_remove_df <- dplyr::bind_rows(
       "Avenida de la ",
       "Avenida de los ",
       "Avenida de las ",
-      "Avenida del ",  
+      "Avenida del ",
       "Avenida de ",
       "Avenida ",
       "Autovía del ",
       "Autovía de ",
-      "Bulevar de ", 
+      "Bulevar de ",
       "Bulevar ",
       "Travesía de las ",
       "Travesía de los ",
@@ -124,63 +124,146 @@ sn_street_name_to_remove_df <- dplyr::bind_rows(
       "Túnel de  ",
       "Volta dels ",
       "Viaducte de "
-      
-    ) %>% 
-      stringr::str_c("^", .)),
-  
+    ) %>%
+      stringr::str_c("^", .)
+  ),
   tibble::tibble(
     country = "Germany",
-    string = c("strasse",
-               "Strasse",
-               "Straße",
-               "straße",
-               "weg",
-               "Weg",
-               "tunnel",
-               "brücke",
-               "promenade",
-               "Platz",
-               "platz",
-               "allee",
-               "steig",
-               "Zeile",
-               "hof")  %>% 
-      stringr::str_c(., "$") %>% 
-      c(. ,
-        c("Allee der ",
+    string = c(
+      "strasse",
+      "Strasse",
+      "Straße",
+      "straße",
+      "weg",
+      "Weg",
+      "tunnel",
+      "brücke",
+      "promenade",
+      "Platz",
+      "platz",
+      "allee",
+      "steig",
+      "Zeile",
+      "hof"
+    ) %>%
+      stringr::str_c(., "$") %>%
+      c(
+        .,
+        c(
+          "Allee der ",
           "Allée du ",
           "Allée ",
-          "Am ") %>%  
-        stringr::str_c("^", .))
-      
+          "Am "
+        ) %>%
+          stringr::str_c("^", .)
+      )
   ),
-  
   tibble::tibble(
     country = "France",
-    string = c("Rue de la ",
-               "Rue de l'",
-               "Rue de ",
-               "Rue des ",
-               "Rue du ",
-               "Rue ",
-               "Place de la ",
-               "Place de ", 
-               "Place ",
-               "Boulevard de la ", 
-               "Boulevard de ", 
-               "Boulevard ",
-               "Allée du ",
-               "Pont de la ",
-               "Pont de ",
-               "Pont d'",
-               "Passerelle de ",
-               "Passerelle ",
-               "Chemin de la ",
-               "Chemin de l'",
-               "Chemin de ",
-               "grande rue de "))
-) 
-  
+    string = c(
+      "Rue de la ",
+      "Rue de l'",
+      "Rue de ",
+      "Rue des ",
+      "Rue du ",
+      "Rue ",
+      "Place de la ",
+      "Place de ",
+      "Place ",
+      "Boulevard de la ",
+      "Boulevard de ",
+      "Boulevard ",
+      "Allée du ",
+      "Pont de la ",
+      "Pont de ",
+      "Pont d'",
+      "Passerelle de ",
+      "Passerelle ",
+      "Chemin de la ",
+      "Chemin de l'",
+      "Chemin de ",
+      "grande rue de "
+    ) %>%
+      stringr::str_c("^", .)
+  ),
+  tibble::tibble(
+    country = "Portugal",
+    string = c(
+      "Alameda ",
+      "Avenida das ",
+      "Avenida da ",
+      "Avenida dos ",
+      "Avenida do ",
+      "Avenida de ",
+      "Avenida ",
+      "Caminho do ",
+      "Estrada da ",
+      "Estrada das ",
+      "Estrada dos ",
+      "Estrada do ",
+      "Estrada de ",
+      "Estrada ",
+      "Largo do ",
+      "Largo da ",
+      "Largo dos ",
+      "Largo das ",
+      "Largo de ",
+      "Largo ",
+      "Praça do ",
+      "Praça da ",
+      "Praça dos ",
+      "Praça das ",
+      "Praça de ",
+      "Praça ",
+      "Praceta da ",
+      "Praceta de ",
+      "Praceta ",
+      "Rua da ",
+      "Rua das ",
+      "Rua dos ",
+      "Rua do ",
+      "Rua de ",
+      "Rua ",
+      "Travessa da ",
+      "Travessa das ",
+      "Travessa dos ",
+      "Travessa do ",
+      "Travessa de ",
+      "Travessa "
+    ) %>%
+      stringr::str_c("^", .)
+  ),
+  tibble::tibble(
+    country = "Hungary",
+    string = c(
+      " utca",
+      " köz",
+      " út",
+      " tér",
+      " utcája",
+      " dűlő",
+      " rakpart",
+      " körút",
+      " hid",
+      " sétány",
+      " felüljáró",
+      " lejtő",
+      " köz",
+      " sugárút",
+      " zug",
+      " útfél",
+      " liget"
+    ) %>%
+      stringr::str_c(., "$") %>%
+      c(
+        .,
+        c("") %>%
+          stringr::str_c("^", .)
+      )
+  ),
+)
+
 sn_street_name_to_remove_df %>% tail()
 usethis::use_data(sn_street_name_to_remove_df,
-                  overwrite = TRUE)
+  overwrite = TRUE
+)
