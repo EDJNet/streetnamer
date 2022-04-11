@@ -12,11 +12,12 @@ sn_language_defaults_by_country <- tibble::tribble(
   "Germany", "DE", "German", "de", "Q188",
   "Greece", "EL", "Greek", "el", "Q36510",
   "Hungary", "HU", "Hungarian", "hu", "Q9067",
+  "Ireland", "IE", "English", "en", "Q1860",
   "Italy", "IT", "Italian", "it", "Q652",
   "Poland", "PL", "Polish", "pl", "Q809",
   "Portugal", "PT", "Portuguese", "pt", "Q5146",
+  "Romania", "RO", "Romanian", "ro", "Q7913",
   "Spain", "ES", "Spanish", "es", "Q1321",
-  "Ireland", "IE", "English", "en", "Q1860",
   "Sweden", "SV", "Swedish", "sv", "Q9027",
   "United Kingdom", "GB", "English", "en", "Q1860",
 )

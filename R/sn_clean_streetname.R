@@ -50,6 +50,12 @@ sn_clean_street_name <- function(street_name,
       .f = function(x) {
         sn_clean_street_name_polish(x)
       })
+  } else if (country == "Romania") {
+    street_name <- purrr::map_chr(
+      .x = street_name,
+      .f = function(x) {
+        sn_clean_street_name_romanian(x)
+      })
   }
   
   street_name %>%
@@ -94,4 +100,54 @@ sn_clean_street_name_polish <- function(street_name) {
     street_name
     }
  
+}
+
+
+#' Clean Romanian street names
+#'
+#' @param street_name Name of street, after having removed street part (e.g. "Aleea")
+#'
+#' @return A character vector of length one. A name that can more easily be searched. 
+#' @export
+#'
+#' @examples
+#' 
+#' sn_clean_street_name_romanian("Aleea Egalității")
+sn_clean_street_name_romanian <- function(street_name) {
+  
+  if (stringr::str_detect(string = street_name, pattern = "ății$")) {
+    split_string <- stringr::str_split(string = street_name,
+                                       pattern = "[[:space:]]",
+                                       simplify = TRUE) %>%
+      as.character()
+    
+    for (i in 1:max(1,(length(split_string)-1))) {
+      if (stringr::str_detect(string = split_string[i], pattern = "ății$")) {
+        split_string[i] <- stringr::str_replace(string = split_string[i],
+                                                pattern = "ății$",
+                                                replacement = "atea")
+      }
+    }
+    stringr::str_c(split_string, collapse = " ")
+  } else if (stringr::str_detect(string = street_name, pattern = "ului$")) {
+    split_string <- stringr::str_split(string = street_name, pattern = "[[:space:]]",
+                                       simplify = TRUE) %>%
+      as.character()
+    
+    split_string[length(split_string)] <- split_string[length(split_string)] %>%
+      stringr::str_remove(pattern = "ului$")
+    
+  } else if (stringr::str_detect(string = street_name, pattern = "ilor$|elor$")) {
+    split_string <- stringr::str_split(string = street_name,
+                                       pattern = "[[:space:]]",
+                                       simplify = TRUE) %>%
+      as.character()
+    
+    split_string[length(split_string)] <- split_string[length(split_string)] %>%
+      stringr::str_remove(pattern = "lor$")
+    
+  } else {
+    street_name
+  }
+  
 }

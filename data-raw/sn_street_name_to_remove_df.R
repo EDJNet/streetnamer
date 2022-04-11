@@ -264,7 +264,29 @@ sn_street_name_to_remove_df <- dplyr::bind_rows(
       "aleja "
     ) %>%
       stringr::str_c("^", .)
-  )
+  ), 
+  
+  tibble::tibble(
+    country = "Romania",
+    string = c(
+      "Bulevardul ",
+      "Strada ",
+      "Calea ",
+      "Șoseaua ",
+      "Piața ",
+      "Splaiul ",
+      "Drumul ",
+      "Intrarea ",
+      "Aleea ",
+      "Podul ",
+      "Prelungirea ",
+      "Fundătura ",
+      "Ulița ",
+      "Piațeta ",
+      "Pietonalul "
+    ) %>%
+      stringr::str_c("^", .)
+  ),
 )
 
 sn_street_name_to_remove_df %>% tail()
