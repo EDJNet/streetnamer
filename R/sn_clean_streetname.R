@@ -44,10 +44,54 @@ sn_clean_street_name <- function(street_name,
       pattern = "-",
       replacement = " "
     )
+  } else if (country == "Poland") {
+    street_name <- purrr::map_chr(
+      .x = street_name,
+      .f = function(x) {
+        sn_clean_street_name_polish(x)
+      })
   }
-
-
+  
   street_name %>%
     stringr::str_squish() %>%
     stringr::str_replace_all(pattern = stringr::fixed("\\"), replacement = " ")
+}
+
+
+
+#' Clean Polish street name
+#'
+#' @param street_name Name of street, after having removed street part (e.g. "Aleja")
+#'
+#' @return A character vector of lenght one. A name that can more easily be searched. 
+#' @export
+#'
+#' @examples
+#' 
+#' sn_clean_street_name_polish("Pawła Edmunda Strzeleckiego")
+sn_clean_street_name_polish <- function(street_name) {
+  
+  if (stringr::str_detect(string = street_name, pattern = "ego$")) {
+      split_string <- stringr::str_split(string = street_name, pattern = "[[:space:]]", simplify = TRUE) %>% as.character()
+      
+      split_string[length(split_string)] <- split_string[length(split_string)] %>% stringr::str_remove(pattern = "ego")
+      
+      for (i in 1:max(1,(length(split_string)-1))) {
+        if (stringr::str_detect(string = split_string[i], pattern = "rzego$")) {
+          split_string[i] <- stringr::str_replace(string = split_string[i], pattern = "rzego$", replacement = "rzy")
+        } else if (stringr::str_detect(string = split_string[i], pattern = "ła$")) {
+          split_string[i] <- stringr::str_replace(string = split_string[i], pattern = "ła$", replacement = "eł")
+        } else if (stringr::str_detect(string = split_string[i], pattern = "ego$")) {
+          split_string[i] <- stringr::str_replace(string = split_string[i], pattern = "ego$", replacement = "")
+        } else if (stringr::str_detect(string = split_string[i], pattern = "szka$")) {
+          split_string[i] <- stringr::str_replace(string = split_string[i], pattern = "szka$", replacement = "szek")
+        } else {
+          split_string[i] <- stringr::str_remove(string = split_string[i], pattern = "a$")
+        }
+      }
+      stringr::str_c(split_string, collapse = " ")
+  } else {
+    street_name
+    }
+ 
 }

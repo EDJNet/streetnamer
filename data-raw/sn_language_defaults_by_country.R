@@ -5,6 +5,7 @@
 
 sn_language_defaults_by_country <- tibble::tribble(
   ~country, ~country_code, ~language, ~language_code, ~qid,
+  "Albania", "AL", "Albanian", "sq", "Q8748",
   "Austria", "AT", "German", "de", "Q188",
   "Czechia", "CZ", "Czech", "cs", "Q9056",
   "France", "FR", "French", "fr", "Q150",
@@ -12,6 +13,7 @@ sn_language_defaults_by_country <- tibble::tribble(
   "Greece", "EL", "Greek", "el", "Q36510",
   "Hungary", "HU", "Hungarian", "hu", "Q9067",
   "Italy", "IT", "Italian", "it", "Q652",
+  "Poland", "PL", "Polish", "pl", "Q809",
   "Portugal", "PT", "Portuguese", "pt", "Q5146",
   "Spain", "ES", "Spanish", "es", "Q1321",
   "Ireland", "IE", "English", "en", "Q1860",

@@ -254,13 +254,17 @@ sn_street_name_to_remove_df <- dplyr::bind_rows(
       " útfél",
       " liget"
     ) %>%
-      stringr::str_c(., "$") %>%
-      c(
-        .,
-        c("") %>%
-          stringr::str_c("^", .)
-      )
+      stringr::str_c(., "$")
   ),
+  
+  tibble::tibble(
+    country = "Poland",
+    string = c(
+      "rondo ",
+      "aleja "
+    ) %>%
+      stringr::str_c("^", .)
+  )
 )
 
 sn_street_name_to_remove_df %>% tail()
