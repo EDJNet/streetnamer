@@ -121,13 +121,11 @@ sn_clean_street_name_romanian <- function(street_name) {
                                        simplify = TRUE) %>%
       as.character()
     
-    for (i in 1:max(1,(length(split_string)-1))) {
-      if (stringr::str_detect(string = split_string[i], pattern = "ății$")) {
-        split_string[i] <- stringr::str_replace(string = split_string[i],
-                                                pattern = "ății$",
-                                                replacement = "atea")
-      }
-    }
+    split_string[length(split_string)] <- split_string[length(split_string)] %>%
+      stringr::str_replace(pattern = "ății$",
+                           replacement = "atea")
+    
+    
     stringr::str_c(split_string, collapse = " ")
   } else if (stringr::str_detect(string = street_name, pattern = "ului$")) {
     split_string <- stringr::str_split(string = street_name, pattern = "[[:space:]]",
@@ -136,7 +134,8 @@ sn_clean_street_name_romanian <- function(street_name) {
     
     split_string[length(split_string)] <- split_string[length(split_string)] %>%
       stringr::str_remove(pattern = "ului$")
-    
+   
+    stringr::str_c(split_string, collapse = " ") 
   } else if (stringr::str_detect(string = street_name, pattern = "ilor$|elor$")) {
     split_string <- stringr::str_split(string = street_name,
                                        pattern = "[[:space:]]",
@@ -145,7 +144,60 @@ sn_clean_street_name_romanian <- function(street_name) {
     
     split_string[length(split_string)] <- split_string[length(split_string)] %>%
       stringr::str_remove(pattern = "lor$")
+    stringr::str_c(split_string, collapse = " ")
+  } else if (stringr::str_detect(string = street_name, pattern = "iei$")) {
+    split_string <- stringr::str_split(string = street_name,
+                                       pattern = "[[:space:]]",
+                                       simplify = TRUE) %>%
+      as.character()
     
+    split_string[length(split_string)] <- split_string[length(split_string)] %>%
+      stringr::str_replace(pattern = "iei$",
+                           replacement = "ia")
+    stringr::str_c(split_string, collapse = " ")
+  } else if (stringr::str_detect(string = street_name, pattern = "ței$")) {
+    split_string <- stringr::str_split(string = street_name,
+                                       pattern = "[[:space:]]",
+                                       simplify = TRUE) %>%
+      as.character()
+    
+    split_string[length(split_string)] <- split_string[length(split_string)] %>%
+      stringr::str_replace(pattern = "ței$",
+                           replacement = "ța")
+    stringr::str_c(split_string, collapse = " ")
+  } else if (stringr::str_detect(string = street_name, pattern = "dei$")) {
+    split_string <- stringr::str_split(string = street_name,
+                                       pattern = "[[:space:]]",
+                                       simplify = TRUE) %>%
+      as.character()
+    
+    split_string[length(split_string)] <- split_string[length(split_string)] %>%
+      stringr::str_replace(pattern = "dei$",
+                           replacement = "da")
+    stringr::str_c(split_string, collapse = " ")
+  }  else if (stringr::str_detect(string = street_name, pattern = "vei$")) {
+    split_string <- stringr::str_split(string = street_name,
+                                       pattern = "[[:space:]]",
+                                       simplify = TRUE) %>%
+      as.character()
+    
+    split_string[length(split_string)] <- split_string[length(split_string)] %>%
+      stringr::str_replace(pattern = "vei$",
+                           replacement = "va")
+    stringr::str_c(split_string, collapse = " ")
+  } else if (stringr::str_detect(string = street_name, pattern = "cii$")) {
+    split_string <- stringr::str_split(string = street_name,
+                                       pattern = "[[:space:]]",
+                                       simplify = TRUE) %>%
+      as.character()
+    
+    if (length(split_string)==1) {
+      split_string[length(split_string)] <- split_string[length(split_string)] %>%
+        stringr::str_replace(pattern = "cii$",
+                             replacement = "ca")
+    }
+
+    stringr::str_c(split_string, collapse = " ")
   } else {
     street_name
   }
