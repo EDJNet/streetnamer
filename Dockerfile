@@ -1,4 +1,4 @@
-FROM rocker/r-ver:4.1.3
+FROM rocker/shiny:4.1.3
 RUN apt-get update && apt-get install -y  gdal-bin git-core libcurl4-openssl-dev libgdal-dev libgeos-dev libgeos++-dev libgit2-dev libicu-dev libpng-dev libproj-dev libsodium-dev libssl-dev libudunits2-dev libxml2-dev make pandoc pandoc-citeproc unixodbc-dev zlib1g-dev
 RUN apt-get install -y unixodbc unixodbc-dev libsqliteodbc odbc-postgresql --install-suggests
 RUN rm -rf /var/lib/apt/lists/*
@@ -34,7 +34,7 @@ RUN Rscript -e 'remotes::install_version("sf",upgrade="never", version = "1.0-7"
 RUN Rscript -e 'remotes::install_version("golem",upgrade="never", version = "0.3.2")'
 RUN Rscript -e 'remotes::install_version("DT",upgrade="never", version = "0.22")'
 RUN Rscript -e 'remotes::install_github("giocomai/latlon2map", upgrade="never", ref = "b67d2a786edb8470e5e721221ea4ee7ed75f9a7d")'
-RUN Rscript -e 'remotes::install_github("EDJNet/tidywikidatar",upgrade="never", ref = "4bd2418ddd23df72386678e57da6d28559216510")'
+RUN Rscript -e 'remotes::install_github("EDJNet/tidywikidatar",upgrade="never", ref = "08ef1b3126a5e66eee0643dc6ae4415822a7fb5f")'
 
 # ODBC driver
 ADD https://dev.mysql.com/get/Downloads/Connector-ODBC/8.0/mysql-connector-odbc-8.0.28-linux-glibc2.12-x86-64bit.tar.gz .
