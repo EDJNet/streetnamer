@@ -10,7 +10,8 @@ sn_get_details_by_country(
   language = tidywikidatar::tw_get_language(),
   connection = NULL,
   base_folder = "sn_data",
-  cache = TRUE
+  cache = TRUE,
+  overwrite_cache = FALSE
 )
 }
 \arguments{
