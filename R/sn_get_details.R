@@ -5,6 +5,9 @@
 #' @param language
 #' @param connection
 #' @param cache Logical, defaults to TRUE.
+#' @param streets_sf Defaults to NULL. If given, used to speed up processing.
+#'   Must be an sf object such as the ones output by `ll_osm_get_roads()`.
+#'   Passed to `ll_osm_get_lau_streets()`.
 #'
 #' @return
 #' @export
@@ -15,6 +18,7 @@ sn_get_details_by_country <- function(country,
                                       language = tidywikidatar::tw_get_language(),
                                       connection = NULL,
                                       base_folder = "sn_data",
+                                      streets_sf = NULL,
                                       cache = TRUE,
                                       overwrite_cache = FALSE) {
   if (nchar(country)==2) {
@@ -76,7 +80,7 @@ sn_get_details_by_country <- function(country,
       
       
       search_df <- sn_search_dedicated_to(gisco_id = x,
-                                          streets_sf = all_country_roads_sf,
+                                          streets_sf = streets_sf,
                                           connection = connection_db, 
                                           disconnect_db = FALSE)
       
