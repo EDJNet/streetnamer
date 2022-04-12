@@ -19,11 +19,30 @@
 #' )
 sn_clean_street_name <- function(street_name,
                                  country) {
-  if (country == "Austria") {
+
+  if (nchar(country)==2) {
+    country_code <- stringr::str_to_upper(country)
+    country_name <- sn_country_codes %>% 
+      dplyr::filter(.data$Code==country_code) %>% 
+      dplyr::pull(.data$Name)
+  } else {
+    country_lower_v <- stringr::str_to_lower(country)
+    country_slice <- sn_country_codes %>% 
+      dplyr::mutate(country_lower = stringr::str_to_lower(Name)) %>% 
+      dplyr::filter(.data$country_lower==country_lower_v) 
+    
+    country_name <- country_slice %>% 
+      dplyr::pull(.data$Name)
+    country_code <- country_slice %>% 
+      dplyr::pull(.data$Code)
+  }
+  
+  if (country_name == "Austria") {
     country_name <- "Germany"
   } else {
     country_name <- country
   }
+  
 
   if (country_name %in% unique(sn_street_name_to_remove_df[["country"]])) {
     street_name <- stringr::str_remove_all(
@@ -38,19 +57,19 @@ sn_clean_street_name <- function(street_name,
     usethis::ui_info("No available method for this country.")
   }
 
-  if (country == "Germany") {
+  if (country_name == "Germany") {
     street_name <- stringr::str_replace_all(
       string = street_name,
       pattern = "-",
       replacement = " "
     )
-  } else if (country == "Poland") {
+  } else if (country_name == "Poland") {
     street_name <- purrr::map_chr(
       .x = street_name,
       .f = function(x) {
         sn_clean_street_name_polish(x)
       })
-  } else if (country == "Romania") {
+  } else if (country_name == "Romania") {
     street_name <- purrr::map_chr(
       .x = street_name,
       .f = function(x) {

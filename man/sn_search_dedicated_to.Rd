@@ -4,7 +4,15 @@
 \alias{sn_search_dedicated_to}
 \title{Try to guess to whom a street is dedicated to}
 \usage{
-sn_search_dedicated_to(gisco_id, search_language = NULL, streets_sf = NULL)
+sn_search_dedicated_to(
+  gisco_id,
+  search_language = NULL,
+  streets_sf = NULL,
+  cache = TRUE,
+  overwrite_cache = FALSE,
+  connection = NULL,
+  disconnect_db = TRUE
+)
 }
 \arguments{
 \item{search_language}{Defaults to NULL, guessed based on country.}

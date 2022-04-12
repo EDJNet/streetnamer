@@ -131,20 +131,18 @@ sn_street_name_to_remove_df <- dplyr::bind_rows(
     country = "Germany",
     string = c(
       "strasse",
-      "Strasse",
-      "Straße",
       "straße",
       "weg",
-      "Weg",
       "tunnel",
       "brücke",
       "promenade",
-      "Platz",
       "platz",
       "allee",
       "steig",
       "Zeile",
-      "hof"
+      "hof",
+      "gasse", 
+      "ring"
     ) %>%
       stringr::str_c(., "$") %>%
       c(
@@ -287,6 +285,37 @@ sn_street_name_to_remove_df <- dplyr::bind_rows(
     ) %>%
       stringr::str_c("^", .)
   ),
+  
+  
+
+  
+  tibble::tibble(
+    country = "Italy",
+    string = c(
+      purrr::map(.x = c("Via ",
+                        "Viale ",
+                        "Piazza ",
+                        "Piazzetta ",
+                        "Corso ", 
+                        "Lungomare ", 
+                        "Ponte ", 
+                        "Vicolo ",
+                        "Ciclabile ",
+                        "Circonvallazione ",
+                        "Largo ",
+                        "Percorso Ciclopedonale "),
+                 .f = function(x) {
+                   stringr::str_c(x,
+                                  c("del ",
+                                    "dei ",
+                                    "di ",
+                                    "d'",
+                                    "",
+                                    collapse = " "))}) %>% 
+        unlist()
+    ) %>%
+      stringr::str_c("^", .)
+  )
 )
 
 sn_street_name_to_remove_df %>% tail()
