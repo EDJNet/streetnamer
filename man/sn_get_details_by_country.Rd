@@ -12,7 +12,8 @@ sn_get_details_by_country(
   base_folder = "sn_data",
   streets_sf = NULL,
   cache = TRUE,
-  overwrite_cache = FALSE
+  overwrite_cache = FALSE,
+  disconnect_db = TRUE
 )
 }
 \arguments{
@@ -25,6 +26,8 @@ Must be an sf object such as the ones output by `ll_osm_get_roads()`.
 Passed to `ll_osm_get_lau_streets()`.}
 
 \item{cache}{Logical, defaults to TRUE.}
+
+\item{disconnect_db}{Defaults to TRUE. If FALSE, leaves the connection to cache open.}
 }
 \value{
 

@@ -8,6 +8,7 @@
 #' @param streets_sf Defaults to NULL. If given, used to speed up processing.
 #'   Must be an sf object such as the ones output by `ll_osm_get_roads()`.
 #'   Passed to `ll_osm_get_lau_streets()`.
+#' @param disconnect_db Defaults to TRUE. If FALSE, leaves the connection to cache open.
 #'
 #' @return
 #' @export
@@ -20,7 +21,8 @@ sn_get_details_by_country <- function(country,
                                       base_folder = "sn_data",
                                       streets_sf = NULL,
                                       cache = TRUE,
-                                      overwrite_cache = FALSE) {
+                                      overwrite_cache = FALSE,
+                                      disconnect_db = TRUE) {
   if (nchar(country)==2) {
     country_code <- stringr::str_to_upper(country)
     country_name <- sn_country_codes %>% 
