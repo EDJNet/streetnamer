@@ -127,6 +127,7 @@ sn_street_name_to_remove_df <- dplyr::bind_rows(
     ) %>%
       stringr::str_c("^", .)
   ),
+  
   tibble::tibble(
     country = "Germany",
     string = c(
@@ -156,34 +157,35 @@ sn_street_name_to_remove_df <- dplyr::bind_rows(
           stringr::str_c("^", .)
       )
   ),
+  
   tibble::tibble(
-    country = "France",
+    country = "Netherlands",
     string = c(
-      "Rue de la ",
-      "Rue de l'",
-      "Rue de ",
-      "Rue des ",
-      "Rue du ",
-      "Rue ",
-      "Place de la ",
-      "Place de ",
-      "Place ",
-      "Boulevard de la ",
-      "Boulevard de ",
-      "Boulevard ",
-      "Allée du ",
-      "Pont de la ",
-      "Pont de ",
-      "Pont d'",
-      "Passerelle de ",
-      "Passerelle ",
-      "Chemin de la ",
-      "Chemin de l'",
-      "Chemin de ",
-      "grande rue de "
+      "straat",
+      "laan",
+      "boulevard",
+      "weg",
+      "passage",
+      "hof",
+      "kade",
+      "pad",
+      "brug", 
+      "circuit",
+      "plein",
+      "pleintje",
+      "steeg"
     ) %>%
-      stringr::str_c("^", .)
+      stringr::str_c(., "$") %>%
+      c(
+        .,
+        c(
+          "Allee der "
+        ) %>%
+          stringr::str_c("^", .)
+      )
   ),
+  
+  
   tibble::tibble(
     country = "Portugal",
     string = c(
@@ -341,11 +343,65 @@ sn_street_name_to_remove_df <- dplyr::bind_rows(
                                     "alla ",
                                     "",
                                     collapse = " "))}) %>% 
-        unlist()
+        unlist() %>% 
+        stringr::str_squish() %>% 
+        unique()
+    ) %>%
+      stringr::str_c("^", .)
+  ),
+  
+  
+  
+  tibble::tibble(
+    country = "France",
+    string = c(
+      purrr::map(.x = c(
+        "Rue ",
+        "Place ",
+        "Boulevard ",
+        "Allée ",
+        "Pont ",
+        "Passerelle ",
+        "Passage ",
+        "Chemin ",
+        "Grande rue ",
+        "Petite rue ",
+        "quai ",
+        "rampe ",
+        "Impasse ",
+        "Galerie ",
+        "Drève ",
+        "Clos ",
+        "Chaussée ",
+        "Champ ",
+        "Avenue ",
+        "Square ",
+        "Tunnel ",
+        "Sentier "
+      ),
+                 .f = function(x) {
+                   stringr::str_c(x,
+                                  c("de l'",
+                                    "de la ",
+                                    "de ",
+                                    "du ",
+                                    "des ",
+                                    "au ",
+                                    "",
+                                    collapse = " "))}) %>% 
+        unlist() %>% 
+        stringr::str_squish() %>% 
+        unique()
     ) %>%
       stringr::str_c("^", .)
   )
 )
+
+sn_street_name_to_remove_df <- sn_street_name_to_remove_df %>% 
+  bind_rows(sn_street_name_to_remove_df %>% 
+              dplyr::filter(country=="France"|country=="Netherlands") %>% 
+              mutate(country = "Belgium") %>% 
+              distinct())
 
 sn_street_name_to_remove_df %>% tail()
 usethis::use_data(sn_street_name_to_remove_df,
