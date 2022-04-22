@@ -460,6 +460,8 @@ sn_app_server <- function(input, output, session) {
 
       if (length(current_default_search_language_v) == 0) {
         current_default_search_language_v <- "en"
+      } else if (length(current_default_search_language_v)>1) {
+        current_default_search_language_v <- current_default_search_language_v[1]
       }
 
 

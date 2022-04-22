@@ -97,6 +97,8 @@ mod_sn_street_info_server <- function(id,
         
         if (length(search_language)==0) {
           search_language <- language
+        } else if (length(search_language)>1) {
+          search_language <- search_language[1]
         }
 
 

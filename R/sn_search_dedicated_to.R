@@ -28,6 +28,13 @@ sn_search_dedicated_to <- function(gisco_id,
       dplyr::pull(language_code)
   }
 
+  if (length(search_language)==0) {
+    search_language <- tidywikidatar::tw_get_language()
+  } else if (length(search_language)>1) {
+    search_language <- search_language[1]
+  }
+  
+  
   current_street_names_df <- latlon2map::ll_osm_get_lau_streets(
     gisco_id = gisco_id,
     unnamed_streets = FALSE,
