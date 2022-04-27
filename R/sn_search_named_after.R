@@ -147,7 +147,7 @@ sn_search_named_after <- function(gisco_id,
     dplyr::rename(name_clean = search)
 
   if (check_named_after == TRUE) {
-      tw_get_property(
+    named_after_df <- tw_get_property(
         id = search_results_df[["id"]],
         p = "P31",
         language = response_language,
@@ -223,12 +223,12 @@ sn_search_named_after <- function(gisco_id,
 
     exclude_v <- unique(c(exclude_v, processed_df[["name"]]))
 
-    if (check_named_after_original) {
+    if (check_named_after_original == TRUE) {
       output_df <- dplyr::bind_rows(
         output_df,
         processed_df
       ) %>%
-        dplyr::distinct(.data$name)
+        dplyr::distinct(.data$name, .keep_all = TRUE)
     } else {
       output_df <- processed_df
     }
@@ -243,7 +243,8 @@ sn_search_named_after <- function(gisco_id,
           y = search_results_df,
           by = "name_clean"
         ) %>%
-        dplyr::distinct(.data$name)
+        dplyr::distinct(.data$name,
+                        .keep_all = TRUE)
     )
   } else {
     output_df <- current_street_names_df %>%
