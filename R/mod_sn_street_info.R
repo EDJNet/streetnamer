@@ -29,23 +29,23 @@ mod_sn_street_info_server <- function(id,
     # current_lau <- streetnamer::sn_lau_by_nuts %>%
     #   dplyr::filter(country_name == gisco_id)
 
-    if (nchar(country)==2) {
+    if (nchar(country) == 2) {
       country_code <- stringr::str_to_upper(country)
-      country_name <- sn_country_codes %>% 
-        dplyr::filter(.data$Code==country_code) %>% 
+      country_name <- sn_country_codes %>%
+        dplyr::filter(.data$Code == country_code) %>%
         dplyr::pull(.data$Name)
     } else {
       country_lower_v <- stringr::str_to_lower(country)
-      country_slice <- sn_country_codes %>% 
-        dplyr::mutate(country_lower = stringr::str_to_lower(Name)) %>% 
-        dplyr::filter(.data$country_lower==country_lower_v) 
-      
-      country_name <- country_slice %>% 
+      country_slice <- sn_country_codes %>%
+        dplyr::mutate(country_lower = stringr::str_to_lower(Name)) %>%
+        dplyr::filter(.data$country_lower == country_lower_v)
+
+      country_name <- country_slice %>%
         dplyr::pull(.data$Name)
-      country_code <- country_slice %>% 
+      country_code <- country_slice %>%
         dplyr::pull(.data$Code)
     }
-    
+
     checked_lv <- NULL
 
     if (is.null(wikidata_id) == FALSE) {
@@ -94,18 +94,20 @@ mod_sn_street_info_server <- function(id,
         search_language <- sn_language_defaults_by_country %>%
           dplyr::filter(.data$country == country_name) %>%
           dplyr::pull(.data$language_code)
-        
-        if (length(search_language)==0) {
+
+        if (length(search_language) == 0) {
           search_language <- language
-        } else if (length(search_language)>1) {
+        } else if (length(search_language) > 1) {
           search_language <- search_language[1]
         }
 
 
         # fix guesser by language
 
-        search_string_v <- sn_clean_street_name(street_name = street_name,
-                                                country = country_name)
+        search_string_v <- sn_clean_street_name(
+          street_name = street_name,
+          country = country_name
+        )
 
         search_df <- tidywikidatar::tw_search(
           search = search_string_v,

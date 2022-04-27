@@ -127,7 +127,6 @@ sn_street_name_to_remove_df <- dplyr::bind_rows(
     ) %>%
       stringr::str_c("^", .)
   ),
-  
   tibble::tibble(
     country = "Germany",
     string = c(
@@ -142,7 +141,7 @@ sn_street_name_to_remove_df <- dplyr::bind_rows(
       "steig",
       "Zeile",
       "hof",
-      "gasse", 
+      "gasse",
       "ring"
     ) %>%
       stringr::str_c(., "$") %>%
@@ -157,7 +156,6 @@ sn_street_name_to_remove_df <- dplyr::bind_rows(
           stringr::str_c("^", .)
       )
   ),
-  
   tibble::tibble(
     country = "Netherlands",
     string = c(
@@ -169,7 +167,7 @@ sn_street_name_to_remove_df <- dplyr::bind_rows(
       "hof",
       "kade",
       "pad",
-      "brug", 
+      "brug",
       "circuit",
       "plein",
       "pleintje",
@@ -184,8 +182,6 @@ sn_street_name_to_remove_df <- dplyr::bind_rows(
           stringr::str_c("^", .)
       )
   ),
-  
-  
   tibble::tibble(
     country = "Portugal",
     string = c(
@@ -256,7 +252,6 @@ sn_street_name_to_remove_df <- dplyr::bind_rows(
     ) %>%
       stringr::str_c(., "$")
   ),
-  
   tibble::tibble(
     country = "Poland",
     string = c(
@@ -264,8 +259,7 @@ sn_street_name_to_remove_df <- dplyr::bind_rows(
       "aleja "
     ) %>%
       stringr::str_c("^", .)
-  ), 
-  
+  ),
   tibble::tibble(
     country = "Romania",
     string = c(
@@ -287,121 +281,164 @@ sn_street_name_to_remove_df <- dplyr::bind_rows(
     ) %>%
       stringr::str_c("^", .)
   ),
-  
-  
-
-  
   tibble::tibble(
     country = "Italy",
     string = c(
-      purrr::map(.x = c("Via ",
-                        "Viale ",
-                        "Piazza ",
-                        "Piazzetta ",
-                        "Piazzale ",
-                        "Corso ", 
-                        "Lungomare ", 
-                        "Ponte ", 
-                        "Ciclabile ",
-                        "Circonvallazione ",
-                        "Largo ",
-                        "Percorso Ciclopedonale ",
-                        "Belvedere ",
-                        "Rampa ",
-                        "Rotatoria ",
-                        "Salita ",
-                        "Discesa ",
-                        "Strada ",
-                        "Archivolto ",
-                        "Calata ",
-                        "Galleria ",
-                        "Scalinata ",
-                        "Sottopassaggio ", 
-                        "Sottopasso ", 
-                        "Sentiero ",
-                        "Vicolo ",
-                        "Vicoletto ",
-                        "Vico ",
-                        "Viottolo ",
-                        "Cupa ",
-                        "Fondaco ",
-                        "Gradini ",
-                        "Parco ",
-                        "Supportico ", 
-                        "Traversa ",
-                        "Cortile ",
-                        "Fondo ",
-                        "Passaggio "),
-                 .f = function(x) {
-                   stringr::str_c(x,
-                                  c("del ",
-                                    "dei ",
-                                    "di ",
-                                    "d'",
-                                    "al ",
-                                    "ai ",
-                                    "alla ",
-                                    "",
-                                    collapse = " "))}) %>% 
-        unlist() %>% 
-        stringr::str_squish() %>% 
+      purrr::map(
+        .x = c(
+          "Via ",
+          "Viale ",
+          "Piazza ",
+          "Piazzetta ",
+          "Piazzale ",
+          "Corso ",
+          "Lungomare ",
+          "Ponte ",
+          "Ciclabile ",
+          "Circonvallazione ",
+          "Largo ",
+          "Percorso Ciclopedonale ",
+          "Belvedere ",
+          "Rampa ",
+          "Rotatoria ",
+          "Salita ",
+          "Discesa ",
+          "Strada ",
+          "Archivolto ",
+          "Calata ",
+          "Galleria ",
+          "Scalinata ",
+          "Sottopassaggio ",
+          "Sottopasso ",
+          "Sentiero ",
+          "Vicolo ",
+          "Vicoletto ",
+          "Vico ",
+          "Viottolo ",
+          "Cupa ",
+          "Fondaco ",
+          "Gradini ",
+          "Parco ",
+          "Supportico ",
+          "Traversa ",
+          "Cortile ",
+          "Fondo ",
+          "Passaggio "
+        ),
+        .f = function(x) {
+          stringr::str_c(
+            x,
+            c("del ",
+              "dei ",
+              "di ",
+              "d'",
+              "al ",
+              "ai ",
+              "alla ",
+              "",
+              collapse = " "
+            )
+          )
+        }
+      ) %>%
+        unlist() %>%
+        stringr::str_squish() %>%
         unique()
     ) %>%
       stringr::str_c("^", .)
   ),
-  
-  
-  
   tibble::tibble(
     country = "France",
     string = c(
-      purrr::map(.x = c(
-        "Rue ",
-        "Place ",
-        "Boulevard ",
-        "Allée ",
-        "Pont ",
-        "Passerelle ",
-        "Passage ",
-        "Chemin ",
-        "Grande rue ",
-        "Petite rue ",
-        "quai ",
-        "rampe ",
-        "Impasse ",
-        "Galerie ",
-        "Drève ",
-        "Clos ",
-        "Chaussée ",
-        "Champ ",
-        "Avenue ",
-        "Square ",
-        "Tunnel ",
-        "Sentier "
-      ),
-                 .f = function(x) {
-                   stringr::str_c(x,
-                                  c("de l'",
-                                    "de la ",
-                                    "de ",
-                                    "du ",
-                                    "des ",
-                                    "au ",
-                                    "",
-                                    collapse = " "))}) %>% 
-        unlist() %>% 
-        stringr::str_squish() %>% 
+      purrr::map(
+        .x = c(
+          "Rue ",
+          "Place ",
+          "Boulevard ",
+          "Allée ",
+          "Pont ",
+          "Passerelle ",
+          "Passage ",
+          "Chemin ",
+          "Grande rue ",
+          "Petite rue ",
+          "quai ",
+          "rampe ",
+          "Impasse ",
+          "Galerie ",
+          "Drève ",
+          "Clos ",
+          "Chaussée ",
+          "Champ ",
+          "Avenue ",
+          "Square ",
+          "Tunnel ",
+          "Sentier "
+        ),
+        .f = function(x) {
+          stringr::str_c(
+            x,
+            c("de l'",
+              "de la ",
+              "de ",
+              "du ",
+              "des ",
+              "au ",
+              "",
+              collapse = " "
+            )
+          )
+        }
+      ) %>%
+        unlist() %>%
+        stringr::str_squish() %>%
         unique()
     ) %>%
       stringr::str_c("^", .)
+  ),
+  tibble::tibble(
+    country = c("Ireland"),
+    string = c(
+      " avenue",
+      " bridge",
+      " boulevard",
+      " crescent",
+      " close",
+      " court",
+      " drive",
+      " gardens",
+      " glen",
+      " green",
+      " grove",
+      " heath",
+      " lane",
+      " lawn",
+      " manor",
+      " meadows",
+      " motorway",
+      " park",
+      " place",
+      " plaza",
+      " quay",
+      " rise",
+      " road",
+      " row",
+      " roundabout",
+      " square",
+      " street",
+      " terrace",
+      " way",
+      " view"
+    ) %>%
+      stringr::str_c(., "$")
   )
 )
 
-sn_street_name_to_remove_df <- sn_street_name_to_remove_df %>% 
-  bind_rows(sn_street_name_to_remove_df %>% 
-              dplyr::filter(country=="France"|country=="Netherlands") %>% 
-              mutate(country = "Belgium") %>% 
-              distinct())
+sn_street_name_to_remove_df <- sn_street_name_to_remove_df %>%
+  bind_rows(sn_street_name_to_remove_df %>%
+    dplyr::filter(country == "France" | country == "Netherlands") %>%
+    mutate(country = "Belgium") %>%
+    distinct())
 
 sn_street_name_to_remove_df %>% tail()
 usethis::use_data(sn_street_name_to_remove_df,

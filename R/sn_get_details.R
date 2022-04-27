@@ -17,190 +17,233 @@
 sn_get_details_by_country <- function(country,
                                       collapse_lists = FALSE,
                                       language = tidywikidatar::tw_get_language(),
+                                      search_language = NULL,
+                                      response_language = tidywikidatar::tw_get_language(),
+                                      check_named_after_original = TRUE,
+                                      check_named_after = TRUE,
                                       connection = NULL,
                                       base_folder = "sn_data",
                                       streets_sf = NULL,
                                       cache = TRUE,
                                       overwrite_cache = FALSE,
                                       disconnect_db = TRUE) {
-  if (nchar(country)==2) {
+  if (nchar(country) == 2) {
     country_code <- stringr::str_to_upper(country)
-    country_name <- sn_country_codes %>% 
-      dplyr::filter(.data$Code==country_code) %>% 
+    country_name <- sn_country_codes %>%
+      dplyr::filter(.data$Code == country_code) %>%
       dplyr::pull(.data$Name)
   } else {
     country_lower_v <- stringr::str_to_lower(country)
-    country_slice <- sn_country_codes %>% 
-      dplyr::mutate(country_lower = stringr::str_to_lower(Name)) %>% 
-      dplyr::filter(.data$country_lower==country_lower_v) 
-    
-    country_name <- country_slice %>% 
+    country_slice <- sn_country_codes %>%
+      dplyr::mutate(country_lower = stringr::str_to_lower(Name)) %>%
+      dplyr::filter(.data$country_lower == country_lower_v)
+
+    country_name <- country_slice %>%
       dplyr::pull(.data$Name)
-    country_code <- country_slice %>% 
+    country_code <- country_slice %>%
       dplyr::pull(.data$Code)
   }
-  
-  country_path <- fs::dir_create(path = fs::path(base_folder,
-                                                 "city_details",
-                                                 country_name))
-  
-  current_country_lau_v <- latlon2map::ll_get_lau_eu() %>% 
-    sf::st_drop_geometry() %>% 
+
+  country_path <- fs::dir_create(path = fs::path(
+    base_folder,
+    "city_details",
+    country_name
+  ))
+
+  current_country_lau_v <- latlon2map::ll_get_lau_eu() %>%
+    sf::st_drop_geometry() %>%
     dplyr::filter(CNTR_CODE == country_code) %>%
-    arrange(desc(POP_2020)) %>% 
-    dplyr::pull(GISCO_ID) 
-  
+    arrange(desc(POP_2020)) %>%
+    dplyr::pull(GISCO_ID)
+
   fs::dir_create(country_path)
   fs::dir_create(fs::path(country_path, "all"))
   fs::dir_create(fs::path(country_path, "only_humans"))
-  
-  
-  
+
+
+
   purrr::walk(
     .x = current_country_lau_v,
     .f = function(x) {
-      city_name <- sn_lau_by_country %>% 
-        dplyr::filter(GISCO_ID == x) %>% 
+      city_name <- sn_lau_by_country %>%
+        dplyr::filter(GISCO_ID == x) %>%
         dplyr::pull(LAU_NAME)
-      
-    current_file <- fs::path(country_path,
-                             "all",
-                             stringr::str_c(x, "-", city_name, ".csv") %>% 
-                               fs::path_sanitize())
-    
-    current_file_humans <- fs::path(country_path,
-                                    "only_humans",
-                                    stringr::str_c(x, "-",
-                                                   city_name,
-                                                   "-only_humans.csv") %>% 
-                                      fs::path_sanitize())
-    
-    if (fs::file_exists(current_file)==FALSE) {
-      
-      
-      connection_db <- tidywikidatar::tw_connect_to_cache(connection = connection)
-      
-      
-      search_df <- sn_search_dedicated_to(gisco_id = x,
-                                          streets_sf = streets_sf,
-                                          connection = connection_db, 
-                                          disconnect_db = FALSE)
-      
-      city_df <- tidywikidatar::tw_get_p_wide(
-        id = search_df, 
-        p = c("P31", 
-              "P21",
-              "P106",
-              "P569",
-              "P19",
-              "P570",
-              "P20",
-              "P39",
-              "P509",
-              "P140",
-              "P611",
-              "P411",
-              "P241",
-              "P410",
-              "P97",
-              "P607",
-              "P27",
-              "P172"),
-        label = TRUE,
-        property_label_as_column_name = TRUE,
-        both_id_and_label = TRUE,
-        only_first = FALSE,
-        unlist = FALSE,
-        cache = cache,
-        overwrite_cache = overwrite_cache,
-        cache_connection = connection_db,
-        disconnect_db = FALSE) %>% 
-        
-        dplyr::select(-.data$id,
-                      -.data$label) 
-      
-      processed_df <- dplyr::bind_cols(search_df, city_df) %>% 
-        dplyr::mutate(
-          picture = tidywikidatar::tw_get_image_same_length(id = id, format = "embed",
-                                                            width = 300,
-                                                            cache = cache,
-                                                            overwrite_cache = overwrite_cache,
-                                                            cache_connection = connection_db,
-                                                            disconnect_db = FALSE),
-          wikipedia = tidywikidatar::tw_get_wikipedia(id = id,
-                                                      cache = cache,
-                                                      overwrite_cache = overwrite_cache,
-                                                      cache_connection = connection_db,
-                                                      disconnect_db = FALSE)
-        ) %>% 
-        dplyr::mutate(place_of_birth_single = purrr::map_chr(.x = place_of_birth,
-                                                             .f = function(x) {x[[1]]}),
-                      place_of_death_single = purrr::map_chr(.x = place_of_death,
-                                                             .f = function(x) {x[[1]]})
-        ) %>% 
-        dplyr::mutate(place_of_birth_coordinates = tw_get_p(place_of_birth_single,
-                                                            p = "P625",
-                                                            only_first = TRUE,
-                                                            preferred = TRUE,
-                                                            cache = cache,
-                                                            overwrite_cache = overwrite_cache,
-                                                            cache_connection = connection_db,
-                                                            disconnect_db = FALSE),
-                      place_of_death_coordinates = tw_get_p(place_of_death_single,
-                                                            p = "P625",
-                                                            only_first = TRUE,
-                                                            preferred = TRUE,
-                                                            cache = cache,
-                                                            overwrite_cache = overwrite_cache,
-                                                            cache_connection = connection_db,
-                                                            disconnect_db = FALSE)) %>% 
-        tidyr::separate(
-          col = place_of_birth_coordinates,
-          into = c(
-            "place_of_birth_latitude",
-            "place_of_birth_longitude"
-          ),
-          sep = ",",
-          remove = TRUE,
-          convert = TRUE
-        ) %>% 
-        tidyr::separate(
-          col = place_of_death_coordinates,
-          into = c(
-            "place_of_death_latitude",
-            "place_of_death_longitude"
-          ),
-          sep = ",",
-          remove = TRUE,
-          convert = TRUE
-        ) 
-      
-      
-      output_df <- processed_df %>%
-        dplyr::group_by(id) %>%
-        dplyr::mutate(
-          dplyr::across(
-            where(is.list),
-            function(x) {
-              stringr::str_c(unique(unlist(x)),
-                             collapse = "; "
-              )
-            }
-          )
+
+      current_file <- fs::path(
+        country_path,
+        "all",
+        stringr::str_c(x, "-", city_name, ".csv") %>%
+          fs::path_sanitize()
+      )
+
+      current_file_humans <- fs::path(
+        country_path,
+        "only_humans",
+        stringr::str_c(
+          x, "-",
+          city_name,
+          "-only_humans.csv"
         ) %>%
-        dplyr::ungroup()
-      
-      
-      print(current_file)
-      readr::write_csv(x = output_df, file = current_file)
-      
-      readr::write_csv(x = output_df %>% 
-                         dplyr::filter(is.na(.data$instance_of)==FALSE) %>% 
-                         dplyr::filter(.data$instance_of == "Q5"),
-                       file = current_file_humans) 
+          fs::path_sanitize()
+      )
+
+      if (fs::file_exists(current_file) == FALSE) {
+        connection_db <- tidywikidatar::tw_connect_to_cache(connection = connection)
+
+
+        search_df <- sn_search_named_after(
+          gisco_id = x,
+          search_language = search_language,
+          check_named_after_original = check_named_after_original,
+          check_named_after = check_named_after,
+          streets_sf = streets_sf,
+          connection = connection_db,
+          disconnect_db = FALSE
+        )
+
+        city_df <- tidywikidatar::tw_get_p_wide(
+          id = search_df,
+          p = c(
+            "P31",
+            "P21",
+            "P106",
+            "P569",
+            "P19",
+            "P570",
+            "P20",
+            "P39",
+            "P509",
+            "P140",
+            "P611",
+            "P411",
+            "P241",
+            "P410",
+            "P97",
+            "P607",
+            "P27",
+            "P172"
+          ),
+          label = TRUE,
+          property_label_as_column_name = TRUE,
+          both_id_and_label = TRUE,
+          only_first = FALSE,
+          unlist = FALSE,
+          cache = cache,
+          language = language,
+          overwrite_cache = overwrite_cache,
+          cache_connection = connection_db,
+          disconnect_db = FALSE
+        ) %>%
+          dplyr::select(
+            -.data$id,
+            -.data$label
+          )
+
+        processed_df <- dplyr::bind_cols(search_df, city_df) %>%
+          dplyr::mutate(
+            picture = tidywikidatar::tw_get_image_same_length(
+              id = id, format = "embed",
+              width = 300,
+              cache = cache,
+              language = language,
+              overwrite_cache = overwrite_cache,
+              cache_connection = connection_db,
+              disconnect_db = FALSE
+            ),
+            wikipedia = tidywikidatar::tw_get_wikipedia(
+              id = id,
+              cache = cache,
+              language = language,
+              overwrite_cache = overwrite_cache,
+              cache_connection = connection_db,
+              disconnect_db = FALSE
+            )
+          ) %>%
+          dplyr::mutate(
+            place_of_birth_single = purrr::map_chr(
+              .x = place_of_birth,
+              .f = function(x) {
+                x[[1]]
+              }
+            ),
+            place_of_death_single = purrr::map_chr(
+              .x = place_of_death,
+              .f = function(x) {
+                x[[1]]
+              }
+            )
+          ) %>%
+          dplyr::mutate(
+            place_of_birth_coordinates = tw_get_p(place_of_birth_single,
+              p = "P625",
+              only_first = TRUE,
+              preferred = TRUE,
+              cache = cache,
+              language = language,
+              overwrite_cache = overwrite_cache,
+              cache_connection = connection_db,
+              disconnect_db = FALSE
+            ),
+            place_of_death_coordinates = tw_get_p(place_of_death_single,
+              p = "P625",
+              only_first = TRUE,
+              preferred = TRUE,
+              cache = cache,
+              language = language,
+              overwrite_cache = overwrite_cache,
+              cache_connection = connection_db,
+              disconnect_db = FALSE
+            )
+          ) %>%
+          tidyr::separate(
+            col = place_of_birth_coordinates,
+            into = c(
+              "place_of_birth_latitude",
+              "place_of_birth_longitude"
+            ),
+            sep = ",",
+            remove = TRUE,
+            convert = TRUE
+          ) %>%
+          tidyr::separate(
+            col = place_of_death_coordinates,
+            into = c(
+              "place_of_death_latitude",
+              "place_of_death_longitude"
+            ),
+            sep = ",",
+            remove = TRUE,
+            convert = TRUE
+          )
+
+
+        output_df <- processed_df %>%
+          dplyr::group_by(id) %>%
+          dplyr::mutate(
+            dplyr::across(
+              where(is.list),
+              function(x) {
+                stringr::str_c(unique(unlist(x)),
+                  collapse = "; "
+                )
+              }
+            )
+          ) %>%
+          dplyr::ungroup()
+
+
+        print(current_file)
+        readr::write_csv(x = output_df, file = current_file)
+
+        readr::write_csv(
+          x = output_df %>%
+            dplyr::filter(is.na(.data$instance_of) == FALSE) %>%
+            dplyr::filter(.data$instance_of == "Q5"),
+          file = current_file_humans
+        )
+      }
     }
-    
-  })
+  )
   tw_disconnect_from_cache(
     cache = cache,
     cache_connection = db,
@@ -224,10 +267,10 @@ sn_get_details_by_country <- function(country,
 #'
 #' @examples
 sn_get_details_legacy <- function(id,
-                           collapse_lists = FALSE,
-                           language = tidywikidatar::tw_get_language(),
-                           connection = NULL,
-                           cache = TRUE) {
+                                  collapse_lists = FALSE,
+                                  language = tidywikidatar::tw_get_language(),
+                                  connection = NULL,
+                                  cache = TRUE) {
   db_connection <- tidywikidatar::tw_connect_to_cache(connection = connection)
 
   qid_tw_df <- tidywikidatar::tw_get(

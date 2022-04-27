@@ -460,15 +460,17 @@ sn_app_server <- function(input, output, session) {
 
       if (length(current_default_search_language_v) == 0) {
         current_default_search_language_v <- "en"
-      } else if (length(current_default_search_language_v)>1) {
+      } else if (length(current_default_search_language_v) > 1) {
         current_default_search_language_v <- current_default_search_language_v[1]
       }
 
 
       selected_wikidata_id_from_search_r <- mod_sn_search_wikidata_server(
         id = "sn_search_wikidata_ui_1",
-        search_string = sn_clean_street_name(street_name = street_selected()$name,
-                                             country = input$current_country_name),
+        search_string = sn_clean_street_name(
+          street_name = street_selected()$name,
+          country = input$current_country_name
+        ),
         search_language = current_default_search_language_v,
         description_language = "en",
         cache = TRUE,
