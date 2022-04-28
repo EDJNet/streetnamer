@@ -11,6 +11,9 @@ sn_street_name_to_remove_df <- dplyr::bind_rows(
       "Calle del ",
       "Calle el ",
       "Calle de ",
+      "Calle las ",
+      "Calle la ",
+      "Calle los ",
       "Calle ",
       "Calleja ",
       "Callejón de ",
@@ -21,10 +24,21 @@ sn_street_name_to_remove_df <- dplyr::bind_rows(
       "Camino de los ",
       "Camino de ",
       "Camino ",
+      "Carretera del ",
       "Carretera de ",
       "Carretera ",
       "Cortafuego de las ",
       "Cortafuego ",
+      "Naves ",
+      "Pasaje del ",
+      "Pasaje de", 
+      "Pasaje ",
+      "Paseo de los ",
+      "Paseo de las ",
+      "Paseo del ",
+      "Paseo de ",
+      "Paseo ",
+      "Patio de ",
       "Plaza de la ",
       "Plaza de los ",
       "Plaza de ",
@@ -72,6 +86,9 @@ sn_street_name_to_remove_df <- dplyr::bind_rows(
       "Camí de la ",
       "Camí de l'",
       "Camí de ",
+      "Callejón del ",
+      "Callejón de los ",
+      "Callejón ",
       "Carrer de les ",
       "Carrer de la ",
       "Carrer del ",
@@ -99,6 +116,8 @@ sn_street_name_to_remove_df <- dplyr::bind_rows(
       "Passeig del ",
       "Passeig de ",
       "Passeig ",
+      "Patio de ",
+      "Patio ",
       "Plaça d'",
       "Plaça de las ",
       "Plaça de la ",
@@ -115,6 +134,7 @@ sn_street_name_to_remove_df <- dplyr::bind_rows(
       "Rambla dels ",
       "Ronda de la ",
       "Ronda de ",
+      "Ronda ",
       "Rotonda de l'",
       "Rotonda de ",
       "Travessia de ",
@@ -123,6 +143,8 @@ sn_street_name_to_remove_df <- dplyr::bind_rows(
       "Túnel de la ",
       "Túnel de  ",
       "Volta dels ",
+      "Via de ",
+      
       "Viaducte de "
     ) %>%
       stringr::str_c("^", .)
@@ -130,6 +152,8 @@ sn_street_name_to_remove_df <- dplyr::bind_rows(
   tibble::tibble(
     country = "Germany",
     string = c(
+      "kamp ",
+      
       "strasse",
       "straße",
       "weg",
@@ -151,7 +175,9 @@ sn_street_name_to_remove_df <- dplyr::bind_rows(
           "Allee der ",
           "Allée du ",
           "Allée ",
-          "Am "
+          "Am ",
+          "An den ",
+          "An der "
         ) %>%
           stringr::str_c("^", .)
       )
@@ -421,6 +447,8 @@ sn_street_name_to_remove_df <- dplyr::bind_rows(
   tibble::tibble(
     country = c("Ireland"),
     string = c(
+      " Avenue Lower",
+      " Avenue Upper",
       " avenue",
       " bridge",
       " boulevard",
@@ -437,6 +465,7 @@ sn_street_name_to_remove_df <- dplyr::bind_rows(
       " lawn",
       " manor",
       " meadows",
+      " mews",
       " motorway",
       " park",
       " place",
@@ -446,9 +475,14 @@ sn_street_name_to_remove_df <- dplyr::bind_rows(
       " road",
       " row",
       " roundabout",
+      " Square West",
+      " Square North",
+      " Square East",
+      " Square South",
       " square",
       " street",
       " terrace",
+      " walk",
       " way",
       " view"
     ) %>%
