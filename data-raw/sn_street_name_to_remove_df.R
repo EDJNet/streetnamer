@@ -352,38 +352,60 @@ sn_street_name_to_remove_df <- dplyr::bind_rows(
     string = c(
       purrr::map(
         .x = c(
-          "Rue ",
-          "Place ",
-          "Boulevard ",
           "Allée ",
-          "Pont ",
-          "Passerelle ",
-          "Passage ",
-          "Chemin ",
-          "Grande rue ",
-          "Petite rue ",
-          "quai ",
-          "rampe ",
-          "Impasse ",
-          "Galerie ",
-          "Drève ",
-          "Clos ",
-          "Chaussée ",
-          "Champ ",
           "Avenue ",
+          "Boulevard ",
+          "Camin ",
+          "Champ ",
+          "Chaussée ",
+          "Chemin ",
+          "Clos ",
+          "Corniche ",
+          "Cours ",
+          "Descente ",
+          "Domaine ",
+          "Drève ",
+          "Escaliers ",
+          "Escalier ",
+          "Espace ",
+          "Esplanade ",
+          "Galerie ",
+          "Grande rue ",
+          "Impasse ",
+          "Montée",
+          "Parc ", 
+          "Parvis ",
+          "Passerelle ",
+          "Passage ",  
+          "Petite Avenue ",
+          "Petite rue ",
+          "Placette ",
+          "Place ",
+          "Pont ",  
+          "Promenade ",
+          "quai ",
+          "Raccourci ",
+          "rampe ",  
+          "route ",
+          "Rue ",
+          "Sentier ",
           "Square ",
+          "Terrasse ",
+          "Traverse ",
           "Tunnel ",
-          "Sentier "
+          "Vieux Chemin ",
+          "Voie "
         ),
         .f = function(x) {
           stringr::str_c(
             x,
-            c("de l'",
+            c("des ",
+              "de l'",
               "de la ",
               "de ",
               "du ",
-              "des ",
               "au ",
+              "d'",
               "",
               collapse = " "
             )
@@ -436,11 +458,11 @@ sn_street_name_to_remove_df <- dplyr::bind_rows(
 
 sn_street_name_to_remove_df <- sn_street_name_to_remove_df %>%
   bind_rows(sn_street_name_to_remove_df %>%
-    dplyr::filter(country == "France" | country == "Netherlands") %>%
-    mutate(country = "Belgium") %>%
-    distinct())
+              dplyr::filter(country == "France" | country == "Netherlands") %>%
+              mutate(country = "Belgium") %>%
+              distinct())
 
 sn_street_name_to_remove_df %>% tail()
 usethis::use_data(sn_street_name_to_remove_df,
-  overwrite = TRUE
+                  overwrite = TRUE
 )
