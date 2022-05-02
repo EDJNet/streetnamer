@@ -60,7 +60,7 @@ sn_get_details_by_country <- function(country,
   fs::dir_create(fs::path(country_path, "all"))
   fs::dir_create(fs::path(country_path, "only_humans"))
 
-
+  connection_db <- tidywikidatar::tw_connect_to_cache(connection = connection)
 
   purrr::walk(
     .x = current_country_lau_v,
@@ -88,8 +88,6 @@ sn_get_details_by_country <- function(country,
       )
 
       if (fs::file_exists(current_file) == FALSE) {
-        connection_db <- tidywikidatar::tw_connect_to_cache(connection = connection)
-
 
         search_df <- sn_search_named_after(
           gisco_id = x,
@@ -246,7 +244,7 @@ sn_get_details_by_country <- function(country,
   )
   tw_disconnect_from_cache(
     cache = cache,
-    cache_connection = db,
+    cache_connection = connection_db,
     disconnect_db = disconnect_db,
     language = language
   )
