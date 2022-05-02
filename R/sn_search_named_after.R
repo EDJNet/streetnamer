@@ -30,9 +30,14 @@ sn_search_named_after <- function(gisco_id,
                                   connection = NULL,
                                   disconnect_db = TRUE) {
   country_code <- stringr::str_extract(string = gisco_id, pattern = "[A-Z][A-Z]")
-  country_name <- sn_country_codes %>%
-    dplyr::filter(Code == country_code) %>%
-    dplyr::pull(Name)
+  
+  if (country_code == "EL") {
+    country_name <- "Greece"
+  } else {
+    country_name <- sn_country_codes %>%
+      dplyr::filter(Code == country_code) %>%
+      dplyr::pull(Name)
+  }
 
   if (is.null(search_language)) {
     search_language <- sn_language_defaults_by_country %>%

@@ -490,7 +490,8 @@ sn_street_name_to_remove_df <- dplyr::bind_rows(
   ),
   tibble::tibble(
     country = c("Greece"),
-    string = c(""))
+    string = c(" ") %>%
+      stringr::str_c(., "$"))
 )
 
 sn_street_name_to_remove_df <- sn_street_name_to_remove_df %>%
