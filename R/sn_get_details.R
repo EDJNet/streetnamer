@@ -29,12 +29,12 @@ sn_get_details_by_country <- function(country,
                                       disconnect_db = TRUE) {
   if (nchar(country) == 2) {
     country_code <- stringr::str_to_upper(country)
-    country_name <- sn_country_codes %>%
+    country_name <- streetnamer::sn_country_codes %>%
       dplyr::filter(.data$Code == country_code) %>%
       dplyr::pull(.data$Name)
   } else {
     country_lower_v <- stringr::str_to_lower(country)
-    country_slice <- sn_country_codes %>%
+    country_slice <- streetnamer::sn_country_codes %>%
       dplyr::mutate(country_lower = stringr::str_to_lower(Name)) %>%
       dplyr::filter(.data$country_lower == country_lower_v)
 
@@ -69,7 +69,7 @@ sn_get_details_by_country <- function(country,
   purrr::walk(
     .x = current_country_lau_v,
     .f = function(x) {
-      city_name <- sn_lau_by_country %>%
+      city_name <- streetnamer::sn_lau_by_country %>%
         dplyr::filter(GISCO_ID == x) %>%
         dplyr::pull(LAU_NAME)
 
