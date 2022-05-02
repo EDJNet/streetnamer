@@ -76,6 +76,13 @@ sn_clean_street_name <- function(street_name,
         sn_clean_street_name_romanian(x)
       }
     )
+  } else if (country_name == "Greece") {
+    street_name <- purrr::map_chr(
+      .x = street_name,
+      .f = function(x) {
+        sn_clean_street_name_greek(x)
+      }
+    )
   }
 
   street_name %>%
@@ -246,4 +253,68 @@ sn_clean_street_name_romanian <- function(street_name) {
   } else {
     street_name
   }
+}
+
+
+#' Clean Greek street name
+#'
+#' @param street_name Name of street, after having removed street part.
+#'
+#' @return A character vector of lenght one. A name that can more easily be searched.
+#' @export
+#'
+#' @examples
+#'
+#' sn_clean_street_name_greek("Αριστοτέλους")
+sn_clean_street_name_greek <- function(street_name) {
+  
+  split_string <- stringr::str_split(string = street_name,
+                                     pattern = "[[:space:]]",
+                                     simplify = TRUE) %>%
+    as.character()
+  
+  for (i in 1:max(1, (length(split_string) - 1))) {
+    
+    if (stringr::str_detect(string =  split_string[i], pattern =  "^Αγίου ")) {
+      split_string[i] <- stringr::str_replace(string = split_string[i],
+                                              pattern = "^Αγίου ",
+                                              replacement = "Αγίους ")
+    } else if (stringr::str_detect(string =  split_string[i], pattern =  "^Αγίων ")){
+      split_string[i] <- stringr::str_replace(string = split_string[i],
+                                              pattern = "^Αγίων ",
+                                              replacement = "Αγιοι ")
+    } else if (stringr::str_detect(string =  split_string[i], pattern =  "^Αγ. ")) {
+      split_string[i] <- stringr::str_replace(string = split_string[i],
+                                              pattern = "^Αγ. ",
+                                              replacement = "Αγίους ")
+    } else if (stringr::str_detect(string =  split_string[i], pattern = "ους$")) {
+      split_string[i] <- stringr::str_replace(string = split_string[i],
+                                              pattern = "ους$",
+                                              replacement = "ης")
+    } else if (stringr::str_detect(string = street_name, pattern = "α$")) {
+      split_string[i] <- stringr::str_replace(string = split_string[i],
+                                              pattern = "α$",
+                                              replacement = "ας")
+    } else if (stringr::str_detect(string =  split_string[i], pattern = "ου$")) {
+      split_string[i] <- stringr::str_replace(string = split_string[i],
+                                              pattern = "ου$",
+                                              replacement = "ος")
+    } else if (stringr::str_detect(string =  split_string[i], pattern = "η$")) {
+      split_string[i] <- stringr::str_replace(string = split_string[i],
+                                              pattern = "η$",
+                                              replacement = "ης")
+    } else if (stringr::str_detect(string =  split_string[i], pattern = "ης$")) {
+      split_string[i] <- stringr::str_replace(string = split_string[i],
+                                              pattern = "ης$",
+                                              replacement = "η")
+    } else if (stringr::str_detect(string =  split_string[i], pattern = "ων$")) {
+      split_string[i] <- stringr::str_replace(string = split_string[i],
+                                              pattern = "ων$",
+                                              replacement = "οι")
+    }
+  }
+
+  stringr::str_c(split_string, collapse = " ") %>% 
+    stringr::str_squish()
+  
 }
