@@ -42,6 +42,10 @@ sn_get_details_by_country <- function(country,
       dplyr::pull(.data$Name)
     country_code <- country_slice %>%
       dplyr::pull(.data$Code)
+    
+    if (country_lower_v=="greece") {
+      country_code <- "EL"
+    }
   }
 
   country_path <- fs::dir_create(path = fs::path(
