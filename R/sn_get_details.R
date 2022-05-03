@@ -45,6 +45,9 @@ sn_get_details_by_country <- function(country,
     
     if (country_lower_v=="greece") {
       country_code <- "EL"
+    } else if (country_lower_v=="czechia") {
+      country_code <- "CZ"
+      country_name <- "Czech Republic"
     }
   }
 

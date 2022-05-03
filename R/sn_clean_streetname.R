@@ -21,12 +21,12 @@ sn_clean_street_name <- function(street_name,
                                  country) {
   if (nchar(country) == 2) {
     country_code <- stringr::str_to_upper(country)
-    country_name <- sn_country_codes %>%
+    country_name <- streetnamer::sn_country_codes %>%
       dplyr::filter(.data$Code == country_code) %>%
       dplyr::pull(.data$Name)
   } else {
     country_lower_v <- stringr::str_to_lower(country)
-    country_slice <- sn_country_codes %>%
+    country_slice <- streetnamer::sn_country_codes %>%
       dplyr::mutate(country_lower = stringr::str_to_lower(Name)) %>%
       dplyr::filter(.data$country_lower == country_lower_v)
 
@@ -287,10 +287,19 @@ sn_clean_street_name_greek <- function(street_name) {
       split_string[i] <- stringr::str_replace(string = split_string[i],
                                               pattern = "^Αγ. ",
                                               replacement = "Αγίους ")
+      
+    } else if (stringr::str_detect(string =  split_string[i], pattern = "λέους$")) {
+      split_string[i] <- stringr::str_replace(string = split_string[i],
+                                              pattern = "λέους$",
+                                              replacement = "λής")
     } else if (stringr::str_detect(string =  split_string[i], pattern = "ους$")) {
       split_string[i] <- stringr::str_replace(string = split_string[i],
                                               pattern = "ους$",
                                               replacement = "ης")
+    } else if (stringr::str_detect(string = street_name, pattern = "ανών$")) {
+      split_string[i] <- stringr::str_replace(string = split_string[i],
+                                              pattern = "ανών$",
+                                              replacement = "ανά")
     } else if (stringr::str_detect(string = street_name, pattern = "α$")) {
       split_string[i] <- stringr::str_replace(string = split_string[i],
                                               pattern = "α$",

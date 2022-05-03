@@ -454,7 +454,7 @@ sn_app_server <- function(input, output, session) {
       input$wikidata_search_panel_switch
     ),
     {
-      current_default_search_language_v <- sn_language_defaults_by_country %>%
+      current_default_search_language_v <- streetnamer::sn_language_defaults_by_country %>%
         dplyr::filter(country == input$current_country_name) %>%
         dplyr::pull(language_code)
 

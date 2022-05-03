@@ -31,12 +31,12 @@ mod_sn_street_info_server <- function(id,
 
     if (nchar(country) == 2) {
       country_code <- stringr::str_to_upper(country)
-      country_name <- sn_country_codes %>%
+      country_name <- streetnamer::sn_country_codes %>%
         dplyr::filter(.data$Code == country_code) %>%
         dplyr::pull(.data$Name)
     } else {
       country_lower_v <- stringr::str_to_lower(country)
-      country_slice <- sn_country_codes %>%
+      country_slice <- streetnamer::sn_country_codes %>%
         dplyr::mutate(country_lower = stringr::str_to_lower(Name)) %>%
         dplyr::filter(.data$country_lower == country_lower_v)
 
@@ -91,7 +91,7 @@ mod_sn_street_info_server <- function(id,
         checked_switch_selected <- FALSE
 
         # try to guess wikidata id based on country
-        search_language <- sn_language_defaults_by_country %>%
+        search_language <- streetnamer::sn_language_defaults_by_country %>%
           dplyr::filter(.data$country == country_name) %>%
           dplyr::pull(.data$language_code)
 

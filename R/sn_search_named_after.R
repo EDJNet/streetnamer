@@ -34,13 +34,13 @@ sn_search_named_after <- function(gisco_id,
   if (country_code == "EL") {
     country_name <- "Greece"
   } else {
-    country_name <- sn_country_codes %>%
+    country_name <- streetnamer::sn_country_codes %>%
       dplyr::filter(Code == country_code) %>%
       dplyr::pull(Name)
   }
 
   if (is.null(search_language)) {
-    search_language <- sn_language_defaults_by_country %>%
+    search_language <- streetnamer::sn_language_defaults_by_country %>%
       dplyr::filter(country == country_name) %>%
       dplyr::pull(language_code)
   }
