@@ -12,6 +12,7 @@ sn_get_details_by_country(
   response_language = tidywikidatar::tw_get_language(),
   check_named_after_original = TRUE,
   check_named_after = TRUE,
+  manual_check_columns = FALSE,
   connection = NULL,
   base_folder = "sn_data",
   streets_sf = NULL,
@@ -24,6 +25,10 @@ sn_get_details_by_country(
 \item{country}{A country, either a two letter country code, or country full name. See `sn_country_codes` for valid values.}
 
 \item{collapse_lists}{Defaults to FALSE. If TRUE, collapses multiple values in a single string, with each value separated by ";". Useful for exports in tabular format.}
+
+\item{manual_check_columns}{Logical, defaults to FALSE. If set to TRUE, it
+adds additional columns that can be used to introduce manually adjustments
+in a spreadsheet.}
 
 \item{streets_sf}{Defaults to NULL. If given, used to speed up processing.
 Must be an sf object such as the ones output by `ll_osm_get_roads()`.
