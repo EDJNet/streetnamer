@@ -66,7 +66,7 @@ sn_search_named_after <- function(gisco_id,
     dplyr::mutate(name = name %>% stringr::str_replace_all(pattern = stringr::fixed("\\"), replacement = " ") %>% stringr::str_squish(),
                   name_clean = name_clean %>% stringr::str_replace_all(pattern = stringr::fixed("\\"), replacement = " ") %>% stringr::str_squish())
   
-  language_combo <- stringr::str_c(language, "_", response_language)
+  language_combo <- stringr::str_c(search_language, "_", response_language)
   
   db_connection <- tidywikidatar::tw_connect_to_cache(connection = connection,
                                                       language = language_combo,
