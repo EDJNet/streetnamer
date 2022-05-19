@@ -6,9 +6,6 @@
 \usage{
 sn_cicerone()
 }
-\value{
-
-}
 \description{
 Create Cicerone guide
 }

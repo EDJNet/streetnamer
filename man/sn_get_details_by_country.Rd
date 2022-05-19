@@ -38,9 +38,6 @@ Passed to `ll_osm_get_lau_streets()`.}
 
 \item{disconnect_db}{Defaults to TRUE. If FALSE, leaves the connection to cache open.}
 }
-\value{
-
-}
 \description{
 Get a pre-defined set of details about
 }

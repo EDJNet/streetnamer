@@ -17,9 +17,6 @@ sn_search_wiki(search, language = "en", limit = 10, wait = 1, cache = TRUE)
 
 \item{cache}{Logical, defaults to TRUE. If TRUE, search queries are stored in a local sqlite database located in the `wiki_search_db` folder within the local cache folder.}
 }
-\value{
-
-}
 \description{
 Search string in Wikidata and return Wikidata id, label, and description.
 }

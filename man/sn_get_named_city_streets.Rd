@@ -9,9 +9,6 @@ sn_get_named_city_streets(gisco_id, cache_names = FALSE, cache_sf = FALSE)
 \arguments{
 \item{gisco_id}{Gisco id of the municipality}
 }
-\value{
-
-}
 \description{
 This function downloads all roads for a given country, downloads boundaries for a given administrative unit, and removes roads with no names.
 }

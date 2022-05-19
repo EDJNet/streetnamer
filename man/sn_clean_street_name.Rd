@@ -11,9 +11,6 @@ sn_clean_street_name(street_name, country)
 
 \item{country}{Name of country.}
 }
-\value{
-
-}
 \description{
 Clean street name in order to keep only the
 }

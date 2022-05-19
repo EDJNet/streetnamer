@@ -9,9 +9,6 @@ sn_create_data_folder(ask = TRUE)
 \arguments{
 \item{ask}{Logical, defaults to TRUE. If FALSE, and cache folder does not exist, it just creates it without asking (useful for interactive sessions).}
 }
-\value{
-
-}
 \description{
 Creates the folder where `streetnamer` stores data.
 }

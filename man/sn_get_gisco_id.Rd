@@ -11,9 +11,6 @@ sn_get_gisco_id(name, country)
 
 \item{country}{Two-letter country code.}
 }
-\value{
-
-}
 \description{
 Warning: there are many instances where there are more than one municipality with the same name in a country.
 }

@@ -10,6 +10,7 @@ sn_search_named_after(
   response_language = tidywikidatar::tw_get_language(),
   check_named_after_original = TRUE,
   check_named_after = TRUE,
+  drop_if_street = TRUE,
   streets_sf = NULL,
   cache = TRUE,
   overwrite_cache = FALSE,
@@ -32,12 +33,13 @@ the "cleaned" name of the street. If the result is a street, road, square,
 or similar, and this has values for the property "named after", this is
 kept instead of the standard method.}
 
+\item{drop_if_street}{Defaults to TRUE. If the result found is primarily an
+instance of "street", "square", or such, as the result is probably the
+street itself, not what or who it is dedicated to.}
+
 \item{streets_sf}{Defaults to NULL. If given, used to speed up processing.
 Must be an sf object such as the ones output by `ll_osm_get_roads()`.
 Passed to `ll_osm_get_lau_streets()`.}
-}
-\value{
-
 }
 \description{
 Try to guess to whom a street is dedicated to

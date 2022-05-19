@@ -20,9 +20,6 @@ sn_get_gender_label(
 
 \item{cache}{Defaults to TRUE. Passed to `tidywikidatar`.}
 }
-\value{
-
-}
 \description{
 Get gender label based on a Wikidata Q identifier
 }

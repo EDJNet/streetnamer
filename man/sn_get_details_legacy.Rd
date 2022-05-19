@@ -19,9 +19,6 @@ sn_get_details_legacy(
 
 \item{cache}{Logical, defaults to TRUE.}
 }
-\value{
-
-}
 \description{
 Get a pre-defined set of details about
 }

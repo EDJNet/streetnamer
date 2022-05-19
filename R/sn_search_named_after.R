@@ -14,6 +14,9 @@
 #' @param streets_sf Defaults to NULL. If given, used to speed up processing.
 #'   Must be an sf object such as the ones output by `ll_osm_get_roads()`.
 #'   Passed to `ll_osm_get_lau_streets()`.
+#' @param drop_if_street Defaults to TRUE. If the result found is primarily an
+#'   instance of "street", "square", or such, as the result is probably the
+#'   street itself, not what or who it is dedicated to.
 #'
 #' @return
 #' @export
@@ -24,6 +27,7 @@ sn_search_named_after <- function(gisco_id,
                                   response_language = tidywikidatar::tw_get_language(),
                                   check_named_after_original = TRUE,
                                   check_named_after = TRUE,
+                                  drop_if_street = TRUE,
                                   streets_sf = NULL,
                                   cache = TRUE,
                                   overwrite_cache = FALSE,
@@ -155,7 +159,7 @@ sn_search_named_after <- function(gisco_id,
     dplyr::group_by(search) %>%
     dplyr::slice(1) %>%
     dplyr::ungroup() %>%
-    dplyr::rename(name_clean = search)
+    dplyr::rename(name_clean = search) 
 
   if (check_named_after == TRUE) {
     named_after_df <- tw_get_property(
@@ -209,14 +213,10 @@ sn_search_named_after <- function(gisco_id,
           disconnect_db = FALSE
         )
       )
+    
   }
 
-  tw_disconnect_from_cache(
-    cache = cache,
-    cache_connection = db_connection,
-    disconnect_db = disconnect_db,
-    language = language
-  )
+
 
   if (check_named_after == TRUE) {
     processed_df <- current_street_names_df %>%
@@ -247,11 +247,13 @@ sn_search_named_after <- function(gisco_id,
 
   if (check_named_after_original | check_named_after) {
     output_df <- dplyr::bind_rows(
-      output_df,
+      output_df %>% 
+        dplyr::mutate(named_after_from_wikidata = TRUE),
       current_street_names_df %>%
         dplyr::filter(!.data$name %in% exclude_v) %>%
         dplyr::left_join(
-          y = search_results_df,
+          y = search_results_df %>% 
+            dplyr::mutate(named_after_from_wikidata = FALSE),
           by = "name_clean"
         ) %>%
         dplyr::distinct(.data$name,
@@ -265,11 +267,43 @@ sn_search_named_after <- function(gisco_id,
         by = "name_clean"
       )
   }
-
-  current_street_names_df %>%
-    dplyr::left_join(
-      y = output_df %>%
-        dplyr::select(-.data$name_clean),
-      by = "name"
-    )
+  
+  if (drop_if_street==TRUE) {
+    final_output_df <- current_street_names_df %>%
+      dplyr::left_join(
+        y = output_df %>%
+          dplyr::select(-.data$name_clean) %>% 
+          dplyr::mutate(instance_of = tidywikidatar::tw_get_p1(id = id, p = "P31",         
+                                                              language = response_language,
+                                                              cache = cache,
+                                                              disconnect_db = FALSE,
+                                                              overwrite_cache = overwrite_cache,
+                                                              cache_connection = db_connection)) %>% 
+          dplyr::filter(!.data$instance_of %in% c(
+            "Q79007", # street
+            "Q174782", # square
+            "Q12280", # bridge
+            "Q3352369", # footpath
+            "Q34442", # road
+            "Q54114" # boulevard
+          )) %>% 
+          dplyr::select(-.data$instance_of),
+        by = "name"
+      ) 
+  } else {
+    final_output_df <- current_street_names_df %>%
+      dplyr::left_join(
+        y = output_df %>%
+          dplyr::select(-.data$name_clean),
+        by = "name"
+      ) 
+  }
+  
+  tw_disconnect_from_cache(
+    cache = cache,
+    cache_connection = db_connection,
+    disconnect_db = disconnect_db,
+    language = language
+  )
+  final_output_df
 }

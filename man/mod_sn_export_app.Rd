@@ -13,9 +13,6 @@ mod_sn_export_app(
 \arguments{
 \item{language}{}
 }
-\value{
-
-}
 \description{
 A minimal shiny app used for categorising streets
 }
