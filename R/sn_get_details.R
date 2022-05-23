@@ -315,20 +315,7 @@ sn_get_details_by_country <- function(country,
 
 #' Gets details for a single city
 #'
-#' @param gisco_id 
-#' @param collapse_lists 
-#' @param language 
-#' @param search_language 
-#' @param response_language 
-#' @param check_named_after_original 
-#' @param check_named_after 
-#' @param manual_check_columns 
-#' @param connection 
-#' @param base_folder 
-#' @param streets_sf 
-#' @param cache 
-#' @param overwrite_cache 
-#' @param disconnect_db 
+#' @inheritParams sn_search_named_after 
 #'
 #' @return
 #' @export
@@ -347,6 +334,7 @@ sn_get_details_by_lau <- function(gisco_id,
                                   connection = NULL,
                                   base_folder = "sn_data",
                                   streets_sf = NULL,
+                                  street_names_df = NULL,
                                   cache = TRUE,
                                   overwrite_cache = FALSE,
                                   disconnect_db = TRUE) {
@@ -379,7 +367,7 @@ sn_get_details_by_lau <- function(gisco_id,
   
   
   
-  purrr::map_dfr(
+  all_df <- purrr::map_dfr(
     .x = gisco_id,
     .f = function(x) {
       city_name <- streetnamer::sn_lau_by_country %>%
@@ -426,6 +414,7 @@ sn_get_details_by_lau <- function(gisco_id,
           check_named_after_original = check_named_after_original,
           check_named_after = check_named_after,
           streets_sf = streets_sf,
+          street_names_df = street_names_df, 
           connection = connection_search_db,
           cache = cache,
           overwrite_cache = overwrite_cache,
@@ -625,6 +614,8 @@ sn_get_details_by_lau <- function(gisco_id,
     disconnect_db = disconnect_db,
     language = language
   )
+  
+  all_df
 }
 
 #' Get a pre-defined set of details about

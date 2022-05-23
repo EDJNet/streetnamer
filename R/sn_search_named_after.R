@@ -1,6 +1,6 @@
 #' Try to guess to whom a street is dedicated to
 #'
-#' @param gisco_id
+#' @param gisco_id A gisco identifier of a European LAU.
 #' @param search_language Defaults to NULL, guessed based on country.
 #' @param response_language Defaults to `tidywikidatar::tw_get_language()`. Used
 #'   for defining the language in which label and description are returned.
@@ -14,6 +14,11 @@
 #' @param streets_sf Defaults to NULL. If given, used to speed up processing.
 #'   Must be an sf object such as the ones output by `ll_osm_get_roads()`.
 #'   Passed to `ll_osm_get_lau_streets()`.
+#' @param street_names_df Defaults to NULL. If TRUE, must be a data frame with
+#'   two columns, named "name" and "name_clean" respectively. If given, these
+#'   are passed directly to the search routine. Useful when name cleaning
+#'   provided by the package is not satisfying, e.g. in places such as some
+#'   Belgian cities where street names are given in more than one language.
 #' @param drop_if_street Defaults to TRUE. If the result found is primarily an
 #'   instance of "street", "square", or such, as the result is probably the
 #'   street itself, not what or who it is dedicated to.
@@ -29,6 +34,7 @@ sn_search_named_after <- function(gisco_id,
                                   check_named_after = TRUE,
                                   drop_if_street = TRUE,
                                   streets_sf = NULL,
+                                  street_names_df = NULL, 
                                   cache = TRUE,
                                   overwrite_cache = FALSE,
                                   connection = NULL,
@@ -56,27 +62,32 @@ sn_search_named_after <- function(gisco_id,
   }
 
 
-  current_street_names_df <- latlon2map::ll_osm_get_lau_streets(
-    gisco_id = gisco_id,
-    unnamed_streets = FALSE,
-    streets_sf = streets_sf
-  ) %>%
-    sf::st_drop_geometry() %>%
-    dplyr::distinct(name) %>%
-    dplyr::mutate(name_clean = sn_clean_street_name(
-      street_name = name,
-      country = country_name
-    )) %>% 
-    dplyr::mutate(name = name %>% stringr::str_replace_all(pattern = stringr::fixed("\\"), replacement = " ") %>% stringr::str_squish(),
-                  name_clean = name_clean %>% stringr::str_replace_all(pattern = stringr::fixed("\\"), replacement = " ") %>% stringr::str_squish())
-  
+  if (is.null(street_names_df)) {
+    current_street_names_df <- latlon2map::ll_osm_get_lau_streets(
+      gisco_id = gisco_id,
+      unnamed_streets = FALSE,
+      streets_sf = streets_sf
+    ) %>%
+      sf::st_drop_geometry() %>%
+      dplyr::distinct(name) %>%
+      dplyr::mutate(name_clean = sn_clean_street_name(
+        street_name = name,
+        country = country_name
+      )) %>% 
+      dplyr::mutate(name = name %>% stringr::str_replace_all(pattern = stringr::fixed("\\"), replacement = " ") %>% stringr::str_squish(),
+                    name_clean = name_clean %>% stringr::str_replace_all(pattern = stringr::fixed("\\"), replacement = " ") %>% stringr::str_squish())
+    
+  } else {
+    current_street_names_df <- street_names_df %>% 
+      dplyr::mutate(name = name %>% stringr::str_replace_all(pattern = stringr::fixed("\\"), replacement = " ") %>% stringr::str_squish(),
+                    name_clean = name_clean %>% stringr::str_replace_all(pattern = stringr::fixed("\\"), replacement = " ") %>% stringr::str_squish())
+  }
+
   language_combo <- stringr::str_c(search_language, "_", response_language)
   
   db_connection <- tidywikidatar::tw_connect_to_cache(connection = connection,
                                                       language = language_combo,
                                                       cache = cache)
-
-  output_street_name_df <- current_street_names_df
 
   exclude_v <- as.character(NA)[FALSE]
 

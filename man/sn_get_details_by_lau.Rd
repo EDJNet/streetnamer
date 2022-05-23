@@ -16,39 +16,38 @@ sn_get_details_by_lau(
   connection = NULL,
   base_folder = "sn_data",
   streets_sf = NULL,
+  street_names_df = NULL,
   cache = TRUE,
   overwrite_cache = FALSE,
   disconnect_db = TRUE
 )
 }
 \arguments{
-\item{gisco_id}{}
+\item{gisco_id}{A gisco identifier of a European LAU.}
 
-\item{collapse_lists}{}
+\item{search_language}{Defaults to NULL, guessed based on country.}
 
-\item{language}{}
+\item{response_language}{Defaults to `tidywikidatar::tw_get_language()`. Used
+for defining the language in which label and description are returned.}
 
-\item{search_language}{}
+\item{check_named_after_original}{Defaults to TRUE. If TRUE, a search is
+performed on the original street name. If the first result has values for
+the property "named after", this takes precedence over other methods.}
 
-\item{response_language}{}
+\item{check_named_after}{Defaults to TRUE. If TRUE, a search is performed on
+the "cleaned" name of the street. If the result is a street, road, square,
+or similar, and this has values for the property "named after", this is
+kept instead of the standard method.}
 
-\item{check_named_after_original}{}
+\item{streets_sf}{Defaults to NULL. If given, used to speed up processing.
+Must be an sf object such as the ones output by `ll_osm_get_roads()`.
+Passed to `ll_osm_get_lau_streets()`.}
 
-\item{check_named_after}{}
-
-\item{manual_check_columns}{}
-
-\item{connection}{}
-
-\item{base_folder}{}
-
-\item{streets_sf}{}
-
-\item{cache}{}
-
-\item{overwrite_cache}{}
-
-\item{disconnect_db}{}
+\item{street_names_df}{Defaults to NULL. If TRUE, must be a data frame with
+two columns, named "name" and "name_clean" respectively. If given, these
+are passed directly to the search routine. Useful when name cleaning
+provided by the package is not satisfying, e.g. in places such as some
+Belgian cities where street names are given in more than one language.}
 }
 \description{
 Gets details for a single city

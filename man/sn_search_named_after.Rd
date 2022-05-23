@@ -12,6 +12,7 @@ sn_search_named_after(
   check_named_after = TRUE,
   drop_if_street = TRUE,
   streets_sf = NULL,
+  street_names_df = NULL,
   cache = TRUE,
   overwrite_cache = FALSE,
   connection = NULL,
@@ -19,6 +20,8 @@ sn_search_named_after(
 )
 }
 \arguments{
+\item{gisco_id}{A gisco identifier of a European LAU.}
+
 \item{search_language}{Defaults to NULL, guessed based on country.}
 
 \item{response_language}{Defaults to `tidywikidatar::tw_get_language()`. Used
@@ -40,6 +43,12 @@ street itself, not what or who it is dedicated to.}
 \item{streets_sf}{Defaults to NULL. If given, used to speed up processing.
 Must be an sf object such as the ones output by `ll_osm_get_roads()`.
 Passed to `ll_osm_get_lau_streets()`.}
+
+\item{street_names_df}{Defaults to NULL. If TRUE, must be a data frame with
+two columns, named "name" and "name_clean" respectively. If given, these
+are passed directly to the search routine. Useful when name cleaning
+provided by the package is not satisfying, e.g. in places such as some
+Belgian cities where street names are given in more than one language.}
 }
 \description{
 Try to guess to whom a street is dedicated to
