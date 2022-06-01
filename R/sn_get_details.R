@@ -275,7 +275,7 @@ sn_get_details_by_country <- function(country,
         }
         
         
-        print(current_file)
+        print(stringr::str_c(current_file))
         readr::write_csv(x = output_df, file = current_file)
         
         readr::write_csv(
@@ -577,7 +577,7 @@ sn_get_details_by_lau <- function(gisco_id,
         }
         
         
-        print(current_file)
+        print(stringr::str_c(current_file))
         readr::write_csv(x = output_df, file = current_file)
         
         readr::write_csv(

@@ -188,7 +188,8 @@ sn_search_named_after <- function(gisco_id,
         "Q12280", # bridge
         "Q3352369", # footpath
         "Q34442", # road
-        "Q54114" # boulevard
+        "Q54114", # boulevard
+        "Q24354" # theater
       )) %>%
       dplyr::left_join(
         y = search_results_df,

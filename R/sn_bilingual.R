@@ -19,10 +19,12 @@ sn_get_clean_street_name_bilingual_df <- function(gisco_id) {
     sf::st_drop_geometry() %>%
     dplyr::distinct(name)
   
-  if (gisco_id == "BE_21004") {
+  if (gisco_id %in% c("BE_21004", "BE_21015", "BE_21001", "BE_21012", "BE_21016")) {
     name_clean_df <- current_street_names_df %>% 
       tidyr::separate(col = name, into = c("French", "Flemish"), sep = " - ", remove = FALSE) %>% 
-      dplyr::transmute(name, name_clean = French)
+      dplyr::transmute(name, name_clean = French) %>% 
+      dplyr::mutate(name_clean = sn_clean_street_name(street_name = .data$name_clean,
+                                                      country = "Belgium"))
   } else {
     usethis::ui_warn("Doing standard name cleaning, as no custom rule for the given gisco_id is currently available.")
     name_clean_df <- current_street_names_df %>%  

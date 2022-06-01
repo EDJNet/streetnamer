@@ -29,20 +29,20 @@ sn_clean_street_name <- function(street_name,
     country_slice <- streetnamer::sn_country_codes %>%
       dplyr::mutate(country_lower = stringr::str_to_lower(Name)) %>%
       dplyr::filter(.data$country_lower == country_lower_v)
-
+    
     country_name <- country_slice %>%
       dplyr::pull(.data$Name)
     country_code <- country_slice %>%
       dplyr::pull(.data$Code)
   }
-
+  
   if (country_name == "Austria") {
     country_name <- "Germany"
   } else {
     country_name <- country
   }
-
-
+  
+  
   if (country_name %in% unique(sn_street_name_to_remove_df[["country"]])) {
     street_name <- stringr::str_remove_all(
       string = street_name,
@@ -55,7 +55,7 @@ sn_clean_street_name <- function(street_name,
   } else {
     usethis::ui_info("No available method for this country.")
   }
-
+  
   if (country_name == "Germany") {
     street_name <- stringr::str_replace_all(
       string = street_name,
@@ -84,7 +84,7 @@ sn_clean_street_name <- function(street_name,
       }
     )
   }
-
+  
   street_name %>%
     stringr::str_squish() %>%
     stringr::str_replace_all(pattern = stringr::fixed("\\"), replacement = " ")
@@ -105,14 +105,20 @@ sn_clean_street_name <- function(street_name,
 sn_clean_street_name_polish <- function(street_name) {
   if (stringr::str_detect(string = street_name, pattern = "ego$")) {
     split_string <- stringr::str_split(string = street_name, pattern = "[[:space:]]", simplify = TRUE) %>% as.character()
-
+    
     split_string[length(split_string)] <- split_string[length(split_string)] %>% stringr::str_remove(pattern = "ego")
-
-    for (i in 1:max(1, (length(split_string) - 1))) {
+    
+    for (i in 1:max(1, (length(split_string)))) {
       if (stringr::str_detect(string = split_string[i], pattern = "rzego$")) {
         split_string[i] <- stringr::str_replace(string = split_string[i], pattern = "rzego$", replacement = "rzy")
-      } else if (stringr::str_detect(string = split_string[i], pattern = "ła$")) {
-        split_string[i] <- stringr::str_replace(string = split_string[i], pattern = "ła$", replacement = "eł")
+      } else if (stringr::str_detect(string = split_string[i], pattern = "Świętego$")) {
+        split_string[i] <- stringr::str_replace(string = split_string[i], pattern = "tego$", replacement = "ty")
+      } else if (stringr::str_detect(string = split_string[i], pattern = "Generała$")) {
+        split_string[i] <- stringr::str_replace(string = split_string[i], pattern = "ła$", replacement = "ł")
+      } else if (stringr::str_detect(string = split_string[i], pattern = "ława$")) {
+        split_string[i] <- stringr::str_replace(string = split_string[i], pattern = "ława$", replacement = "ław")
+      } else if (stringr::str_detect(string = split_string[i], pattern = "Ignacego")) {
+        split_string[i] <- stringr::str_replace(string = split_string[i], pattern = "Ignacego$", replacement = "Ignacy")
       } else if (stringr::str_detect(string = split_string[i], pattern = "ego$")) {
         split_string[i] <- stringr::str_replace(string = split_string[i], pattern = "ego$", replacement = "")
       } else if (stringr::str_detect(string = split_string[i], pattern = "szka$")) {
@@ -121,8 +127,133 @@ sn_clean_street_name_polish <- function(street_name) {
         split_string[i] <- stringr::str_remove(string = split_string[i], pattern = "a$")
       }
     }
-    stringr::str_c(split_string, collapse = " ")
+    return(stringr::str_c(split_string, collapse = " ") %>% stringr::str_squish())
   } else {
+    split_string <- stringr::str_split(string = street_name, pattern = "[[:space:]]", simplify = TRUE) %>% as.character()
+    name_replace_m_v <- c(Adama = "Adam",
+                          Adolfa = "Adolf",
+                          Aleksandra = "Aleksander",
+                          Andrzeja = "Andrzej",
+                          Antoniego = "Antoni",
+                          Augusta = "August",
+                          Bolesława = "Bolesław",
+                          Bronisława = "Bronisław",
+                          Czesława = "Czesław",
+                          Edwarda = "Edward",
+                          Eugeniusza = "Eugeniusz",
+                          Franciszka = "Franciszek",
+                          Gabriela = "Gabriel",
+                          Grzegorza = "Grzegorz",
+                          Gustawa = "Gustaw",
+                          Henryka = "Henryk",
+                          Ignacego = "Ignacy",
+                          Jana = "Jan",
+                          Janusza = "Janusz",
+                          Jarosława = "Jarosław",
+                          Jerzego = "Jerzy",
+                          Józefa = "Józef",
+                          Juliana = "Julian",
+                          Juliusza = "Juliusz",
+                          Leona = "Leon",
+                          Leopolda = "Leopold",
+                          Leszka = "Leszek",
+                          Ludwika = "Ludwik",
+                          Karola = "Karol",
+                          Kazimierza = "Kazimierz",
+                          Krzysztofa = "Krzysztof",
+                          Macieja = "Maciej",
+                          Maksymiliana = "Maksymilian",
+                          Mariana = "Marian",
+                          Michała = "Michał",
+                          Mieczysława = "Mieczysław",
+                          Mikołaja = "Mikołaj",
+                          Pabla = "Pablo",
+                          Piotra = "Piotr",
+                          Romana = "Roman",
+                          Romualda = "Romuald",
+                          Seweryna = "Seweryn",
+                          Stanisława = "Stanisław",
+                          Stefana = "Stefan",
+                          Tadeusza = "Tadeusz",
+                          Teodora = "Teodor",
+                          Tomasza = "Tomasz",
+                          Wacława = "Wacław",
+                          Wawrzyńca = "Wawrzyniec",
+                          Wincentego = "Wincent",
+                          Witolda = "Witold",
+                          Władysława = "Władysław",
+                          Włodzimierza = "Włodzimierz",
+                          Wojciecha = "Wojciech",
+                          Zbigniewa = "Zbigniew",
+                          Zdzisława = "Zdzisław",
+                          Zygmunta= "Zygmunt",
+                          Świętego = "Święty")
+    
+    name_replace_f_v <- c(Aleksandry = "Aleksandra",
+                          Heleny = "Helena",
+                          Natalii = "Natalia",
+                          Wisławy = "Wisława",
+                          Marii = "Maria",
+                          Świętej = "Święta",
+                          Księżnej = "Księżna",
+                          Bitwa = "Bitwy")
+    
+    if (split_string[1] %in% names(name_replace_m_v)) {
+      
+      if (stringr::str_detect(string = split_string[1], pattern = "Świętego$")) {
+        split_string[1] <- stringr::str_replace(string = split_string[1], pattern = "tego$", replacement = "ty")
+      } else {
+        split_string[1] <-  stringr::str_replace_all(string = split_string[1], name_replace_m_v)
+      }
+      
+      if (length(split_string)>1) {
+        for (j in 2:length(split_string)) {
+          if (stringr::str_detect(string = split_string[j], pattern = "a$")) {
+            split_string[j] <- stringr::str_replace(string = split_string[j],
+                                                    pattern = "a$",
+                                                    replacement = "")
+          }
+        }
+        
+      }
+      
+      return(stringr::str_c(split_string, collapse = " ") %>%
+               stringr::str_squish())
+    } else if (split_string[1] %in% names(name_replace_f_v)){
+      split_string[1] <-  stringr::str_replace_all(string = split_string[1], name_replace_f_v)
+      
+      
+      if (length(split_string)>1) {
+        for (j in 2:length(split_string)) {
+          if (stringr::str_detect(string = split_string[j], pattern = "iej$")) {
+            split_string[j] <- stringr::str_replace(string = split_string[j],
+                                                    pattern = "iej$",
+                                                    replacement = "a")
+          } else if (stringr::str_detect(string = split_string[j], pattern = "ówny$")) {
+            split_string[j] <- stringr::str_replace(string = split_string[j],
+                                                    pattern = "ówny$",
+                                                    replacement = "ówna")
+          } else if (stringr::str_detect(string = split_string[j], pattern = "y$")) {
+            split_string[j] <- stringr::str_replace(string = split_string[j],
+                                                    pattern = "y$",
+                                                    replacement = "a")
+          } else if (stringr::str_detect(string = split_string[j], pattern = "igi$")) {
+            split_string[j] <- stringr::str_replace(string = split_string[j],
+                                                    pattern = "igi$",
+                                                    replacement = "iga")
+          } else if (stringr::str_detect(string = split_string[j], pattern = "ngi$")) {
+            split_string[j] <- stringr::str_replace(string = split_string[j],
+                                                    pattern = "ngi$",
+                                                    replacement = "nga")
+          }
+        }
+        
+      }
+     
+      
+      return(stringr::str_c(split_string, collapse = " ") %>%
+               stringr::str_squish())
+    }
     street_name
   }
 }
@@ -146,14 +277,14 @@ sn_clean_street_name_romanian <- function(street_name) {
       simplify = TRUE
     ) %>%
       as.character()
-
+    
     split_string[length(split_string)] <- split_string[length(split_string)] %>%
       stringr::str_replace(
         pattern = "ății$",
         replacement = "atea"
       )
-
-
+    
+    
     stringr::str_c(split_string, collapse = " ")
   } else if (stringr::str_detect(string = street_name, pattern = "ului$")) {
     split_string <- stringr::str_split(
@@ -161,10 +292,10 @@ sn_clean_street_name_romanian <- function(street_name) {
       simplify = TRUE
     ) %>%
       as.character()
-
+    
     split_string[length(split_string)] <- split_string[length(split_string)] %>%
       stringr::str_remove(pattern = "ului$")
-
+    
     stringr::str_c(split_string, collapse = " ")
   } else if (stringr::str_detect(string = street_name, pattern = "ilor$|elor$")) {
     split_string <- stringr::str_split(
@@ -173,7 +304,7 @@ sn_clean_street_name_romanian <- function(street_name) {
       simplify = TRUE
     ) %>%
       as.character()
-
+    
     split_string[length(split_string)] <- split_string[length(split_string)] %>%
       stringr::str_remove(pattern = "lor$")
     stringr::str_c(split_string, collapse = " ")
@@ -184,7 +315,7 @@ sn_clean_street_name_romanian <- function(street_name) {
       simplify = TRUE
     ) %>%
       as.character()
-
+    
     split_string[length(split_string)] <- split_string[length(split_string)] %>%
       stringr::str_replace(
         pattern = "iei$",
@@ -198,7 +329,7 @@ sn_clean_street_name_romanian <- function(street_name) {
       simplify = TRUE
     ) %>%
       as.character()
-
+    
     split_string[length(split_string)] <- split_string[length(split_string)] %>%
       stringr::str_replace(
         pattern = "ței$",
@@ -212,7 +343,7 @@ sn_clean_street_name_romanian <- function(street_name) {
       simplify = TRUE
     ) %>%
       as.character()
-
+    
     split_string[length(split_string)] <- split_string[length(split_string)] %>%
       stringr::str_replace(
         pattern = "dei$",
@@ -226,7 +357,7 @@ sn_clean_street_name_romanian <- function(street_name) {
       simplify = TRUE
     ) %>%
       as.character()
-
+    
     split_string[length(split_string)] <- split_string[length(split_string)] %>%
       stringr::str_replace(
         pattern = "vei$",
@@ -240,7 +371,7 @@ sn_clean_street_name_romanian <- function(street_name) {
       simplify = TRUE
     ) %>%
       as.character()
-
+    
     if (length(split_string) == 1) {
       split_string[length(split_string)] <- split_string[length(split_string)] %>%
         stringr::str_replace(
@@ -248,7 +379,7 @@ sn_clean_street_name_romanian <- function(street_name) {
           replacement = "ca"
         )
     }
-
+    
     stringr::str_c(split_string, collapse = " ")
   } else {
     street_name
@@ -273,56 +404,84 @@ sn_clean_street_name_greek <- function(street_name) {
                                      simplify = TRUE) %>%
     as.character()
   
-  for (i in 1:max(1, (length(split_string) - 1))) {
+  if (stringr::str_detect(string =  street_name, pattern =  "^Αγίου ")) {
+    split_string[1] <- stringr::str_replace(string = split_string[1],
+                                            pattern = "^Αγίου",
+                                            replacement = "Αγίος")
     
-    if (stringr::str_detect(string =  split_string[i], pattern =  "^Αγίου ")) {
-      split_string[i] <- stringr::str_replace(string = split_string[i],
-                                              pattern = "^Αγίου ",
-                                              replacement = "Αγίους ")
-    } else if (stringr::str_detect(string =  split_string[i], pattern =  "^Αγίων ")){
-      split_string[i] <- stringr::str_replace(string = split_string[i],
-                                              pattern = "^Αγίων ",
-                                              replacement = "Αγιοι ")
-    } else if (stringr::str_detect(string =  split_string[i], pattern =  "^Αγ. ")) {
-      split_string[i] <- stringr::str_replace(string = split_string[i],
-                                              pattern = "^Αγ. ",
-                                              replacement = "Αγίους ")
-      
-    } else if (stringr::str_detect(string =  split_string[i], pattern = "λέους$")) {
-      split_string[i] <- stringr::str_replace(string = split_string[i],
-                                              pattern = "λέους$",
-                                              replacement = "λής")
-    } else if (stringr::str_detect(string =  split_string[i], pattern = "ους$")) {
-      split_string[i] <- stringr::str_replace(string = split_string[i],
-                                              pattern = "ους$",
-                                              replacement = "ης")
-    } else if (stringr::str_detect(string = street_name, pattern = "ανών$")) {
-      split_string[i] <- stringr::str_replace(string = split_string[i],
-                                              pattern = "ανών$",
-                                              replacement = "ανά")
-    } else if (stringr::str_detect(string = street_name, pattern = "α$")) {
-      split_string[i] <- stringr::str_replace(string = split_string[i],
-                                              pattern = "α$",
-                                              replacement = "ας")
-    } else if (stringr::str_detect(string =  split_string[i], pattern = "ου$")) {
-      split_string[i] <- stringr::str_replace(string = split_string[i],
-                                              pattern = "ου$",
-                                              replacement = "ος")
-    } else if (stringr::str_detect(string =  split_string[i], pattern = "η$")) {
-      split_string[i] <- stringr::str_replace(string = split_string[i],
-                                              pattern = "η$",
-                                              replacement = "ης")
-    } else if (stringr::str_detect(string =  split_string[i], pattern = "ης$")) {
-      split_string[i] <- stringr::str_replace(string = split_string[i],
-                                              pattern = "ης$",
-                                              replacement = "η")
-    } else if (stringr::str_detect(string =  split_string[i], pattern = "ων$")) {
-      split_string[i] <- stringr::str_replace(string = split_string[i],
-                                              pattern = "ων$",
-                                              replacement = "οι")
+    split_string[2] <- stringr::str_replace(string = split_string[2],
+                                            pattern = "ου$",
+                                            replacement = "ος")
+  } else if (stringr::str_detect(string =  street_name, pattern =  "^Αγίας ")) {
+    split_string[1] <- stringr::str_replace(string = split_string[1],
+                                            pattern = "^Αγίας",
+                                            replacement = "Αγία")
+    
+    split_string[2] <- stringr::str_replace(string = split_string[2],
+                                            pattern = "ας$",
+                                            replacement = "α")
+  } else {
+    
+    
+    for (i in 1:max(1, (length(split_string)))) {
+      if (stringr::str_detect(string =  split_string[i], pattern =  "ονος$")) {
+        split_string[i] <- stringr::str_replace(string = split_string[i],
+                                                pattern = "ονος$",
+                                                replacement = "ων")
+      } else if (stringr::str_detect(string =  split_string[i], pattern =  "^Αγίου ")) {
+        split_string[i] <- stringr::str_replace(string = split_string[i],
+                                                pattern = "^Αγίου ",
+                                                replacement = "Αγίους ")
+      } else if (stringr::str_detect(string =  split_string[i], pattern =  "^Αγίων ")){
+        split_string[i] <- stringr::str_replace(string = split_string[i],
+                                                pattern = "^Αγίων ",
+                                                replacement = "Αγιοι ")
+      } else if (stringr::str_detect(string =  split_string[i], pattern =  "^Αγ. ")) {
+        split_string[i] <- stringr::str_replace(string = split_string[i],
+                                                pattern = "^Αγ. ",
+                                                replacement = "Αγίους ")
+        
+      } else if (stringr::str_detect(string =  split_string[i], pattern = "λέους$")) {
+        split_string[i] <- stringr::str_replace(string = split_string[i],
+                                                pattern = "λέους$",
+                                                replacement = "λής")
+      } else if (stringr::str_detect(string =  split_string[i], pattern = "ους$")) {
+        split_string[i] <- stringr::str_replace(string = split_string[i],
+                                                pattern = "ους$",
+                                                replacement = "ης")
+      } else if (stringr::str_detect(string = street_name, pattern = "ανών$")) {
+        split_string[i] <- stringr::str_replace(string = split_string[i],
+                                                pattern = "ανών$",
+                                                replacement = "ανά")
+      } else if (stringr::str_detect(string = street_name, pattern = "α$")) {
+        split_string[i] <- stringr::str_replace(string = split_string[i],
+                                                pattern = "α$",
+                                                replacement = "ας")
+      } else if (stringr::str_detect(string = street_name, pattern = "ας$")) {
+        split_string[i] <- stringr::str_replace(string = split_string[i],
+                                                pattern = "ας$",
+                                                replacement = "α")
+      } else if (stringr::str_detect(string =  split_string[i], pattern = "ου$")) {
+        split_string[i] <- stringr::str_replace(string = split_string[i],
+                                                pattern = "ου$",
+                                                replacement = "ος")
+      } else if (stringr::str_detect(string =  split_string[i], pattern = "η$")) {
+        split_string[i] <- stringr::str_replace(string = split_string[i],
+                                                pattern = "η$",
+                                                replacement = "ης")
+      } else if (stringr::str_detect(string =  split_string[i], pattern = "ης$")) {
+        split_string[i] <- stringr::str_replace(string = split_string[i],
+                                                pattern = "ης$",
+                                                replacement = "η")
+      } else if (stringr::str_detect(string =  split_string[i], pattern = "ων$")) {
+        split_string[i] <- stringr::str_replace(string = split_string[i],
+                                                pattern = "ων$",
+                                                replacement = "οι")
+      }
     }
   }
-
+  
+  
   stringr::str_c(split_string, collapse = " ") %>% 
     stringr::str_squish()
   

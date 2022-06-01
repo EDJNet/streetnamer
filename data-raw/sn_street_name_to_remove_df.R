@@ -209,53 +209,6 @@ sn_street_name_to_remove_df <- dplyr::bind_rows(
       )
   ),
   tibble::tibble(
-    country = "Portugal",
-    string = c(
-      "Alameda ",
-      "Avenida das ",
-      "Avenida da ",
-      "Avenida dos ",
-      "Avenida do ",
-      "Avenida de ",
-      "Avenida ",
-      "Caminho do ",
-      "Estrada da ",
-      "Estrada das ",
-      "Estrada dos ",
-      "Estrada do ",
-      "Estrada de ",
-      "Estrada ",
-      "Largo do ",
-      "Largo da ",
-      "Largo dos ",
-      "Largo das ",
-      "Largo de ",
-      "Largo ",
-      "Praça do ",
-      "Praça da ",
-      "Praça dos ",
-      "Praça das ",
-      "Praça de ",
-      "Praça ",
-      "Praceta da ",
-      "Praceta de ",
-      "Praceta ",
-      "Rua da ",
-      "Rua das ",
-      "Rua dos ",
-      "Rua do ",
-      "Rua de ",
-      "Rua ",
-      "Travessa da ",
-      "Travessa das ",
-      "Travessa dos ",
-      "Travessa do ",
-      "Travessa de ",
-      "Travessa "
-    ) %>%
-      stringr::str_c("^", .)
-  ),
-  tibble::tibble(
     country = "Hungary",
     string = c(
       " utca",
@@ -282,7 +235,34 @@ sn_street_name_to_remove_df <- dplyr::bind_rows(
     country = "Poland",
     string = c(
       "rondo ",
-      "aleja "
+      "aleja ",
+      "Alejka ",
+      "(Alejka) ",
+      "Bulwar ",
+      "Most ",
+      "Mostek ",
+      "Pasaż ",
+      "Pętla ",
+      "rondo imienia ",
+      "Rondo ",
+      "Doktora ",
+      "Harcmistrza ",
+      "Księdza ",
+      "Błogosławionego ",
+      "Błogosławionej ",
+      "Generała ",
+      "Kapitana ",
+      "Kardynała ",
+      "Profesora ",
+      "Pułkownika ",
+      "Arcybiskupa ",
+      "Majora ",
+      "Marszałka ",
+      "Plac ",
+      "Skwer ",
+      "Strona ",
+      "Wiadukt ",
+      "Wybrzeże "
     ) %>%
       stringr::str_c("^", .)
   ),
@@ -368,7 +348,6 @@ sn_street_name_to_remove_df <- dplyr::bind_rows(
         }
       ) %>%
         unlist() %>%
-        stringr::str_squish() %>%
         unique()
     ) %>%
       stringr::str_c("^", .)
@@ -439,7 +418,52 @@ sn_street_name_to_remove_df <- dplyr::bind_rows(
         }
       ) %>%
         unlist() %>%
-        stringr::str_squish() %>%
+        unique()
+    ) %>%
+      stringr::str_c("^", .)
+  ),
+  tibble::tibble(
+    country = "Portugal",
+    string = c(
+      purrr::map(
+        .x = c(
+          "Alameda ",
+          "Azinhaga ",
+          "Avenida ",
+          "Bairro ",
+          "Beco ",
+          "Calçada ",
+          "Caminho ",
+          "Canto ",
+          "Escadaria ",
+          "Escadas ",
+          "Escadinhas ",
+          "Estrada ",
+          "Ladeira ",
+          "Largo ",
+          "Praça ",
+          "Praceta ",
+          "Rua ",
+          "Travessa ",
+          "Trilho ",
+          "Viaduto ",
+          "Viela "
+        ),
+        .f = function(x) {
+          stringr::str_c(
+            x,
+            c("das ", 
+              "dos ",
+              "da ",
+              "do ",
+              "de ",
+              "",
+              collapse = " "
+            )
+          )
+        }
+      ) %>%
+        unlist() %>%
         unique()
     ) %>%
       stringr::str_c("^", .)
