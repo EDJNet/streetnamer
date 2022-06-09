@@ -123,6 +123,10 @@ sn_clean_street_name_polish <- function(street_name) {
         split_string[i] <- stringr::str_replace(string = split_string[i], pattern = "ego$", replacement = "")
       } else if (stringr::str_detect(string = split_string[i], pattern = "szka$")) {
         split_string[i] <- stringr::str_replace(string = split_string[i], pattern = "szka$", replacement = "szek")
+      } else if (stringr::str_detect(string = split_string[i], pattern = "ndra$")) {
+        split_string[j] <- stringr::str_replace(string = split_string[i],
+                                                pattern = "ndra$",
+                                                replacement = "nder")
       } else {
         split_string[i] <- stringr::str_remove(string = split_string[i], pattern = "a$")
       }
@@ -208,7 +212,11 @@ sn_clean_street_name_polish <- function(street_name) {
       
       if (length(split_string)>1) {
         for (j in 2:length(split_string)) {
-          if (stringr::str_detect(string = split_string[j], pattern = "a$")) {
+          if (stringr::str_detect(string = split_string[j], pattern = "ndra$")) {
+            split_string[j] <- stringr::str_replace(string = split_string[j],
+                                                    pattern = "ndra$",
+                                                    replacement = "nder")
+          } else if (stringr::str_detect(string = split_string[j], pattern = "a$")) {
             split_string[j] <- stringr::str_replace(string = split_string[j],
                                                     pattern = "a$",
                                                     replacement = "")
@@ -418,8 +426,8 @@ sn_clean_street_name_greek <- function(street_name) {
                                             replacement = "Αγία")
     
     split_string[2] <- stringr::str_replace(string = split_string[2],
-                                            pattern = "ας$",
-                                            replacement = "α")
+                                            pattern = "ς$",
+                                            replacement = "")
   } else {
     
     
@@ -465,6 +473,10 @@ sn_clean_street_name_greek <- function(street_name) {
         split_string[i] <- stringr::str_replace(string = split_string[i],
                                                 pattern = "ου$",
                                                 replacement = "ος")
+      } else if (stringr::str_detect(string =  split_string[i], pattern = "ού$")) {
+        split_string[i] <- stringr::str_replace(string = split_string[i],
+                                                pattern = "ού$",
+                                                replacement = "ός")
       } else if (stringr::str_detect(string =  split_string[i], pattern = "η$")) {
         split_string[i] <- stringr::str_replace(string = split_string[i],
                                                 pattern = "η$",
@@ -473,6 +485,10 @@ sn_clean_street_name_greek <- function(street_name) {
         split_string[i] <- stringr::str_replace(string = split_string[i],
                                                 pattern = "ης$",
                                                 replacement = "η")
+      } else if (stringr::str_detect(string =  split_string[i], pattern = "ής$")) {
+        split_string[i] <- stringr::str_replace(string = split_string[i],
+                                                pattern = "ής$",
+                                                replacement = "ή")
       } else if (stringr::str_detect(string =  split_string[i], pattern = "ων$")) {
         split_string[i] <- stringr::str_replace(string = split_string[i],
                                                 pattern = "ων$",

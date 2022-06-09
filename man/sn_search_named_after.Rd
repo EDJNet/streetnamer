@@ -9,10 +9,12 @@ sn_search_named_after(
   search_language = NULL,
   response_language = tidywikidatar::tw_get_language(),
   check_named_after_original = TRUE,
+  check_named_after_original_n = 1,
   check_named_after = TRUE,
   drop_if_street = TRUE,
   streets_sf = NULL,
   street_names_df = NULL,
+  checked_df = NULL,
   cache = TRUE,
   overwrite_cache = FALSE,
   connection = NULL,
@@ -30,6 +32,8 @@ for defining the language in which label and description are returned.}
 \item{check_named_after_original}{Defaults to TRUE. If TRUE, a search is
 performed on the original street name. If the first result has values for
 the property "named after", this takes precedence over other methods.}
+
+\item{check_named_after_original_n}{Defaults to 1.}
 
 \item{check_named_after}{Defaults to TRUE. If TRUE, a search is performed on
 the "cleaned" name of the street. If the result is a street, road, square,
@@ -49,6 +53,9 @@ two columns, named "name" and "name_clean" respectively. If given, these
 are passed directly to the search routine. Useful when name cleaning
 provided by the package is not satisfying, e.g. in places such as some
 Belgian cities where street names are given in more than one language.}
+
+\item{checked_df}{Defaults to NULL. If given, a data frame with a `name` and
+`id`. Takes precedence over searches.}
 }
 \description{
 Try to guess to whom a street is dedicated to

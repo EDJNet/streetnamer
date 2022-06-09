@@ -12,8 +12,10 @@ sn_get_details_by_lau(
   response_language = tidywikidatar::tw_get_language(),
   check_named_after_original = TRUE,
   check_named_after = TRUE,
+  checked_df = NULL,
   manual_check_columns = FALSE,
   connection = NULL,
+  connection_search = NULL,
   base_folder = "sn_data",
   streets_sf = NULL,
   street_names_df = NULL,
@@ -38,6 +40,9 @@ the property "named after", this takes precedence over other methods.}
 the "cleaned" name of the street. If the result is a street, road, square,
 or similar, and this has values for the property "named after", this is
 kept instead of the standard method.}
+
+\item{checked_df}{Defaults to NULL. If given, a data frame with a `name` and
+`id`. Takes precedence over searches.}
 
 \item{streets_sf}{Defaults to NULL. If given, used to speed up processing.
 Must be an sf object such as the ones output by `ll_osm_get_roads()`.
