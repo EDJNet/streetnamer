@@ -69,7 +69,14 @@ sn_clean_street_name <- function(street_name,
         sn_clean_street_name_polish(x)
       }
     )
-  } else if (country_name == "Romania") {
+  }else if (country_name == "Croatia") {
+    street_name <- purrr::map_chr(
+      .x = street_name,
+      .f = function(x) {
+        sn_clean_street_name_croatian(x)
+      }
+    )
+  } else if (country_name == "Romania"|country_name == "Moldova") {
     street_name <- purrr::map_chr(
       .x = street_name,
       .f = function(x) {
@@ -81,6 +88,13 @@ sn_clean_street_name <- function(street_name,
       .x = street_name,
       .f = function(x) {
         sn_clean_street_name_greek(x)
+      }
+    ) 
+  } else if (country_name == "Ukraine") {
+    street_name <- purrr::map_chr(
+      .x = street_name,
+      .f = function(x) {
+        sn_clean_street_name_ukrainian(x)
       }
     )
   }
@@ -96,7 +110,7 @@ sn_clean_street_name <- function(street_name,
 #'
 #' @param street_name Name of street, after having removed street part (e.g. "Aleja")
 #'
-#' @return A character vector of lenght one. A name that can more easily be searched.
+#' @return A character vector of length one. A name that can more easily be searched.
 #' @export
 #'
 #' @examples
@@ -257,7 +271,7 @@ sn_clean_street_name_polish <- function(street_name) {
         }
         
       }
-     
+      
       
       return(stringr::str_c(split_string, collapse = " ") %>%
                stringr::str_squish())
@@ -399,7 +413,7 @@ sn_clean_street_name_romanian <- function(street_name) {
 #'
 #' @param street_name Name of street, after having removed street part.
 #'
-#' @return A character vector of lenght one. A name that can more easily be searched.
+#' @return A character vector of length one. A name that can more easily be searched.
 #' @export
 #'
 #' @examples
@@ -502,3 +516,130 @@ sn_clean_street_name_greek <- function(street_name) {
     stringr::str_squish()
   
 }
+
+
+
+
+#' Clean Croatian street name
+#'
+#' @param street_name Name of street, after having removed street part.
+#'
+#' @return A character vector of length one. A name that can more easily be searched.
+#' @export
+#'
+#' @examples
+#'
+#' sn_clean_street_name_croatian("Joze Kljakovića")
+sn_clean_street_name_croatian <- function(street_name) {
+  
+  split_string <- stringr::str_split(string = street_name,
+                                     pattern = "[[:space:]]",
+                                     simplify = TRUE) %>%
+    as.character()
+  
+  
+  name_replace_m_v <- c(sn_first_names_combinations[["Croatia"]]$fixed_first_name)
+  names(name_replace_m_v) <- c(sn_first_names_combinations[["Croatia"]]$original_first_name)
+  
+  
+  if (split_string[1] %in% names(name_replace_m_v)) {
+ 
+    split_string[1] <-  stringr::str_replace_all(string = split_string[1], name_replace_m_v)
+    
+    if (length(split_string)>1) {
+      for (j in 2:length(split_string)) {
+        if (stringr::str_detect(string = split_string[j], pattern = "a$")) {
+          split_string[j] <- stringr::str_replace(string = split_string[j],
+                                                  pattern = "a$",
+                                                  replacement = "")
+        } 
+      }
+      
+    }
+    
+    return(stringr::str_c(split_string, collapse = " ") %>%
+             stringr::str_squish())
+  }
+  street_name
+}
+
+
+
+
+#' Clean Ukrainian street name
+#'
+#' @param street_name Name of street, after having removed street part.
+#'
+#' @return A character vector of length one. A name that can more easily be searched.
+#' @export
+#'
+#' @examples
+#'
+#' sn_clean_street_name_ukrainian("Володимира Висоцького")
+#' sn_clean_street_name_ukrainian("Кисловодська")
+#' sn_clean_street_name_ukrainian("Кисловодський")
+#' sn_clean_street_name_ukrainian("Миколи Терещенка")
+sn_clean_street_name_ukrainian <- function(street_name) {
+  
+  split_string <- stringr::str_split(string = street_name,
+                                     pattern = "[[:space:]]",
+                                     simplify = TRUE) %>%
+    as.character()
+  
+  for (j in 1:length(split_string)) {
+    if (stringr::str_detect(string = split_string[j], pattern = "нка$")) {
+      split_string[j] <- stringr::str_replace(string = split_string[j],
+                                              pattern = "нка$",
+                                              replacement = "нко")
+    } else if (stringr::str_detect(string = split_string[j], pattern = "дний$")) {
+      split_string[j] <- stringr::str_replace(string = split_string[j],
+                                              pattern = "дний$",
+                                              replacement = "д")
+    } else if (stringr::str_detect(string = split_string[j], pattern = "дна$")) {
+      split_string[j] <- stringr::str_replace(string = split_string[j],
+                                              pattern = "дна$",
+                                              replacement = "")
+    } else if (stringr::str_detect(string = split_string[j], pattern = "ля$")) {
+      split_string[j] <- stringr::str_replace(string = split_string[j],
+                                              pattern = "ля$",
+                                              replacement = "ль")
+    } else if (stringr::str_detect(string = split_string[j], pattern = "ський$")) {
+      split_string[j] <- stringr::str_replace(string = split_string[j],
+                                              pattern = "ський$",
+                                              replacement = "")
+    }else if (stringr::str_detect(string = split_string[j], pattern = "ська$")) {
+      split_string[j] <- stringr::str_replace(string = split_string[j],
+                                              pattern = "ська$",
+                                              replacement = "")
+    }else if (stringr::str_detect(string = split_string[j], pattern = "а$")) {
+      split_string[j] <- stringr::str_replace(string = split_string[j],
+                                              pattern = "а$",
+                                              replacement = "")
+    } else if (stringr::str_detect(string = split_string[j], pattern = "ого$")) {
+      split_string[j] <- stringr::str_replace(string = split_string[j],
+                                              pattern = "ого$",
+                                              replacement = "ий")
+    } else if (stringr::str_detect(string = split_string[j], pattern = "ий$")) {
+      split_string[j] <- stringr::str_replace(string = split_string[j],
+                                              pattern = "ий$",
+                                              replacement = "")
+    }  else if (stringr::str_detect(string = split_string[j], pattern = "и$")) {
+      split_string[j] <- stringr::str_replace(string = split_string[j],
+                                              pattern = "и$",
+                                              replacement = "а")
+    } else if (stringr::str_detect(string = split_string[j], pattern = "ії$")) {
+      split_string[j] <- stringr::str_replace(string = split_string[j],
+                                              pattern = "ії$",
+                                              replacement = "ія")
+    } else if (stringr::str_detect(string = split_string[j], pattern = "я$")) {
+      split_string[j] <- stringr::str_replace(string = split_string[j],
+                                              pattern = "я$",
+                                              replacement = "й")
+    } 
+  }
+  return(stringr::str_c(split_string, collapse = " ") %>%
+           stringr::str_squish())  
+} 
+
+  
+  

@@ -19,9 +19,16 @@ sn_standard_country <- function(country,
   
   if (nchar(country) == 2) {
     country_code <- stringr::str_to_upper(country)
-    country_name <- streetnamer::sn_country_codes %>%
-      dplyr::filter(.data$Code == country_code) %>%
-      dplyr::pull(.data$Name)
+    if (country_code=="UK") {
+      country_name <- "United Kingdom"
+    } else if (country_code=="EL") {
+      country_name <- "Greece"
+    } else {
+      country_name <- streetnamer::sn_country_codes %>%
+        dplyr::filter(.data$Code == country_code) %>%
+        dplyr::pull(.data$Name)
+    }
+
   } else {
     country_lower_v <- stringr::str_to_lower(country)
     country_slice <- streetnamer::sn_country_codes %>%
@@ -38,6 +45,9 @@ sn_standard_country <- function(country,
     } else if (country_lower_v=="czechia") {
       country_code <- "CZ"
       country_name <- "Czech Republic"
+    } else if (country_lower_v=="united kingdom") {
+      country_code <- "UK"
+      country_name <- "United Kingdom"
     }
   }
   

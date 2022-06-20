@@ -10,7 +10,7 @@ sn_clean_street_name_polish(street_name)
 \item{street_name}{Name of street, after having removed street part (e.g. "Aleja")}
 }
 \value{
-A character vector of lenght one. A name that can more easily be searched.
+A character vector of length one. A name that can more easily be searched.
 }
 \description{
 Clean Polish street name

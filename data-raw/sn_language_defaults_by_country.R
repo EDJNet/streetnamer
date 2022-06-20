@@ -9,20 +9,27 @@ sn_language_defaults_by_country <- tibble::tribble(
   "Austria", "AT", "German", "de", "Q188",
   "Belgium", "BE", "Dutch", "nl", "Q7411",
   "Belgium", "BE", "French", "fr", "Q150",
+  "Bulgaria", "BG", "Bulgarian", "bg", "Q7918",
   "Czechia", "CZ", "Czech", "cs", "Q9056",
+  "Croatia", "HR", "Croatian", "hr", "Q6654",
+  "Denmark", "DK", "Danish", "da", "Q9035",
+  "Finland", "FI", "Finnish", "fi", "Q1412",
   "France", "FR", "French", "fr", "Q150",
   "Germany", "DE", "German", "de", "Q188",
   "Greece", "EL", "Greek", "el", "Q36510",
   "Hungary", "HU", "Hungarian", "hu", "Q9067",
   "Ireland", "IE", "English", "en", "Q1860",
   "Italy", "IT", "Italian", "it", "Q652",
+  "Moldova", "MD", "Moldovan", "ro", "Q36392",
   "Netherlands", "NL", "Dutch", "nl", "Q7411",
   "Poland", "PL", "Polish", "pl", "Q809",
   "Portugal", "PT", "Portuguese", "pt", "Q5146",
   "Romania", "RO", "Romanian", "ro", "Q7913",
+  "Serbia", "RS", "Serbian", "sr", "Q9299",
   "Spain", "ES", "Spanish", "es", "Q1321",
   "Sweden", "SV", "Swedish", "sv", "Q9027",
-  "United Kingdom", "GB", "English", "en", "Q1860",
+  "Ukraine", "UA", "Ukrainian", "uk", "Q8798",
+  "United Kingdom", "UK", "English", "en", "Q1860"
 )
 
 
