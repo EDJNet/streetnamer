@@ -559,6 +559,43 @@ sn_clean_street_name_croatian <- function(street_name) {
     
     return(stringr::str_c(split_string, collapse = " ") %>%
              stringr::str_squish())
+  } else {
+    for (j in seq_along(split_string)) {
+      
+      if (stringr::str_detect(string = split_string[j], pattern = "ska$")) {
+        split_string[j] <- stringr::str_replace(string = split_string[j],
+                                                pattern = "ska$",
+                                                replacement = "")
+      } else if (stringr::str_detect(string = split_string[j], pattern = "ski$")) {
+        split_string[j] <- stringr::str_replace(string = split_string[j],
+                                                pattern = "ski$",
+                                                replacement = "")
+      }else if (stringr::str_detect(string = split_string[j], pattern = "ečka$")) {
+        split_string[j] <- stringr::str_replace(string = split_string[j],
+                                                pattern = "ečka$",
+                                                replacement = "")
+      }else if (stringr::str_detect(string = split_string[j], pattern = "ačka$")) {
+        split_string[j] <- stringr::str_replace(string = split_string[j],
+                                                pattern = "ačka$",
+                                                replacement = "")
+      } else if (stringr::str_detect(string = split_string[j], pattern = "inska$")) {
+        split_string[j] <- stringr::str_replace(string = split_string[j],
+                                                pattern = "inska$",
+                                                replacement = "")
+      }else if (stringr::str_detect(string = split_string[j], pattern = "eva$")) {
+        split_string[j] <- stringr::str_replace(string = split_string[j],
+                                                pattern = "eva$",
+                                                replacement = "")
+      } else if (stringr::str_detect(string = split_string[j], pattern = "a$")) {
+        split_string[j] <- stringr::str_replace(string = split_string[j],
+                                                pattern = "a$",
+                                                replacement = "")
+      } 
+    }
+    
+    
+    return(stringr::str_c(split_string, collapse = " ") %>%
+             stringr::str_squish())
   }
   street_name
 }

@@ -153,7 +153,7 @@ sn_street_name_to_remove_df <- dplyr::bind_rows(
     country = "Germany",
     string = c(
       "kamp ",
-      
+      "Hauptstraße",
       "strasse",
       "straße",
       "weg",
@@ -632,6 +632,7 @@ sn_street_name_to_remove_df <- dplyr::bind_rows(
     string = c(
       " avenija",
       " breg",
+      " brijeg",
       " cesta",
       " dužice",
       " krči",
@@ -678,7 +679,25 @@ sn_street_name_to_remove_df <- dplyr::bind_rows(
           "вулиця "
         ) %>%
           stringr::str_c("^", .)
-      ))
+      )),
+  tibble::tibble(
+    country = c("Finland"),
+    string = c(
+      "aukio",
+    "intie",
+    "katu",
+      "kuja",
+    "piha",
+    "polku",
+    "raitti",
+    "santie",
+    "sentie",
+    "silta",
+     " Road",
+    "utie"
+    ) %>%
+      stringr::str_c(., "$")
+  ),
 )
 
 sn_street_name_to_remove_df <- sn_street_name_to_remove_df %>%
