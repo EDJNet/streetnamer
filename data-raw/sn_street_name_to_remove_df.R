@@ -653,6 +653,7 @@ sn_street_name_to_remove_df <- dplyr::bind_rows(
         .,
         c(
           "Aleja ",
+          "Avenija ",
           "Prilaz ",
           "Prolaz ",
           "Put ",
