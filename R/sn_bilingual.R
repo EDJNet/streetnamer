@@ -10,16 +10,24 @@
 #' @export
 #'
 #' @examples
-sn_get_clean_street_name_bilingual_df <- function(gisco_id) {
-  current_street_names_df <- latlon2map::ll_osm_get_lau_streets(
-    gisco_id = gisco_id,
-    unnamed_streets = FALSE,
-    streets_sf = NULL
-  ) %>%
-    sf::st_drop_geometry() %>%
-    dplyr::distinct(name)
+sn_get_clean_street_name_bilingual_df <- function(gisco_id, 
+                                                  street_names_df = NULL) {
   
-  if (gisco_id %in% c("BE_21004", "BE_21015", "BE_21001", "BE_21012", "BE_21016")) {
+  if (is.null(street_names_df)==FALSE) {
+    current_street_names_df <- street_names_df %>%
+      dplyr::distinct(name)
+  } else {
+    current_street_names_df <- latlon2map::ll_osm_get_lau_streets(
+      gisco_id = gisco_id,
+      unnamed_streets = FALSE,
+      streets_sf = NULL
+    ) %>%
+      sf::st_drop_geometry() %>%
+      dplyr::distinct(name)
+  }
+ 
+  
+  if (gisco_id %in% c("BE100", "BE_21004", "BE_21015", "BE_21001", "BE_21012", "BE_21016")) {
     name_clean_df <- current_street_names_df %>% 
       tidyr::separate(col = name, into = c("French", "Flemish"), sep = " - ", remove = FALSE) %>% 
       dplyr::transmute(name, name_clean = French) %>% 
