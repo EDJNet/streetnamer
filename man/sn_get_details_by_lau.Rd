@@ -6,6 +6,7 @@
 \usage{
 sn_get_details_by_lau(
   gisco_id,
+  export_format = NULL,
   collapse_lists = FALSE,
   language = tidywikidatar::tw_get_language(),
   search_language = NULL,
@@ -26,6 +27,8 @@ sn_get_details_by_lau(
 }
 \arguments{
 \item{gisco_id}{A gisco identifier of a European LAU.}
+
+\item{export_format}{Defaults to NULL. If given, it exports outputs in the given format. Available values include "csv" and "geojson".}
 
 \item{search_language}{Defaults to NULL, guessed based on country.}
 

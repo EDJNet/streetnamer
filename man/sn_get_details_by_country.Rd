@@ -6,6 +6,7 @@
 \usage{
 sn_get_details_by_country(
   country,
+  export_format = NULL,
   collapse_lists = FALSE,
   language = tidywikidatar::tw_get_language(),
   search_language = NULL,
@@ -27,7 +28,26 @@ sn_get_details_by_country(
 \arguments{
 \item{country}{A country, either a two letter country code, or country full name. See `sn_country_codes` for valid values.}
 
+\item{export_format}{Defaults to NULL. If given, it exports outputs in the given format. Available values include "csv" and "geojson".}
+
 \item{collapse_lists}{Defaults to FALSE. If TRUE, collapses multiple values in a single string, with each value separated by ";". Useful for exports in tabular format.}
+
+\item{search_language}{Defaults to NULL, guessed based on country.}
+
+\item{response_language}{Defaults to `tidywikidatar::tw_get_language()`. Used
+for defining the language in which label and description are returned.}
+
+\item{check_named_after_original}{Defaults to TRUE. If TRUE, a search is
+performed on the original street name. If the first result has values for
+the property "named after", this takes precedence over other methods.}
+
+\item{check_named_after}{Defaults to TRUE. If TRUE, a search is performed on
+the "cleaned" name of the street. If the result is a street, road, square,
+or similar, and this has values for the property "named after", this is
+kept instead of the standard method.}
+
+\item{checked_df}{Defaults to NULL. If given, a data frame with a `name` and
+`id`. Takes precedence over searches.}
 
 \item{manual_check_columns}{Logical, defaults to FALSE. If set to TRUE, it
 adds additional columns that can be used to introduce manually adjustments
