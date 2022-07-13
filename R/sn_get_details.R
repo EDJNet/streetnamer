@@ -190,6 +190,7 @@ sn_get_details_by_lau <- function(gisco_id,
       if (is.null(export_format)==FALSE) {
         current_file <- fs::path(
           country_path,
+          export_format,
           "all",
           stringr::str_c(x, "-", city_name, ".", export_format) %>%
             fs::path_sanitize()
@@ -197,6 +198,7 @@ sn_get_details_by_lau <- function(gisco_id,
         
         current_file_humans <- fs::path(
           country_path,
+          export_format,
           "humans",
           stringr::str_c(
             x, "-",
@@ -209,6 +211,7 @@ sn_get_details_by_lau <- function(gisco_id,
         
         current_file_not_humans <- fs::path(
           country_path,
+          export_format,
           "not_humans",
           stringr::str_c(
             x, "-",
