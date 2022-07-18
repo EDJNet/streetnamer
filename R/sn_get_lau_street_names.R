@@ -45,7 +45,7 @@ sn_get_lau_street_names <- function(gisco_id,
 
   db_result <- tryCatch(
     dplyr::tbl(src = db, table_name) %>%
-      dplyr::filter(.data$gisco_id %in% stringr::str_to_upper(gisco_id)),
+      dplyr::filter(.data$gisco_id %in% !!stringr::str_to_upper(gisco_id)),
     error = function(e) {
       logical(1L)
     }

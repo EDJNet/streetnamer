@@ -165,8 +165,8 @@ sn_write_street_name_wikidata_id <- function(gisco_id = NULL,
         table_name
       ) %>%
         dplyr::filter(
-          .data$gisco_id %in% stringr::str_c(gisco_id),
-          .data$street_name %in% stringr::str_c(street_name)
+          .data$gisco_id %in% !!stringr::str_c(gisco_id),
+          .data$street_name %in% !!stringr::str_c(street_name)
         ) %>%
         dplyr::pull(.data$street_name) %>%
         length() %>%
@@ -293,8 +293,8 @@ sn_get_street_name_wikidata_id <- function(country,
     db_result <- tryCatch(
       dplyr::tbl(src = db, table_name) %>%
         dplyr::filter(
-          .data$gisco_id %in% stringr::str_c(gisco_id),
-          .data$street_name %in% stringr::str_c(street_name)
+          .data$gisco_id %in% !!stringr::str_c(gisco_id),
+          .data$street_name %in% !!stringr::str_c(street_name)
         ),
       error = function(e) {
         logical(1L)
@@ -305,7 +305,7 @@ sn_get_street_name_wikidata_id <- function(country,
     db_result <- tryCatch(
       dplyr::tbl(src = db, table_name) %>%
         dplyr::filter(
-          .data$street_name %in% stringr::str_c(street_name)
+          .data$street_name %in% !!stringr::str_c(street_name)
         ),
       error = function(e) {
         logical(1L)
@@ -316,7 +316,7 @@ sn_get_street_name_wikidata_id <- function(country,
     db_result <- tryCatch(
       dplyr::tbl(src = db, table_name) %>%
         dplyr::filter(
-          .data$gisco_id %in% stringr::str_c(gisco_id),
+          .data$gisco_id %in% !!stringr::str_c(gisco_id),
         ),
       error = function(e) {
         logical(1L)

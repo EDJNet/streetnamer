@@ -60,7 +60,7 @@ sn_write_lau_street_names <- function(df,
   } else {
     previously_available <- dplyr::tbl(src = db, table_name) %>%
       dplyr::distinct(.data$gisco_id) %>%
-      dplyr::filter(.data$gisco_id %in% stringr::str_to_upper(unique(df$gisco_id))) %>%
+      dplyr::filter(.data$gisco_id %in% !!stringr::str_to_upper(unique(df$gisco_id))) %>%
       dplyr::pull(.data$gisco_id) %>%
       length() %>%
       as.logical()
