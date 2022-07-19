@@ -241,14 +241,6 @@ mod_sn_street_info_server <- function(id,
         conditionalPanel(
           condition = "input.person_switch == false",
           ns = ns,
-          # shinyWidgets::radioGroupButtons(
-          #   inputId = ns("category_radio"),
-          #   selected = "other",
-          #   choices = c("place", "event", "other"),
-          #   individual = TRUE,
-          #   checkIcon = list(yes = icon("ok", lib = "glyphicon")),
-          #   justified = TRUE
-          # ),
           shiny::selectizeInput(
             inputId = ns("tag_selectize_not_person"),
             label = "Add a tag",
@@ -261,6 +253,30 @@ mod_sn_street_info_server <- function(id,
               "animal"
             ),
             options = list(create = TRUE)
+          )
+        ),
+        shinyWidgets::switchInput(
+          inputId = ns("dedicated_to_n_switch"),
+          label = "Is it dedicated to more than one entity?",
+          onLabel = "Yes",
+          offLabel = "No",
+          size = "large",
+          value = FALSE,
+          labelWidth = "280px",
+          handleWidth = "80px",
+          width = "90%"
+        ),
+        shiny::conditionalPanel(
+          condition = "input.dedicated_to_n_switch == true",
+          ns = ns,
+          shiny::p("Input number of entities this street is dedicated to:"),
+          shiny::numericInput(
+            inputId = ns("dedicated_to_n"),
+            label = NULL, # "Input number of entities this street is dedicated to",
+            value = 1,
+            min = 1,
+            max = 100,
+            step = 1
           )
         )
         # ,
@@ -297,6 +313,7 @@ mod_sn_street_info_server <- function(id,
         tag = tag_v,
         checked = as.integer(TRUE),
         ignore = as.integer(FALSE),
+        dedicated_to_n = as.integer(input$dedicated_to_n),
         session = session$token,
         append = TRUE,
         connection = connection,
@@ -317,10 +334,10 @@ mod_sn_street_info_server <- function(id,
 
 #' A minimal shiny app used for categorising streets
 #'
-#' @param street_name
-#' @param gisco_id
-#' @param country
-#' @param language
+#' @param street_name A character string. Conceptually, the name of a street
+#' @param gisco_id Identifier of the city.
+#' @param country Two letter country code
+#' @param language Two letter language code.
 #'
 #' @return
 #' @export
@@ -336,7 +353,7 @@ mod_sn_street_info_server <- function(id,
 #' }
 mod_sn_street_info_app <- function(street_name,
                                    gisco_id,
-                                   country,
+                                   country = NULL,
                                    connection = NULL,
                                    language = tidywikidatar::tw_get_language()) {
   ui <- shiny::fluidPage(

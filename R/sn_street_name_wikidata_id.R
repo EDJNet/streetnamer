@@ -6,6 +6,8 @@
 #' @param overwrite Logical, defaults to FALSE. If TRUE, it first deletes all rows associated with the item(s) included in `item_df`. Useful if the original Wikidata object has been updated.
 #' @param connection Defaults to NULL. If NULL, and caching is enabled, `streetnamer` will use a local sqlite database. A custom connection to other databases can be given (see vignette `caching` for details).
 #' @param disconnect_db Defaults to TRUE. If FALSE, leaves the connection to cache open.
+#' @param gisco_id Identifier of a municipality, typically a gisco identifier. Can be any code, as long as it used consistently, and it starts with a two-letter country code.
+#' @param dedicated_to_n An integer, defaults to NULL, but most commonly expected to be 1. Input more than one if the street is named after `n` entities.
 #'
 #' @return Nothing, used for its side effects.
 #' @export
@@ -44,6 +46,7 @@ sn_write_street_name_wikidata_id <- function(gisco_id = NULL,
                                              tag = NULL,
                                              checked = NULL,
                                              ignore = NULL,
+                                             dedicated_to_n = NULL,
                                              session = NULL,
                                              overwrite = FALSE,
                                              append = TRUE,
@@ -114,6 +117,10 @@ sn_write_street_name_wikidata_id <- function(gisco_id = NULL,
         as.integer(NA),
         as.integer(ignore)
       ),
+      dedicated_to_n = ifelse(is.null(dedicated_to_n),
+        as.integer(NA),
+        as.integer(dedicated_to_n)
+      ),
       tag = ifelse(is.null(tag),
         as.character(NA),
         as.character(tag)
@@ -122,7 +129,7 @@ sn_write_street_name_wikidata_id <- function(gisco_id = NULL,
         as.character(NA),
         as.character(session)
       ),
-      time = Sys.time()
+      time = as.numeric(Sys.time())
     )
   }
 

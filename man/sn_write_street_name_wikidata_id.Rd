@@ -15,6 +15,7 @@ sn_write_street_name_wikidata_id(
   tag = NULL,
   checked = NULL,
   ignore = NULL,
+  dedicated_to_n = NULL,
   session = NULL,
   overwrite = FALSE,
   append = TRUE,
@@ -26,7 +27,11 @@ sn_write_street_name_wikidata_id(
 )
 }
 \arguments{
+\item{gisco_id}{Identifier of a municipality, typically a gisco identifier. Can be any code, as long as it used consistently, and it starts with a two-letter country code.}
+
 \item{country}{Two letter country code.}
+
+\item{dedicated_to_n}{An integer, defaults to NULL, but most commonly expected to be 1. Input more than one if the street is named after `n` entities.}
 
 \item{overwrite}{Logical, defaults to FALSE. If TRUE, it first deletes all rows associated with the item(s) included in `item_df`. Useful if the original Wikidata object has been updated.}
 
