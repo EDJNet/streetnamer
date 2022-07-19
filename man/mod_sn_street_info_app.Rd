@@ -7,13 +7,19 @@
 mod_sn_street_info_app(
   street_name,
   gisco_id,
-  country,
+  country = NULL,
   connection = NULL,
   language = tidywikidatar::tw_get_language()
 )
 }
 \arguments{
-\item{language}{}
+\item{street_name}{A character string. Conceptually, the name of a street}
+
+\item{gisco_id}{Identifier of the city.}
+
+\item{country}{Two letter country code}
+
+\item{language}{Two letter language code.}
 }
 \description{
 A minimal shiny app used for categorising streets

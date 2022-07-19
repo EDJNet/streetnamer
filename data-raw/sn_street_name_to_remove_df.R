@@ -31,7 +31,7 @@ sn_street_name_to_remove_df <- dplyr::bind_rows(
       "Cortafuego ",
       "Naves ",
       "Pasaje del ",
-      "Pasaje de", 
+      "Pasaje de",
       "Pasaje ",
       "Paseo de los ",
       "Paseo de las ",
@@ -144,7 +144,6 @@ sn_street_name_to_remove_df <- dplyr::bind_rows(
       "Túnel de  ",
       "Volta dels ",
       "Via de ",
-      
       "Viaducte de "
     ) %>%
       stringr::str_c("^", .)
@@ -349,7 +348,7 @@ sn_street_name_to_remove_df <- dplyr::bind_rows(
       "Intrarea ",
       "Aleea ",
       "Pasajul ",
-      "Pasaj ", 
+      "Pasaj ",
       "Podul ",
       "Prelungirea ",
       "Fundătura ",
@@ -365,7 +364,6 @@ sn_street_name_to_remove_df <- dplyr::bind_rows(
       "Акад. ",
       "Академик ",
       "Арх. ",
-      
       "бул. ",
       "Ген. ",
       "Митрополит ",
@@ -466,19 +464,19 @@ sn_street_name_to_remove_df <- dplyr::bind_rows(
           "Grande rue ",
           "Impasse ",
           "Montée",
-          "Parc ", 
+          "Parc ",
           "Parvis ",
           "Passerelle ",
-          "Passage ",  
+          "Passage ",
           "Petite Avenue ",
           "Petite rue ",
           "Placette ",
           "Place ",
-          "Pont ",  
+          "Pont ",
           "Promenade ",
           "quai ",
           "Raccourci ",
-          "rampe ",  
+          "rampe ",
           "route ",
           "Rue ",
           "Sentier ",
@@ -540,7 +538,7 @@ sn_street_name_to_remove_df <- dplyr::bind_rows(
         .f = function(x) {
           stringr::str_c(
             x,
-            c("das ", 
+            c("das ",
               "dos ",
               "da ",
               "do ",
@@ -595,7 +593,7 @@ sn_street_name_to_remove_df <- dplyr::bind_rows(
       " quay",
       " rise",
       " Road Roundabout",
-       " Road East",
+      " Road East",
       " Road West",
       " Road South",
       " Road North",
@@ -622,11 +620,13 @@ sn_street_name_to_remove_df <- dplyr::bind_rows(
   tibble::tibble(
     country = c("Greece"),
     string = c("Πλατεία ") %>%
-      stringr::str_c("^", .)),
+      stringr::str_c("^", .)
+  ),
   tibble::tibble(
     country = c("Czech Republic"),
     string = c("alej ") %>%
-      stringr::str_c("^", .)),
+      stringr::str_c("^", .)
+  ),
   tibble::tibble(
     country = c("Croatia"),
     string = c(
@@ -637,17 +637,15 @@ sn_street_name_to_remove_df <- dplyr::bind_rows(
       " dužice",
       " krči",
       " kuti",
-      
-      " lug", 
+      " lug",
       " odvojak",
       " obronak",
       " prilaz",
       " put",
-      
       " stube",
-      
       " ulica",
-      " vijenac") %>%
+      " vijenac"
+    ) %>%
       stringr::str_c(., "$") %>%
       c(
         .,
@@ -664,7 +662,8 @@ sn_street_name_to_remove_df <- dplyr::bind_rows(
           "Ulica "
         ) %>%
           stringr::str_c("^", .)
-      )),
+      )
+  ),
   tibble::tibble(
     country = c("Ukraine"),
     string = c(
@@ -672,7 +671,8 @@ sn_street_name_to_remove_df <- dplyr::bind_rows(
       " вулиця",
       " площа",
       " провулок",
-      " проспект") %>%
+      " проспект"
+    ) %>%
       stringr::str_c(., "$") %>%
       c(
         .,
@@ -680,22 +680,23 @@ sn_street_name_to_remove_df <- dplyr::bind_rows(
           "вулиця "
         ) %>%
           stringr::str_c("^", .)
-      )),
+      )
+  ),
   tibble::tibble(
     country = c("Finland"),
     string = c(
       "aukio",
-    "intie",
-    "katu",
+      "intie",
+      "katu",
       "kuja",
-    "piha",
-    "polku",
-    "raitti",
-    "santie",
-    "sentie",
-    "silta",
-     " Road",
-    "utie"
+      "piha",
+      "polku",
+      "raitti",
+      "santie",
+      "sentie",
+      "silta",
+      " Road",
+      "utie"
     ) %>%
       stringr::str_c(., "$")
   ),
@@ -703,19 +704,19 @@ sn_street_name_to_remove_df <- dplyr::bind_rows(
 
 sn_street_name_to_remove_df <- sn_street_name_to_remove_df %>%
   bind_rows(sn_street_name_to_remove_df %>%
-              dplyr::filter(country == "France" | country == "Netherlands") %>%
-              mutate(country = "Belgium") %>%
-              distinct()) %>% 
+    dplyr::filter(country == "France" | country == "Netherlands") %>%
+    mutate(country = "Belgium") %>%
+    distinct()) %>%
   bind_rows(sn_street_name_to_remove_df %>%
-              dplyr::filter(country == "Romania") %>%
-              mutate(country = "Moldova") %>%
-              distinct()) %>% 
+    dplyr::filter(country == "Romania") %>%
+    mutate(country = "Moldova") %>%
+    distinct()) %>%
   bind_rows(sn_street_name_to_remove_df %>%
-             dplyr::filter(country == "Ireland") %>%
-             mutate(country = "United Kingdom") %>%
-             distinct())
+    dplyr::filter(country == "Ireland") %>%
+    mutate(country = "United Kingdom") %>%
+    distinct())
 
 sn_street_name_to_remove_df %>% tail()
 usethis::use_data(sn_street_name_to_remove_df,
-                  overwrite = TRUE
+  overwrite = TRUE
 )

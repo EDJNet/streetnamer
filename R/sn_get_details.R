@@ -19,7 +19,7 @@
 #'
 #' @examples
 sn_get_details_by_country <- function(country,
-                                      export_format = NULL, 
+                                      export_format = NULL,
                                       collapse_lists = FALSE,
                                       language = tidywikidatar::tw_get_language(),
                                       search_language = NULL,
@@ -36,66 +36,71 @@ sn_get_details_by_country <- function(country,
                                       cache = TRUE,
                                       overwrite_cache = FALSE,
                                       disconnect_db = TRUE) {
-  
-  
-  country_name <- sn_standard_country(country = country, 
-                                      type = "name")
-  
-  country_code <- sn_standard_country(country = country, 
-                                      type = "code")
-  
+  country_name <- sn_standard_country(
+    country = country,
+    type = "name"
+  )
+
+  country_code <- sn_standard_country(
+    country = country,
+    type = "code"
+  )
+
 
   current_country_lau_v <- latlon2map::ll_get_lau_eu() %>%
     sf::st_drop_geometry() %>%
     dplyr::filter(CNTR_CODE == country_code) %>%
     dplyr::arrange(desc(POP_2020)) %>%
     dplyr::pull(GISCO_ID)
-  
-  
-  connection_db <- tidywikidatar::tw_connect_to_cache(connection = connection,
-                                                      language = response_language,
-                                                      cache = cache)
-  
+
+
+  connection_db <- tidywikidatar::tw_connect_to_cache(
+    connection = connection,
+    language = response_language,
+    cache = cache
+  )
+
   if (is.null(search_language)) {
     search_language <- streetnamer::sn_language_defaults_by_country %>%
       dplyr::filter(country == country_name) %>%
       dplyr::pull(language_code)
   }
-  
-  
+
+
   language_combo <- stringr::str_c(search_language, "_", response_language)
-  
-  
-  
-  
-  connection_search_db <- tidywikidatar::tw_connect_to_cache(connection = connection_search,
-                                                             language = language_combo,
-                                                             cache = cache)
-  
-  
+
+
+
+
+  connection_search_db <- tidywikidatar::tw_connect_to_cache(
+    connection = connection_search,
+    language = language_combo,
+    cache = cache
+  )
+
+
   purrr::walk(
     .x = current_country_lau_v,
     .f = function(x) {
-      
-      sn_get_details_by_lau(gisco_id = x,
-                            export_format = export_format,
-                            collapse_lists = collapse_lists,
-                            language = language,
-                            search_language = search_language,
-                            response_language = response_language,
-                            check_named_after_original = check_named_after_original,
-                            check_named_after = check_named_after,
-                            checked_df = checked_df,
-                            manual_check_columns = manual_check_columns,
-                            connection = connection_db,
-                            connection_search = connection_search_db,
-                            base_folder = base_folder,
-                            streets_sf = streets_sf,
-                            cache = cache,
-                            overwrite_cache = overwrite_cache,
-                            disconnect_db = FALSE
+      sn_get_details_by_lau(
+        gisco_id = x,
+        export_format = export_format,
+        collapse_lists = collapse_lists,
+        language = language,
+        search_language = search_language,
+        response_language = response_language,
+        check_named_after_original = check_named_after_original,
+        check_named_after = check_named_after,
+        checked_df = checked_df,
+        manual_check_columns = manual_check_columns,
+        connection = connection_db,
+        connection_search = connection_search_db,
+        base_folder = base_folder,
+        streets_sf = streets_sf,
+        cache = cache,
+        overwrite_cache = overwrite_cache,
+        disconnect_db = FALSE
       )
-      
     }
   )
   tw_disconnect_from_cache(
@@ -104,7 +109,7 @@ sn_get_details_by_country <- function(country,
     disconnect_db = disconnect_db,
     language = language
   )
-  
+
   tw_disconnect_from_cache(
     cache = cache,
     cache_connection = connection_search_db,
@@ -118,13 +123,13 @@ sn_get_details_by_country <- function(country,
 #' Gets details for a single city
 #'
 #' @param export_format Defaults to NULL. If given, it exports outputs in the given format. Available values include "csv" and "geojson".
-#' @inheritParams sn_search_named_after 
+#' @inheritParams sn_search_named_after
 #'
 #' @return
 #' @export
 #'
 #' @examples
-#' 
+#'
 #' gisco_id <- "DE_11000000"
 sn_get_details_by_lau <- function(gisco_id,
                                   export_format = NULL,
@@ -144,50 +149,55 @@ sn_get_details_by_lau <- function(gisco_id,
                                   cache = TRUE,
                                   overwrite_cache = FALSE,
                                   disconnect_db = TRUE) {
-  
-  country_name <- sn_standard_country(country = stringr::str_extract(string = gisco_id, pattern = "[A-Z][A-Z]") %>%
-                                        stringr::str_to_upper(), 
-                                      type = "name")
-  
-  
-  connection_db <- tidywikidatar::tw_connect_to_cache(connection = connection,
-                                                      language = response_language,
-                                                      cache = cache)
-  
+  country_name <- sn_standard_country(
+    country = stringr::str_extract(string = gisco_id, pattern = "[A-Z][A-Z]") %>%
+      stringr::str_to_upper(),
+    type = "name"
+  )
+
+
+  connection_db <- tidywikidatar::tw_connect_to_cache(
+    connection = connection,
+    language = response_language,
+    cache = cache
+  )
+
   if (is.null(search_language)) {
     search_language <- streetnamer::sn_language_defaults_by_country %>%
       dplyr::filter(country == country_name) %>%
       dplyr::pull(language_code)
   }
-  
+
   language_combo <- stringr::str_c(search_language, "_", response_language)
-  
-  connection_search_db <- tidywikidatar::tw_connect_to_cache(connection = connection_search,
-                                                             language = language_combo,
-                                                             cache = cache)
-  
-  
-  if (is.null(export_format)==FALSE) {
+
+  connection_search_db <- tidywikidatar::tw_connect_to_cache(
+    connection = connection_search,
+    language = language_combo,
+    cache = cache
+  )
+
+
+  if (is.null(export_format) == FALSE) {
     country_path <- fs::dir_create(path = fs::path(
       base_folder,
       "city_details",
       country_name
     ))
-    
+
     fs::dir_create(country_path)
     fs::dir_create(fs::path(country_path, export_format, "all"))
     fs::dir_create(fs::path(country_path, export_format, "humans"))
     fs::dir_create(fs::path(country_path, export_format, "not_humans"))
   }
-  
+
   all_df <- purrr::map_dfr(
     .x = gisco_id,
     .f = function(x) {
       city_name <- streetnamer::sn_lau_by_country %>%
         dplyr::filter(GISCO_ID == x) %>%
         dplyr::pull(LAU_NAME)
-      
-      if (is.null(export_format)==FALSE) {
+
+      if (is.null(export_format) == FALSE) {
         current_file <- fs::path(
           country_path,
           export_format,
@@ -195,7 +205,7 @@ sn_get_details_by_lau <- function(gisco_id,
           stringr::str_c(x, "-", city_name, ".", export_format) %>%
             fs::path_sanitize()
         )
-        
+
         current_file_humans <- fs::path(
           country_path,
           export_format,
@@ -208,7 +218,7 @@ sn_get_details_by_lau <- function(gisco_id,
           ) %>%
             fs::path_sanitize()
         )
-        
+
         current_file_not_humans <- fs::path(
           country_path,
           export_format,
@@ -216,25 +226,26 @@ sn_get_details_by_lau <- function(gisco_id,
           stringr::str_c(
             x, "-",
             city_name,
-            "-not_humans.", 
+            "-not_humans.",
             export_format
           ) %>%
             fs::path_sanitize()
         )
-        
       }
-      if (is.null(export_format)==FALSE) {
+      if (is.null(export_format) == FALSE) {
         if (fs::file_exists(current_file) == TRUE) {
-          if (export_format=="csv") {
-            output <- readr::read_csv(file = current_file,
-                                      col_types = list(.default = "c"))
+          if (export_format == "csv") {
+            output <- readr::read_csv(
+              file = current_file,
+              col_types = list(.default = "c")
+            )
           } else {
             output <- sf::st_read(dsn = current_file)
           }
           return(output)
         }
       }
-      
+
       search_df <- sn_search_named_after(
         gisco_id = x,
         search_language = search_language,
@@ -242,14 +253,14 @@ sn_get_details_by_lau <- function(gisco_id,
         check_named_after_original = check_named_after_original,
         check_named_after = check_named_after,
         streets_sf = streets_sf,
-        street_names_df = street_names_df, 
+        street_names_df = street_names_df,
         checked_df = checked_df,
         connection = connection_search_db,
         cache = cache,
         overwrite_cache = overwrite_cache,
         disconnect_db = FALSE
       )
-      
+
       city_df <- tidywikidatar::tw_get_p_wide(
         id = search_df,
         p = c(
@@ -287,7 +298,7 @@ sn_get_details_by_lau <- function(gisco_id,
           -.data$id,
           -.data$label
         )
-      
+
       processed_df <- dplyr::bind_cols(search_df, city_df) %>%
         dplyr::mutate(
           picture = tidywikidatar::tw_get_image_same_length(
@@ -324,24 +335,24 @@ sn_get_details_by_lau <- function(gisco_id,
         ) %>%
         dplyr::mutate(
           place_of_birth_coordinates = tw_get_p(place_of_birth_single,
-                                                p = "P625",
-                                                only_first = TRUE,
-                                                preferred = TRUE,
-                                                cache = cache,
-                                                language = language,
-                                                overwrite_cache = overwrite_cache,
-                                                cache_connection = connection_db,
-                                                disconnect_db = FALSE
+            p = "P625",
+            only_first = TRUE,
+            preferred = TRUE,
+            cache = cache,
+            language = language,
+            overwrite_cache = overwrite_cache,
+            cache_connection = connection_db,
+            disconnect_db = FALSE
           ),
           place_of_death_coordinates = tw_get_p(place_of_death_single,
-                                                p = "P625",
-                                                only_first = TRUE,
-                                                preferred = TRUE,
-                                                cache = cache,
-                                                language = language,
-                                                overwrite_cache = overwrite_cache,
-                                                cache_connection = connection_db,
-                                                disconnect_db = FALSE
+            p = "P625",
+            only_first = TRUE,
+            preferred = TRUE,
+            cache = cache,
+            language = language,
+            overwrite_cache = overwrite_cache,
+            cache_connection = connection_db,
+            disconnect_db = FALSE
           )
         ) %>%
         tidyr::separate(
@@ -364,8 +375,8 @@ sn_get_details_by_lau <- function(gisco_id,
           remove = TRUE,
           convert = TRUE
         )
-      
-      
+
+
       output_df <- processed_df %>%
         dplyr::group_by(id) %>%
         dplyr::mutate(
@@ -373,140 +384,164 @@ sn_get_details_by_lau <- function(gisco_id,
             where(is.list),
             function(x) {
               stringr::str_c(unique(unlist(x)),
-                             collapse = "; "
+                collapse = "; "
               )
             }
           )
         ) %>%
         dplyr::ungroup()
-      
-      if (is.null(checked_df)==FALSE) {
+
+      if (is.null(checked_df) == FALSE) {
         if ("gender" %in% colnames(checked_df)) {
-          na_gender_df <- output_df %>% 
-            dplyr::filter(is.na(.data$sex_or_gender)) %>% 
+          na_gender_df <- output_df %>%
+            dplyr::filter(is.na(.data$sex_or_gender)) %>%
             dplyr::select(.data$name)
-          
-          checked_gender_v <- na_gender_df %>% 
-            dplyr::left_join(y = checked_df %>% 
-                               dplyr::distinct(.data$name,
-                                               .data$gender),
-                             by = "name") %>% 
+
+          checked_gender_v <- na_gender_df %>%
+            dplyr::left_join(
+              y = checked_df %>%
+                dplyr::distinct(
+                  .data$name,
+                  .data$gender
+                ),
+              by = "name"
+            ) %>%
             dplyr::pull(.data$gender)
-          
+
           logical_filter_v <- is.na(output_df$sex_or_gender_label)
-          
+
           output_df$sex_or_gender_label[logical_filter_v] <- as.character(checked_gender_v)
-          
-          sex_or_gender_id_v <- as.character(stringr::str_replace_all(string = checked_gender_v,
-                                                                      pattern = c(male = "Q6581097",
-                                                                                  female = "Q6581072")))
-          
+
+          sex_or_gender_id_v <- as.character(stringr::str_replace_all(
+            string = checked_gender_v,
+            pattern = c(
+              male = "Q6581097",
+              female = "Q6581072"
+            )
+          ))
+
           sex_or_gender_id_v[!tidywikidatar::tw_check_qid(id = sex_or_gender_id_v, logical_vector = TRUE)] <- as.character(NA)
-          
+
           output_df$sex_or_gender[logical_filter_v] <- sex_or_gender_id_v
-          
-          output_df$instance_of[logical_filter_v][is.na(sex_or_gender_id_v)==FALSE] <- "Q5"
-          output_df$instance_of_label[logical_filter_v][is.na(sex_or_gender_id_v)==FALSE] <- "human"
-          
+
+          output_df$instance_of[logical_filter_v][is.na(sex_or_gender_id_v) == FALSE] <- "Q5"
+          output_df$instance_of_label[logical_filter_v][is.na(sex_or_gender_id_v) == FALSE] <- "human"
         }
       }
-      
-      
-      if (manual_check_columns==TRUE) {
-        output_df <- output_df %>% 
-          dplyr::mutate(gisco_id = x,
-                        tic_if_wrong = "", 
-                        fixed_wikidata_id = "", 
-                        fixed_human = "",
-                        fixed_sex_or_gender = "", 
-                        fixed_category = "",
-                        fixed_n_dedicated_to = "") %>% 
-          dplyr::select(.data$gisco_id,
-                        .data$name, 
-                        .data$name_clean,
-                        .data$id,
-                        .data$label, 
-                        .data$description, 
-                        .data$tic_if_wrong, 
-                        .data$fixed_human,
-                        .data$fixed_wikidata_id, 
-                        .data$fixed_sex_or_gender, 
-                        .data$fixed_category,
-                        .data$fixed_n_dedicated_to,
-                        dplyr::everything()
+
+
+      if (manual_check_columns == TRUE) {
+        output_df <- output_df %>%
+          dplyr::mutate(
+            gisco_id = x,
+            tic_if_wrong = "",
+            fixed_wikidata_id = "",
+            fixed_human = "",
+            fixed_sex_or_gender = "",
+            fixed_category = "",
+            fixed_n_dedicated_to = ""
+          ) %>%
+          dplyr::select(
+            .data$gisco_id,
+            .data$name,
+            .data$name_clean,
+            .data$id,
+            .data$label,
+            .data$description,
+            .data$tic_if_wrong,
+            .data$fixed_human,
+            .data$fixed_wikidata_id,
+            .data$fixed_sex_or_gender,
+            .data$fixed_category,
+            .data$fixed_n_dedicated_to,
+            dplyr::everything()
           )
       }
-      
-      if (is.null(export_format)==TRUE) {
+
+      if (is.null(export_format) == TRUE) {
         output_df
       } else if (export_format == "csv") {
-        
         print(stringr::str_c(current_file))
         readr::write_csv(x = output_df, file = current_file)
-        
+
         readr::write_csv(
           x = output_df %>%
             dplyr::filter(is.na(.data$instance_of) == FALSE) %>%
-            dplyr::filter(.data$instance_of == "Q5"|stringr::str_detect(string = .data$instance_of,
-                                                                        pattern = "Q5;")|stringr::str_detect(string = .data$instance_of,
-                                                                                                             pattern = "Q5$")),
+            dplyr::filter(.data$instance_of == "Q5" | stringr::str_detect(
+              string = .data$instance_of,
+              pattern = "Q5;"
+            ) | stringr::str_detect(
+              string = .data$instance_of,
+              pattern = "Q5$"
+            )),
           file = current_file_humans
         )
-        
+
         readr::write_csv(
           x = output_df %>%
-            dplyr::filter(is.na(.data$instance_of) | stringr::str_detect(string = .data$instance_of,
-                                                                         pattern = "Q5;") == FALSE) %>% 
+            dplyr::filter(is.na(.data$instance_of) | stringr::str_detect(
+              string = .data$instance_of,
+              pattern = "Q5;"
+            ) == FALSE) %>%
             dplyr::filter(is.na(.data$instance_of) | .data$instance_of != "Q5"),
           file = current_file_not_humans
         )
-        
+
         output_df
       } else if (export_format == "geojson") {
-        
         current_sf <- latlon2map::ll_osm_get_lau_streets(
           gisco_id = gisco_id,
           unnamed_streets = FALSE,
           streets_sf = streets_sf
-        ) %>% 
+        ) %>%
           dplyr::left_join(y = output_df, by = "name")
-        
-        sf::st_write(obj = current_sf,
-                     dsn = current_file)
-        
-        sf::st_write(obj = current_sf %>%
-                       dplyr::filter(is.na(.data$instance_of) == FALSE) %>%
-                       dplyr::filter(.data$instance_of == "Q5"|stringr::str_detect(string = .data$instance_of,
-                                                                                   pattern = "Q5;")|stringr::str_detect(string = .data$instance_of,
-                                                                                                                        pattern = "Q5$")),
-                     dsn = current_file_humans
+
+        sf::st_write(
+          obj = current_sf,
+          dsn = current_file
         )
-        
-        sf::st_write(obj = current_sf %>%
-                       dplyr::filter(is.na(.data$instance_of) | stringr::str_detect(string = .data$instance_of,
-                                                                                    pattern = "Q5;") == FALSE) %>% 
-                       dplyr::filter(is.na(.data$instance_of) | .data$instance_of != "Q5"),
-                     dsn = current_file_not_humans
+
+        sf::st_write(
+          obj = current_sf %>%
+            dplyr::filter(is.na(.data$instance_of) == FALSE) %>%
+            dplyr::filter(.data$instance_of == "Q5" | stringr::str_detect(
+              string = .data$instance_of,
+              pattern = "Q5;"
+            ) | stringr::str_detect(
+              string = .data$instance_of,
+              pattern = "Q5$"
+            )),
+          dsn = current_file_humans
+        )
+
+        sf::st_write(
+          obj = current_sf %>%
+            dplyr::filter(is.na(.data$instance_of) | stringr::str_detect(
+              string = .data$instance_of,
+              pattern = "Q5;"
+            ) == FALSE) %>%
+            dplyr::filter(is.na(.data$instance_of) | .data$instance_of != "Q5"),
+          dsn = current_file_not_humans
         )
         current_sf
       }
     }
   )
-  
+
   tw_disconnect_from_cache(
     cache = cache,
     cache_connection = connection_db,
     disconnect_db = disconnect_db,
     language = language
   )
-  
+
   tw_disconnect_from_cache(
     cache = cache,
     cache_connection = connection_search_db,
     disconnect_db = disconnect_db,
     language = language
   )
-  
+
   all_df
 }
 
@@ -528,7 +563,7 @@ sn_get_details_legacy <- function(id,
                                   connection = NULL,
                                   cache = TRUE) {
   db_connection <- tidywikidatar::tw_connect_to_cache(connection = connection)
-  
+
   qid_tw_df <- tidywikidatar::tw_get(
     id = id,
     language = language,
@@ -536,7 +571,7 @@ sn_get_details_legacy <- function(id,
     cache_connection = db_connection,
     disconnect_db = FALSE
   )
-  
+
   df_l <- tibble::tibble(qid = id) %>%
     dplyr::mutate(
       label = tidywikidatar::tw_get_label(qid, language = language, cache_connection = db_connection, disconnect_db = FALSE, cache = cache, id_df = qid_tw_df),
@@ -692,12 +727,14 @@ sn_get_details_legacy <- function(id,
       picture = tidywikidatar::tw_get_image_same_length(id = qid, language = language, cache_connection = db_connection, disconnect_db = FALSE, cache = cache, id_df = qid_tw_df, only_first = TRUE),
       wikipedia = tidywikidatar::tw_get_wikipedia(id = qid, language = language, cache_connection = db_connection, disconnect_db = FALSE, cache = cache, id_df = qid_tw_df)
     )
-  
-  tidywikidatar::tw_disconnect_from_cache(cache = cache,
-                                          cache_connection = db_connection,
-                                          disconnect_db = TRUE,
-                                          language = language)
-  
+
+  tidywikidatar::tw_disconnect_from_cache(
+    cache = cache,
+    cache_connection = db_connection,
+    disconnect_db = TRUE,
+    language = language
+  )
+
   if (collapse_lists) {
     df_l %>%
       dplyr::group_by(qid) %>%
