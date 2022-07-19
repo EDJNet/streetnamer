@@ -21,7 +21,7 @@ mod_sn_street_info_server <- function(id,
                                       street_name,
                                       gisco_id,
                                       wikidata_id = NULL,
-                                      country,
+                                      country = NULL,
                                       connection = NULL,
                                       language = tidywikidatar::tw_get_language()) {
   moduleServer(id, function(input, output, session) {
@@ -29,22 +29,13 @@ mod_sn_street_info_server <- function(id,
     # current_lau <- streetnamer::sn_lau_by_nuts %>%
     #   dplyr::filter(country_name == gisco_id)
 
-    if (nchar(country) == 2) {
-      country_code <- stringr::str_to_upper(country)
-      country_name <- streetnamer::sn_country_codes %>%
-        dplyr::filter(.data$Code == country_code) %>%
-        dplyr::pull(.data$Name)
-    } else {
-      country_lower_v <- stringr::str_to_lower(country)
-      country_slice <- streetnamer::sn_country_codes %>%
-        dplyr::mutate(country_lower = stringr::str_to_lower(Name)) %>%
-        dplyr::filter(.data$country_lower == country_lower_v)
 
-      country_name <- country_slice %>%
-        dplyr::pull(.data$Name)
-      country_code <- country_slice %>%
-        dplyr::pull(.data$Code)
+    if (is.null(country)) {
+      country <- stringr::str_extract(string = gisco_id, pattern = "[[:alnum:]]{2}") %>%
+        stringr::str_to_upper()
     }
+    country_code <- sn_standard_country(country = country, type = "code")
+    country_name <- sn_standard_country(country = country, type = "name")
 
     checked_lv <- NULL
 
