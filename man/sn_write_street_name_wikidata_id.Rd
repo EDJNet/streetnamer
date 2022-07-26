@@ -16,6 +16,7 @@ sn_write_street_name_wikidata_id(
   checked = NULL,
   ignore = NULL,
   dedicated_to_n = NULL,
+  fixed_name_clean = NULL,
   session = NULL,
   time = NULL,
   overwrite = FALSE,
@@ -33,6 +34,8 @@ sn_write_street_name_wikidata_id(
 \item{country}{Defaults to NULL. A character string, expected to be a two-letter country code. If not given, tentatively extracted from `gisco_id`.}
 
 \item{dedicated_to_n}{An integer, defaults to NULL, but most commonly expected to be 1. Input more than one if the street is named after `n` entities.}
+
+\item{fixed_name_clean}{A character vector, defaults to NULL. To be used only when Wikidata identififer is not available, but it is possible to offer a "cleaner" version of the person/entity a street is dedicated to.}
 
 \item{overwrite}{Logical, defaults to FALSE. If TRUE, it first deletes all rows associated with the item(s) included in `item_df`. Useful if the original Wikidata object has been updated.}
 

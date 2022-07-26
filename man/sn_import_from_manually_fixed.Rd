@@ -10,7 +10,7 @@ sn_import_from_manually_fixed(
   gisco_id = NULL,
   country = NULL,
   connection = NULL,
-  return_df_only = FALSE,
+  return_df_only = TRUE,
   session = stringi::stri_rand_strings(n = 1, length = 24)
 )
 }

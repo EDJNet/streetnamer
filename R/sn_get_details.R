@@ -19,6 +19,19 @@
 #'
 #' @examples
 sn_get_details_by_country <- function(country,
+                                      additional_properties = c(
+                                        "P39",
+                                        "P509",
+                                        "P140",
+                                        "P611",
+                                        "P411",
+                                        "P241",
+                                        "P410",
+                                        "P97",
+                                        "P607",
+                                        "P27",
+                                        "P172",
+                                        additional_properties),
                                       export_format = NULL,
                                       collapse_lists = FALSE,
                                       language = tidywikidatar::tw_get_language(),
@@ -84,6 +97,7 @@ sn_get_details_by_country <- function(country,
     .f = function(x) {
       sn_get_details_by_lau(
         gisco_id = x,
+        additional_properties = additional_properties,
         export_format = export_format,
         collapse_lists = collapse_lists,
         language = language,
@@ -123,6 +137,7 @@ sn_get_details_by_country <- function(country,
 #' Gets details for a single city
 #'
 #' @param export_format Defaults to NULL. If given, it exports outputs in the given format. Available values include "csv" and "geojson".
+#' @param additional_properties Defaults to a vector of Wikidata properties, with common properties of interest for humans. Some basic properties related to birth, death, and occupation are included by default.
 #' @inheritParams sn_search_named_after
 #'
 #' @return
@@ -132,6 +147,18 @@ sn_get_details_by_country <- function(country,
 #'
 #' gisco_id <- "DE_11000000"
 sn_get_details_by_lau <- function(gisco_id,
+                                  additional_properties = c(
+                                    "P39",
+                                    "P509",
+                                    "P140",
+                                    "P611",
+                                    "P411",
+                                    "P241",
+                                    "P410",
+                                    "P97",
+                                    "P607",
+                                    "P27",
+                                    "P172"),
                                   export_format = NULL,
                                   collapse_lists = FALSE,
                                   language = tidywikidatar::tw_get_language(),
@@ -271,17 +298,7 @@ sn_get_details_by_lau <- function(gisco_id,
           "P19",
           "P570",
           "P20",
-          "P39",
-          "P509",
-          "P140",
-          "P611",
-          "P411",
-          "P241",
-          "P410",
-          "P97",
-          "P607",
-          "P27",
-          "P172"
+          additional_properties
         ),
         label = TRUE,
         property_label_as_column_name = TRUE,
@@ -439,7 +456,9 @@ sn_get_details_by_lau <- function(gisco_id,
             fixed_human = "",
             fixed_sex_or_gender = "",
             fixed_category = "",
-            fixed_n_dedicated_to = ""
+            fixed_n_dedicated_to = "",
+            fixed_name_clean = "",
+            fixed_ignore = "",
           ) %>%
           dplyr::select(
             .data$gisco_id,
@@ -454,6 +473,8 @@ sn_get_details_by_lau <- function(gisco_id,
             .data$fixed_sex_or_gender,
             .data$fixed_category,
             .data$fixed_n_dedicated_to,
+            .data$fixed_name_clean,
+            .data$fixed_ignore,
             dplyr::everything()
           )
       }

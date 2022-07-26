@@ -26,7 +26,7 @@ sn_get_named_city_streets <- function(gisco_id,
   )
 
   if (fs::file_exists(cached_file)) {
-    return(readr::read_rds(cached_file))
+    return(readRDS(cached_file))
   }
 
   if (country_code == "IT") {

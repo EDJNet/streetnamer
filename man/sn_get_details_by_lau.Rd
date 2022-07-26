@@ -6,6 +6,8 @@
 \usage{
 sn_get_details_by_lau(
   gisco_id,
+  additional_properties = c("P39", "P509", "P140", "P611", "P411", "P241", "P410", "P97",
+    "P607", "P27", "P172"),
   export_format = NULL,
   collapse_lists = FALSE,
   language = tidywikidatar::tw_get_language(),
@@ -27,6 +29,8 @@ sn_get_details_by_lau(
 }
 \arguments{
 \item{gisco_id}{A gisco identifier of a European LAU.}
+
+\item{additional_properties}{Defaults to a vector of Wikidata properties, with common properties of interest for humans. Some basic properties related to birth, death, and occupation are included by default.}
 
 \item{export_format}{Defaults to NULL. If given, it exports outputs in the given format. Available values include "csv" and "geojson".}
 

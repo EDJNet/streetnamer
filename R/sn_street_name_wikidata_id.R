@@ -8,6 +8,7 @@
 #' @param disconnect_db Defaults to TRUE. If FALSE, leaves the connection to cache open.
 #' @param gisco_id Identifier of a municipality, typically a gisco identifier. Can be any code, as long as it used consistently, and it starts with a two-letter country code.
 #' @param dedicated_to_n An integer, defaults to NULL, but most commonly expected to be 1. Input more than one if the street is named after `n` entities.
+#' @param fixed_name_clean A character vector, defaults to NULL. To be used only when Wikidata identififer is not available, but it is possible to offer a "cleaner" version of the person/entity a street is dedicated to.
 #' @param return_df_only Logical, defaults to FALSE. If TRUE, does not write to database but simply returns the data frame that would be written to database when set to TRUE.
 #'
 #' @return Nothing, used for its side effects.
@@ -48,6 +49,7 @@ sn_write_street_name_wikidata_id <- function(gisco_id = NULL,
                                              checked = NULL,
                                              ignore = NULL,
                                              dedicated_to_n = NULL,
+                                             fixed_name_clean = NULL, 
                                              session = NULL,
                                              time = NULL,
                                              overwrite = FALSE,
@@ -57,7 +59,6 @@ sn_write_street_name_wikidata_id <- function(gisco_id = NULL,
                                              disconnect_db = TRUE,
                                              return_df_only = FALSE,
                                              df_to_write = NULL) {
-  print(df_to_write)
   if (is.null(df_to_write) == FALSE & is.data.frame(df_to_write) == TRUE) {
     df <- df_to_write
 
@@ -104,9 +105,9 @@ sn_write_street_name_wikidata_id <- function(gisco_id = NULL,
     }
     
     if (is.null(person)) {
-      person_v <- as.character(NA)
+      person_v <- as.integer(NA)
     } else {
-      person_v <- as.character(person)
+      person_v <- as.integer(person)
     }
     
     if (is.null(gender)) {
@@ -137,6 +138,12 @@ sn_write_street_name_wikidata_id <- function(gisco_id = NULL,
       dedicated_to_n_v <- as.integer(NA)
     } else {
       dedicated_to_n_v <- as.integer(dedicated_to_n)
+    }
+    
+    if (is.null(fixed_name_clean)) {
+      fixed_name_clean_v <- as.character(NA)
+    } else {
+      fixed_name_clean_v <- as.character(fixed_name_clean)
     }
     
     if (is.null(tag)) {
@@ -170,6 +177,7 @@ sn_write_street_name_wikidata_id <- function(gisco_id = NULL,
       checked = checked_v,
       ignore = ignore_v,
       dedicated_to_n = dedicated_to_n_v,
+      fixed_name_clean = fixed_name_clean_v,
       tag = tag_v,
       session = session_v,
       time = time_v
@@ -301,7 +309,7 @@ sn_write_street_name_wikidata_id <- function(gisco_id = NULL,
 #'   street_name = "Belvedere San Francesco",
 #'   country = "IT"
 #' )
-sn_get_street_name_wikidata_id <- function(country,
+sn_get_street_name_wikidata_id <- function(country = NULL,
                                            gisco_id = NULL,
                                            street_name = NULL,
                                            only_checked = FALSE,
@@ -311,6 +319,13 @@ sn_get_street_name_wikidata_id <- function(country,
                                            disconnect_db = TRUE) {
   if (is.null(gisco_id) == FALSE) {
     gisco_id <- stringr::str_to_upper(gisco_id)
+  }
+  
+  if (is.null(country)) {
+    country <- stringr::str_extract(
+      string = stringr::str_to_upper(string = gisco_id),
+      pattern = "[A-Z][A-Z]"
+    )
   }
 
   country <- stringr::str_to_upper(country)

@@ -37,8 +37,6 @@ are invited to update those packages before reporting.
 
 ## How does it work?
 
-At this stage, not much really works.
-
 In order to get a preview of how the interface looks like, you can try
 running the following code chunks.
 
@@ -81,6 +79,455 @@ tw_create_cache_folder(ask = FALSE)
 
 # sn_run_app()
 ```
+
+## Export data about a city
+
+First, as usual, you need to set up the folders where data will be
+stored
+
+``` r
+library("streetnamer")
+library("latlon2map")
+library("tidywikidatar")
+options(timeout = 60000) # big timeout, as big downloads needed 
+
+ll_set_folder(path = fs::path(fs::path_home_r(),
+                              "R",
+                              "ll_data"))
+#> /home/g/R/ll_data
+
+sn_set_data_folder(fs::path(fs::path_home_r(),
+                            "R",
+                            "sn_streetnamer_data"))
+
+sn_create_data_folder(ask = FALSE)
+
+# tidywikidatar cache
+tw_set_cache_folder(path = fs::path(fs::path_home_r(),
+                            "R",
+                            "tw_streetnamer_data"))
+
+tw_create_cache_folder(ask = FALSE)
+
+tw_enable_cache(SQLite = TRUE)
+```
+
+Then, let’s say we want to find who streets are dedicated to in Berlin.
+We can find a full list with `ll_get_lau_eu()`
+
+``` r
+ll_get_lau_eu() %>% 
+  sf::st_drop_geometry() %>% 
+  dplyr::filter(stringr::str_detect(string = LAU_NAME, pattern = "Berlin"))
+#> ℹ © EuroGeographics for the administrative boundaries
+#> # A tibble: 10 × 9
+#>    GISCO_ID    CNTR_CODE LAU_ID   LAU_NAME   POP_2…¹ POP_D…² AREA_…³  YEAR FID  
+#>    <chr>       <chr>     <chr>    <chr>        <int>   <dbl>   <dbl> <int> <chr>
+#>  1 DE_07233004 DE        07233004 Berlingen      224    62.3    3.59  2020 DE_0…
+#>  2 DE_16061003 DE        16061003 Berlinger…    1222   105.    11.7   2020 DE_1…
+#>  3 DE_12064336 DE        12064336 Neuenhage…   18657   959.    19.5   2020 DE_1…
+#>  4 DE_12064428 DE        12064428 Rüdersdor…   15812   226.    70.1   2020 DE_1…
+#>  5 DE_12067440 DE        12067440 Schöneich…   12789   748.    17.1   2020 DE_1…
+#>  6 DE_11000000 DE        11000000 Berlin, S… 3669491  4115.   892.    2020 DE_1…
+#>  7 DE_12060020 DE        12060020 Bernau be…   40031   383.   105.    2020 DE_1…
+#>  8 CH_CH4801   CH        CH4801   Berlingen      890   228.     3.90  2020 CH_C…
+#>  9 FR_57064    FR        57064    Berling        270    85.5    3.16  2020 FR_5…
+#> 10 IT_017015   IT        017015   Berlingo      2791   608.     4.59  2020 IT_0…
+#> # … with abbreviated variable names ¹​POP_2020, ²​POP_DENS_2, ³​AREA_KM2
+```
+
+Berlin’s `gisco_id` is: `DE_11000000`
+
+The first step is to get the streets. The first time you run this, this
+will likely take a long time due to download and filtering, but it will
+be cached automatically.
+
+``` r
+current_city <- "DE_11000000"
+current_city_streets_sf <- ll_osm_get_lau_streets(gisco_id = current_city,
+                                                  unnamed_streets = FALSE)
+```
+
+``` r
+ggplot2::ggplot() +
+  ggplot2::geom_sf(data = ll_get_lau_eu(gisco_id = current_city)) +
+  ggplot2::geom_sf(data = current_city_streets_sf ) 
+#> ℹ © EuroGeographics for the administrative boundaries
+```
+
+<img src="man/figures/README-unnamed-chunk-5-1.png" width="100%" />
+
+Now we’ll want to find to whom each street is dedicated to.
+
+If you have no other source of information, a good starting point is the
+following. Notice that this will take a long time the first time you run
+it (possibly, a few hours with very big cities), but work almost
+instantly afterwards thanks to local caching.
+
+``` r
+sn_search_named_after(gisco_id = current_city)
+```
+
+However, here are some common use patterns. For example, rather than
+relying on the web interface, it may be quicker to check data in a
+spreadsheet. The following function exports data in a local subfolder
+(by defauly, `sn_data`), and stores csv files with all names of streets,
+with automatic guesses of who the street is dedicated to (the same can
+also be exported to `geojson` by setting the `export_format` parameter).
+
+For ease of processing, files with humans and non-humans will be stored
+separately.
+
+``` r
+sn_get_details_by_lau(gisco_id = curreny_city,
+                      export_format = "csv",
+                      manual_check_columns = TRUE)
+```
+
+For convenience, if you want to have all municipalities of a country
+processed in order of population size, you can use
+`sn_get_details_by_lau()`.
+
+You can then fix data in the spreadsheet by ticking with an `x` the
+`tic_if_wrong` column, and the fill in the columns whose name starts
+with `fixed_` (all others will be ignored).
+
+More specifically:
+
+-   `tic_if_wrong`: expected either `x`, or empty. Since this package is
+    mostly focused on humans, it expects that the `humans` files will be
+    checked most thoroughly: if the `tic_if_wrong` column is left empty
+    for a given row, then it will be assumed that the automatic matching
+    is right. On the contrary, in the `non_humans` files, rows without
+    the `tic_if_wrong` box will simply be ignored.
+-   `fixed_human`: if a given row has a tick (typically, `x`), then it
+    means that the row refers to a human. If left empty, that it does
+    not refer to a human
+-   `fixed_wikidata_id`: if left empty, it is assumed that the Wikidata
+    identifier is not known. If given, it must correspond to a Wikidata
+    Q identifier, such as `Q539`
+-   `fixed_sex_or_gender`: if left empty, no particular assumption will
+    be made. If the Wikidata identifier is given, this can mostly be
+    left empty, as the information will be derived from there. If given,
+    it should be one of the options available in the online interface,
+    or a their shortened form: `female` (`f`), `male` (`m`), `other`
+    (`o`), `uncertain`, (`u`).
+-   `fixed_category`: can typically be left empty
+-   `fixed_n_dedicated_to`: if left empty, assumed to be one. This can
+    be used to express when a street is dedicated to more than one
+    person: in that case, the row should be duplicated as many times as
+    the needed, and the same number be included in each row of
+    `fixed_n_dedicated_to`.
+
+Recently produced files may also include the following columns: -
+`fixed_name_clean`: this can be used when a full, clean name of the
+person a street is dedicated to can be desumed, or is otherwise known,
+but no Wikidata identifiers is available. Additional useful details can
+be added within brackets after the name. - `fixed_ignore`: if left
+empty, no assumption will be made. If ticked, it will be assumed that
+the row does not refer to a proper street,
+
+After a file is processed, then it can be re-read and stored in the
+local database or re-uploaded to the web interface.
+
+Let us assume that we have stored the fixed files for Berlin in
+`sn_data_fixed/Germany`:
+
+``` r
+current_fixed_files_v <- fs::dir_ls(path = fs::path("sn_data_fixed", "Germany"), recurse = TRUE, type = "file", glob = "*.csv")
+```
+
+Here is the data frame summarising all confirmed information we have in
+those previously exported tables:
+
+``` r
+current_city_confirmed_df <- purrr::map_dfr(.x = current_fixed_files_v, .f = function(x) {
+  sn_import_from_manually_fixed(input_df = x,
+                                return_df_only = TRUE)
+})
+#> Warning: One or more parsing issues, see `problems()` for details
+current_city_confirmed_df
+#> # A tibble: 3,198 × 14
+#>    gisco_id stree…¹ country wikid…² person gender categ…³ checked ignore dedic…⁴
+#>    <chr>    <chr>   <chr>   <chr>    <int> <chr>  <chr>     <int>  <int>   <int>
+#>  1 DE_1100… Abbe L… DE      Q30850…      1 <NA>   <NA>          1     NA      NA
+#>  2 DE_1100… Abbest… DE      Q76359       1 <NA>   <NA>          1     NA      NA
+#>  3 DE_1100… Abram-… DE      Q331067      1 <NA>   <NA>          1     NA      NA
+#>  4 DE_1100… Abtstr… DE      Q174178      1 <NA>   <NA>          1     NA      NA
+#>  5 DE_1100… Achenb… DE      Q76416       1 <NA>   <NA>          1     NA      NA
+#>  6 DE_1100… Achill… DE      Q33083…      1 <NA>   <NA>          1     NA      NA
+#>  7 DE_1100… Adalbe… DE      Q347939      1 <NA>   <NA>          1     NA      NA
+#>  8 DE_1100… Adam-K… DE      Q87850       1 <NA>   <NA>          1     NA      NA
+#>  9 DE_1100… Adam-v… DE      Q66002       1 <NA>   <NA>          1     NA      NA
+#> 10 DE_1100… Adamst… DE      Q33083…      1 <NA>   <NA>          1     NA      NA
+#> # … with 3,188 more rows, 4 more variables: fixed_name_clean <chr>, tag <chr>,
+#> #   session <chr>, time <dttm>, and abbreviated variable names ¹​street_name,
+#> #   ²​wikidata_id, ³​category, ⁴​dedicated_to_n
+#> # ℹ Use `print(n = ...)` to see more rows, and `colnames()` to see all variable names
+```
+
+For context: setting the parameter `return_df_only` returns the data,
+setting it to `TRUE` stores it in the local database, from where it can
+be read with the following command.
+
+``` r
+sn_get_street_name_wikidata_id(gisco_id = current_city)
+#> # A tibble: 0 × 13
+#> # … with 13 variables: gisco_id <chr>, street_name <chr>, country <chr>,
+#> #   wikidata_id <chr>, person <int>, gender <chr>, category <chr>,
+#> #   checked <int>, ignore <int>, dedicated_to_n <int>, tag <chr>,
+#> #   session <chr>, time <dbl>
+#> # ℹ Use `colnames()` to see all variable names
+```
+
+Either way, `current_city_confirmed_df` should now include all confirmed
+humans as well as the custom fixed non-humans.
+
+``` r
+current_city_confirmed_df
+#> # A tibble: 3,198 × 14
+#>    gisco_id stree…¹ country wikid…² person gender categ…³ checked ignore dedic…⁴
+#>    <chr>    <chr>   <chr>   <chr>    <int> <chr>  <chr>     <int>  <int>   <int>
+#>  1 DE_1100… Abbe L… DE      Q30850…      1 <NA>   <NA>          1     NA      NA
+#>  2 DE_1100… Abbest… DE      Q76359       1 <NA>   <NA>          1     NA      NA
+#>  3 DE_1100… Abram-… DE      Q331067      1 <NA>   <NA>          1     NA      NA
+#>  4 DE_1100… Abtstr… DE      Q174178      1 <NA>   <NA>          1     NA      NA
+#>  5 DE_1100… Achenb… DE      Q76416       1 <NA>   <NA>          1     NA      NA
+#>  6 DE_1100… Achill… DE      Q33083…      1 <NA>   <NA>          1     NA      NA
+#>  7 DE_1100… Adalbe… DE      Q347939      1 <NA>   <NA>          1     NA      NA
+#>  8 DE_1100… Adam-K… DE      Q87850       1 <NA>   <NA>          1     NA      NA
+#>  9 DE_1100… Adam-v… DE      Q66002       1 <NA>   <NA>          1     NA      NA
+#> 10 DE_1100… Adamst… DE      Q33083…      1 <NA>   <NA>          1     NA      NA
+#> # … with 3,188 more rows, 4 more variables: fixed_name_clean <chr>, tag <chr>,
+#> #   session <chr>, time <dttm>, and abbreviated variable names ¹​street_name,
+#> #   ²​wikidata_id, ³​category, ⁴​dedicated_to_n
+#> # ℹ Use `print(n = ...)` to see more rows, and `colnames()` to see all variable names
+```
+
+So, let’s process these data and get some basic information about them.
+
+First step, let’s keep only humans:
+
+``` r
+current_city_humans_df <- current_city_confirmed_df %>% 
+  dplyr::filter(as.logical(person), as.logical(checked))
+```
+
+``` r
+# consider uncommenting lines below if intergrating into function
+# additional_properties = c("P39", "P509", "P140", "P611", "P411", "P241", "P410", "P97", "P607", "P27", "P172")
+
+city_df <- current_city_humans_df %>% 
+  dplyr::pull(wikidata_id) %>% 
+tidywikidatar::tw_get_p_wide(
+        p = c(
+          "P31",
+          "P21",
+          "P106",
+          "P569",
+          "P19",
+          "P570",
+          "P20"
+          # ,
+          # additional_properties
+        ),
+        label = TRUE,
+        property_label_as_column_name = TRUE,
+        both_id_and_label = TRUE,
+        only_first = FALSE,
+        unlist = FALSE,
+        # cache = cache,
+        # language = language,
+        # overwrite_cache = overwrite_cache,
+        # cache_connection = connection_db,
+        # disconnect_db = FALSE
+      ) %>%
+        dplyr::select(
+          -.data$id,
+          -.data$label
+        )
+#> Warning: <Pool> uses an old dbplyr interface
+#> ℹ Please install a newer version of the package or contact the maintainer
+#> This warning is displayed once every 8 hours.
+
+      processed_df <- dplyr::bind_cols(current_city_humans_df, city_df) %>%
+        dplyr::mutate(
+          picture = tidywikidatar::tw_get_image_same_length(
+            id = wikidata_id, 
+            format = "embed",
+            width = 300,
+            # cache = cache,
+            # language = language,
+            # overwrite_cache = overwrite_cache,
+            # cache_connection = connection_db,
+            disconnect_db = FALSE
+          ),
+          wikipedia = tidywikidatar::tw_get_wikipedia(
+            id = wikidata_id,
+            # cache = cache,
+            # language = language,
+            # overwrite_cache = overwrite_cache,
+            # cache_connection = connection_db,
+            disconnect_db = FALSE
+          )
+        ) %>%
+        dplyr::mutate(
+          place_of_birth_single = purrr::map_chr(
+            .x = place_of_birth,
+            .f = function(x) {
+              x[[1]]
+            }
+          ),
+          place_of_death_single = purrr::map_chr(
+            .x = place_of_death,
+            .f = function(x) {
+              x[[1]]
+            }
+          )
+        ) %>%
+        dplyr::mutate(
+          place_of_birth_coordinates = tw_get_p(place_of_birth_single,
+            p = "P625",
+            only_first = TRUE,
+            preferred = TRUE,
+            # cache = cache,
+            # language = language,
+            # overwrite_cache = overwrite_cache,
+            # cache_connection = connection_db,
+            disconnect_db = FALSE
+          ),
+          place_of_death_coordinates = tw_get_p(place_of_death_single,
+            p = "P625",
+            only_first = TRUE,
+            preferred = TRUE,
+            # cache = cache,
+            # language = language,
+            # overwrite_cache = overwrite_cache,
+            # cache_connection = connection_db,
+            disconnect_db = FALSE
+          )
+        ) %>%
+        tidyr::separate(
+          col = place_of_birth_coordinates,
+          into = c(
+            "place_of_birth_latitude",
+            "place_of_birth_longitude"
+          ),
+          sep = ",",
+          remove = TRUE,
+          convert = TRUE
+        ) %>%
+        tidyr::separate(
+          col = place_of_death_coordinates,
+          into = c(
+            "place_of_death_latitude",
+            "place_of_death_longitude"
+          ),
+          sep = ",",
+          remove = TRUE,
+          convert = TRUE
+        ) %>% 
+        dplyr::mutate(row_number = dplyr::row_number())
+
+      output_df <- processed_df %>%
+       dplyr::group_by(row_number) %>%
+        dplyr::mutate(
+          dplyr::across(
+            where(is.list),
+            function(x) {
+              stringr::str_c(unique(unlist(x)),
+                collapse = "; "
+              )
+            }
+          )
+        ) %>%
+        dplyr::ungroup() %>% 
+  dplyr::mutate(
+    gender_label_combo = dplyr::case_when(is.na(sex_or_gender_label)==FALSE&sex_or_gender_label!="female"&sex_or_gender_label!="male" ~ as.character("other"),
+                                          is.na(sex_or_gender_label)==FALSE ~ sex_or_gender_label,
+                                          is.na(sex_or_gender_label)==TRUE ~ gender,
+                                          TRUE ~ gender)
+    )
+      
+readr::write_csv(x = output_df, file = paste0(current_city, ".csv"))
+```
+
+Some summary stats:
+
+NB: consider that a single street can be dedicated to more than a human,
+and that some entities (fictional characters, deities, etc.) are not
+humans, but may have a defined gender.
+
+``` r
+summary_df <- tibble::tribble(~name, ~value,
+                "gisco_id", unique(output_df$gisco_id), 
+                "municipality_name", ll_get_lau_eu(gisco_id = unique(output_df$gisco_id), silent = TRUE) %>% dplyr::pull(LAU_NAME), 
+                "total_streets", scales::number(nrow(current_city_streets_sf %>% sf::st_drop_geometry() %>% dplyr::distinct(name))), 
+                "total_streets_dedicated_to_humans", output_df %>%
+  dplyr::filter(as.logical(person), as.logical(checked)) %>% 
+    dplyr::distinct(street_name) %>% 
+    nrow() %>% 
+    scales::number(), 
+  "total_streets_dedicated_to_male", output_df %>%
+  dplyr::filter(gender_label_combo == "male") %>% 
+    dplyr::distinct(street_name) %>% 
+    nrow() %>% 
+    scales::number(),
+    "total_streets_dedicated_to_female", output_df %>%
+  dplyr::filter(gender_label_combo == "female") %>% 
+    dplyr::distinct(street_name) %>% 
+    nrow() %>% 
+    scales::number(),
+  "total_streets_dedicated_to_other_gender", output_df %>%
+  dplyr::filter(gender_label_combo == "other") %>% 
+    dplyr::distinct(street_name) %>% 
+    nrow() %>% 
+    scales::number(),
+  "total_streets_dedicated_to_more_than_1_n",output_df %>% dplyr::filter(is.na(dedicated_to_n)==FALSE, dedicated_to_n>1) %>% dplyr::distinct(street_name) %>% nrow() %>% scales::number(),
+  "total_streets_dedicated_to_human_with_qid", output_df %>%
+  dplyr::filter(as.logical(person), as.logical(checked), is.na(wikidata_id)==FALSE) %>% nrow() %>% scales::number(),
+   "total_streets_dedicated_to_human_without_qid", output_df %>%
+  dplyr::filter(as.logical(person), as.logical(checked), is.na(wikidata_id)==TRUE) %>% nrow() %>% scales::number(),
+  "total_streets_dedicated_to_human_with_unknown_gender", output_df %>%
+  dplyr::filter(as.logical(person), as.logical(checked), is.na(gender_label_combo)==TRUE) %>% nrow() %>% scales::number())
+
+
+print(summary_df, n = 100)
+#> # A tibble: 11 × 2
+#>    name                                                 value        
+#>    <chr>                                                <chr>        
+#>  1 gisco_id                                             DE_11000000  
+#>  2 municipality_name                                    Berlin, Stadt
+#>  3 total_streets                                        11 252       
+#>  4 total_streets_dedicated_to_humans                    3 027        
+#>  5 total_streets_dedicated_to_male                      2 632        
+#>  6 total_streets_dedicated_to_female                    400          
+#>  7 total_streets_dedicated_to_other_gender              1            
+#>  8 total_streets_dedicated_to_more_than_1_n             20           
+#>  9 total_streets_dedicated_to_human_with_qid            2 895        
+#> 10 total_streets_dedicated_to_human_without_qid         153          
+#> 11 total_streets_dedicated_to_human_with_unknown_gender 2
+```
+
+And a quick summary map:
+
+``` r
+streets_combo_sf <- 
+  current_city_streets_sf %>% 
+  dplyr::rename(street_name = name) %>% 
+  dplyr::left_join(output_df, by = "street_name")
+
+ggplot2::ggplot() +
+  ggplot2::geom_sf(data = ll_get_lau_eu(gisco_id = current_city, silent = TRUE)) +
+  ggplot2::geom_sf(data = streets_combo_sf %>% 
+  dplyr::filter(is.na(gender_label_combo)), color = "lightgray" ) +
+    ggplot2::geom_sf(data = streets_combo_sf %>% 
+  dplyr::filter(is.na(gender_label_combo)==FALSE), mapping = ggplot2::aes(color = gender_label_combo )) +
+  ggplot2::scale_color_viridis_d() +
+  ggplot2::theme_minimal()
+```
+
+<img src="man/figures/README-unnamed-chunk-15-1.png" width="100%" />
 
 ## Function naming conventions
 
@@ -145,14 +592,13 @@ sn_write_street_name_wikidata_id(
   overwrite = FALSE,
   disconnect_db = TRUE
 )
-#> NULL
-#> # A tibble: 1 × 13
+#> # A tibble: 1 × 14
 #>   gisco_id  stree…¹ country wikid…² person gender categ…³ checked ignore dedic…⁴
 #>   <chr>     <chr>   <chr>   <chr>    <int> <chr>  <chr>     <int>  <int>   <int>
 #> 1 IT_022205 Belved… IT      Q676555      1 male   religi…       1     NA      NA
-#> # … with 3 more variables: tag <chr>, session <chr>, time <dbl>, and
-#> #   abbreviated variable names ¹​street_name, ²​wikidata_id, ³​category,
-#> #   ⁴​dedicated_to_n
+#> # … with 4 more variables: fixed_name_clean <chr>, tag <chr>, session <chr>,
+#> #   time <dttm>, and abbreviated variable names ¹​street_name, ²​wikidata_id,
+#> #   ³​category, ⁴​dedicated_to_n
 #> # ℹ Use `colnames()` to see all variable names
 
 
@@ -161,9 +607,6 @@ street_info_df <- sn_get_street_name_wikidata_id(
   street_name = "Belvedere San Francesco",
   country = "IT"
 )
-#> Warning: <Pool> uses an old dbplyr interface
-#> ℹ Please install a newer version of the package or contact the maintainer
-#> This warning is displayed once every 8 hours.
 
 street_info_df %>% 
   dplyr::distinct(gisco_id, .keep_all = TRUE) %>% 
@@ -173,22 +616,23 @@ street_info_df %>%
                       values_drop_na = FALSE,
                       values_transform = as.character) %>% 
   print(n = 100)
-#> # A tibble: 13 × 2
-#>    type           value                    
-#>    <chr>          <chr>                    
-#>  1 gisco_id       "IT_022205"              
-#>  2 street_name    "Belvedere San Francesco"
-#>  3 country        "IT"                     
-#>  4 wikidata_id    "Q676555"                
-#>  5 person         "1"                      
-#>  6 gender         "male"                   
-#>  7 category       "religion"               
-#>  8 checked        "1"                      
-#>  9 ignore          <NA>                    
-#> 10 dedicated_to_n  <NA>                    
-#> 11 tag            ""                       
-#> 12 session        "testing"                
-#> 13 time           "1658240047.54168"
+#> # A tibble: 14 × 2
+#>    type             value                    
+#>    <chr>            <chr>                    
+#>  1 gisco_id         "IT_022205"              
+#>  2 street_name      "Belvedere San Francesco"
+#>  3 country          "IT"                     
+#>  4 wikidata_id      "Q676555"                
+#>  5 person           "1"                      
+#>  6 gender           "male"                   
+#>  7 category         "religion"               
+#>  8 checked          "1"                      
+#>  9 ignore            <NA>                    
+#> 10 dedicated_to_n    <NA>                    
+#> 11 fixed_name_clean  <NA>                    
+#> 12 tag              ""                       
+#> 13 session          "testing"                
+#> 14 time             "1658874788.58616"
 ```
 
 Each time the “confirm” button is clicked, a new row is added to the

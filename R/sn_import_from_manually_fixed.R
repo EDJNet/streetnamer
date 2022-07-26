@@ -14,7 +14,7 @@ sn_import_from_manually_fixed <- function(input_df,
                                           gisco_id = NULL,
                                           country = NULL,
                                           connection = NULL,
-                                          return_df_only = FALSE,
+                                          return_df_only = TRUE,
                                           session = stringi::stri_rand_strings(n = 1, length = 24)) {
   if (is.data.frame(input_df) == FALSE) {
     if (is.null(gisco_id)) {
@@ -24,7 +24,7 @@ sn_import_from_manually_fixed <- function(input_df,
     if (is.null(country)) {
       country <- stringr::str_extract(string = gisco_id, pattern = "[[:alnum:]]{2}")
     }
-
+    
     if (is.null(type)) {
       if (stringr::str_detect(string = input_df, pattern = stringr::fixed("not_humans."))) {
         type <- "not_humans"  
@@ -36,9 +36,9 @@ sn_import_from_manually_fixed <- function(input_df,
       
       
     }
-    input_df <- readr::read_csv(file = input_df)
+    input_df <- readr::read_csv(file = input_df, show_col_types = FALSE)
   }
-
+  
   relevant_df <- input_df %>%
     dplyr::select(
       .data$gisco_id,
@@ -52,7 +52,7 @@ sn_import_from_manually_fixed <- function(input_df,
       .data$fixed_n_dedicated_to
     )
   
-  if (type == "human") {
+  if (type == "humans") {
     
     # write confirmed humans
     
@@ -68,24 +68,24 @@ sn_import_from_manually_fixed <- function(input_df,
                                                                              non_id_as_NA = TRUE)
     )
     gender_confirmed_v <- dplyr::case_when(is.na(confirmed_humans_df$fixed_sex_or_gender) ~ as.character(NA), 
-                                       confirmed_humans_df$fixed_sex_or_gender == "m"|confirmed_humans_df$fixed_sex_or_gender=="male" ~ "male",
-                                       confirmed_humans_df$fixed_sex_or_gender == "f"|confirmed_humans_df$fixed_sex_or_gender=="female" ~ "female",
-                                       confirmed_humans_df$fixed_sex_or_gender == "o"|confirmed_humans_df$fixed_sex_or_gender=="other" ~ "other",
-                                       confirmed_humans_df$fixed_sex_or_gender == "u"|confirmed_humans_df$fixed_sex_or_gender=="uncertain" ~ "uncertain",
-                                       TRUE ~ as.character(NA))
+                                           confirmed_humans_df$fixed_sex_or_gender == "m"|confirmed_humans_df$fixed_sex_or_gender=="male" ~ "male",
+                                           confirmed_humans_df$fixed_sex_or_gender == "f"|confirmed_humans_df$fixed_sex_or_gender=="female" ~ "female",
+                                           confirmed_humans_df$fixed_sex_or_gender == "o"|confirmed_humans_df$fixed_sex_or_gender=="other" ~ "other",
+                                           confirmed_humans_df$fixed_sex_or_gender == "u"|confirmed_humans_df$fixed_sex_or_gender=="uncertain" ~ "uncertain",
+                                           TRUE ~ as.character(NA))
     
-    sn_write_street_name_wikidata_id(gisco_id = gisco_id,
-                                     country = country,
-                                     street_name = confirmed_humans_df$name,
-                                     wikidata_id = wikidata_id_import,
-                                     dedicated_to_n = confirmed_humans_df$fixed_n_dedicated_to,
-                                     category = confirmed_humans_df$fixed_category,
-                                     gender = gender_confirmed_v,
-                                     checked = TRUE,
-                                     person = TRUE,
-                                     session = session,
-                                     return_df_only = return_df_only,
-                                     connection = connection)
+    confirmed_output_df <- sn_write_street_name_wikidata_id(gisco_id = gisco_id,
+                                                            country = country,
+                                                            street_name = confirmed_humans_df$name,
+                                                            wikidata_id = wikidata_id_import,
+                                                            dedicated_to_n = confirmed_humans_df$fixed_n_dedicated_to,
+                                                            category = confirmed_humans_df$fixed_category,
+                                                            gender = gender_confirmed_v,
+                                                            checked = TRUE,
+                                                            person = TRUE,
+                                                            session = session,
+                                                            return_df_only = return_df_only,
+                                                            connection = connection)
     
     # write fixed humans
     
@@ -102,25 +102,29 @@ sn_import_from_manually_fixed <- function(input_df,
     )
     
     gender_fixed_v <- dplyr::case_when(is.na(fixed_humans_df$fixed_sex_or_gender) ~ as.character(NA), 
-                                 fixed_humans_df$fixed_sex_or_gender == "m"|fixed_humans_df$fixed_sex_or_gender=="male" ~ "male",
-                                 fixed_humans_df$fixed_sex_or_gender == "f"|fixed_humans_df$fixed_sex_or_gender=="female" ~ "female",
-                                 fixed_humans_df$fixed_sex_or_gender == "o"|fixed_humans_df$fixed_sex_or_gender=="other" ~ "other",
-                                 fixed_humans_df$fixed_sex_or_gender == "u"|fixed_humans_df$fixed_sex_or_gender=="uncertain" ~ "uncertain",
-                                 TRUE ~ as.character(NA))
+                                       fixed_humans_df$fixed_sex_or_gender == "m"|fixed_humans_df$fixed_sex_or_gender=="male" ~ "male",
+                                       fixed_humans_df$fixed_sex_or_gender == "f"|fixed_humans_df$fixed_sex_or_gender=="female" ~ "female",
+                                       fixed_humans_df$fixed_sex_or_gender == "o"|fixed_humans_df$fixed_sex_or_gender=="other" ~ "other",
+                                       fixed_humans_df$fixed_sex_or_gender == "u"|fixed_humans_df$fixed_sex_or_gender=="uncertain" ~ "uncertain",
+                                       TRUE ~ as.character(NA))
     
     
-    sn_write_street_name_wikidata_id(gisco_id = gisco_id,
-                                     country = country,
-                                     street_name = fixed_humans_df$name,
-                                     wikidata_id = wikidata_id_fixed_import,
-                                     dedicated_to_n = fixed_humans_df$fixed_n_dedicated_to,
-                                     category = fixed_humans_df$fixed_category,
-                                     gender = gender_fixed_v,
-                                     checked = TRUE,
-                                     person = TRUE,
-                                     session = session,
-                                     return_df_only = return_df_only,
-                                     connection = connection)
+    fixed_output_df <- sn_write_street_name_wikidata_id(gisco_id = gisco_id,
+                                                        country = country,
+                                                        street_name = fixed_humans_df$name,
+                                                        wikidata_id = wikidata_id_fixed_import,
+                                                        dedicated_to_n = fixed_humans_df$fixed_n_dedicated_to,
+                                                        category = fixed_humans_df$fixed_category,
+                                                        gender = gender_fixed_v,
+                                                        checked = TRUE,
+                                                        person = person_lv,
+                                                        session = session,
+                                                        return_df_only = return_df_only,
+                                                        connection = connection)
+
+    
+    return(dplyr::bind_rows(confirmed_output_df,
+                            fixed_output_df))
     
   } else if (type == "not_humans") {
     
@@ -143,23 +147,25 @@ sn_import_from_manually_fixed <- function(input_df,
                                            all_fixed_df $fixed_sex_or_gender == "u"|all_fixed_df$fixed_sex_or_gender=="uncertain" ~ "uncertain",
                                            TRUE ~ as.character(NA))
     
-    person_v <- dplyr::if_else(condition = is.na(all_fixed_df$fixed_human),
+    person_lv <- dplyr::if_else(condition = is.na(all_fixed_df$fixed_human),
                                true = FALSE, 
                                false = TRUE
     )
     
-    sn_write_street_name_wikidata_id(gisco_id = gisco_id,
-                                     country = country,
-                                     street_name = all_fixed_df$name,
-                                     wikidata_id = wikidata_id_import,
-                                     dedicated_to_n = all_fixed_df$fixed_n_dedicated_to,
-                                     category = all_fixed_df$fixed_category,
-                                     gender = gender_confirmed_v,
-                                     checked = TRUE,
-                                     person = TRUE,
-                                     session = session,
-                                     return_df_only = return_df_only,
-                                     connection = connection) 
+    output_df <-  sn_write_street_name_wikidata_id(gisco_id = gisco_id,
+                                                   country = country,
+                                                   street_name = all_fixed_df$name,
+                                                   wikidata_id = wikidata_id_import,
+                                                   dedicated_to_n = all_fixed_df$fixed_n_dedicated_to,
+                                                   category = all_fixed_df$fixed_category,
+                                                   gender = gender_confirmed_v,
+                                                   checked = TRUE,
+                                                   person = person_lv,
+                                                   session = session,
+                                                   return_df_only = return_df_only,
+                                                   connection = connection) 
+    
+    return(output_df)
   }
-
+  
 }

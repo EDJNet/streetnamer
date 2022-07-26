@@ -35,7 +35,7 @@ sn_get_osm_city_boundaries <- function(city,
       )
     )
     if (fs::file_exists(file_location) == TRUE) {
-      return(readr::read_rds(file = file_location))
+      return(readRDS(file = file_location))
     }
   }
 

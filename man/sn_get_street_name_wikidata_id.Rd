@@ -5,7 +5,7 @@
 \title{Retrieve combination of municipality/street name/wikidata id and category from database.}
 \usage{
 sn_get_street_name_wikidata_id(
-  country,
+  country = NULL,
   gisco_id = NULL,
   street_name = NULL,
   only_checked = FALSE,
