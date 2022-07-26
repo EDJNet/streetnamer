@@ -17,6 +17,7 @@ sn_write_street_name_wikidata_id(
   ignore = NULL,
   dedicated_to_n = NULL,
   session = NULL,
+  time = NULL,
   overwrite = FALSE,
   append = TRUE,
   connection = NULL,
@@ -29,7 +30,7 @@ sn_write_street_name_wikidata_id(
 \arguments{
 \item{gisco_id}{Identifier of a municipality, typically a gisco identifier. Can be any code, as long as it used consistently, and it starts with a two-letter country code.}
 
-\item{country}{Two letter country code.}
+\item{country}{Defaults to NULL. A character string, expected to be a two-letter country code. If not given, tentatively extracted from `gisco_id`.}
 
 \item{dedicated_to_n}{An integer, defaults to NULL, but most commonly expected to be 1. Input more than one if the street is named after `n` entities.}
 
@@ -38,6 +39,8 @@ sn_write_street_name_wikidata_id(
 \item{connection}{Defaults to NULL. If NULL, and caching is enabled, `streetnamer` will use a local sqlite database. A custom connection to other databases can be given (see vignette `caching` for details).}
 
 \item{disconnect_db}{Defaults to TRUE. If FALSE, leaves the connection to cache open.}
+
+\item{return_df_only}{Logical, defaults to FALSE. If TRUE, does not write to database but simply returns the data frame that would be written to database when set to TRUE.}
 
 \item{df}{A data frame with two columns: gisco_id and name.}
 }

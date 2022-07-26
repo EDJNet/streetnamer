@@ -2,12 +2,13 @@
 #'
 #'
 #' @param df A data frame with two columns: gisco_id and name.
-#' @param country Two letter country code.
+#' @param country Defaults to NULL. A character string, expected to be a two-letter country code. If not given, tentatively extracted from `gisco_id`.
 #' @param overwrite Logical, defaults to FALSE. If TRUE, it first deletes all rows associated with the item(s) included in `item_df`. Useful if the original Wikidata object has been updated.
 #' @param connection Defaults to NULL. If NULL, and caching is enabled, `streetnamer` will use a local sqlite database. A custom connection to other databases can be given (see vignette `caching` for details).
 #' @param disconnect_db Defaults to TRUE. If FALSE, leaves the connection to cache open.
 #' @param gisco_id Identifier of a municipality, typically a gisco identifier. Can be any code, as long as it used consistently, and it starts with a two-letter country code.
 #' @param dedicated_to_n An integer, defaults to NULL, but most commonly expected to be 1. Input more than one if the street is named after `n` entities.
+#' @param return_df_only Logical, defaults to FALSE. If TRUE, does not write to database but simply returns the data frame that would be written to database when set to TRUE.
 #'
 #' @return Nothing, used for its side effects.
 #' @export
@@ -48,6 +49,7 @@ sn_write_street_name_wikidata_id <- function(gisco_id = NULL,
                                              ignore = NULL,
                                              dedicated_to_n = NULL,
                                              session = NULL,
+                                             time = NULL,
                                              overwrite = FALSE,
                                              append = TRUE,
                                              connection = NULL,
@@ -71,65 +73,106 @@ sn_write_street_name_wikidata_id <- function(gisco_id = NULL,
       gisco_id <- df$gisco_id
     }
   } else {
-    gisco_id <- stringr::str_to_upper(ifelse(is.null(gisco_id),
-      as.character(NA),
-      as.character(gisco_id)
-    ))
-    country <- stringr::str_to_upper(ifelse(is.null(country),
-      as.character(NA),
-      as.character(country)
-    ))
+
+
+    if (is.null(country)) {
+      country_v <- as.character(NA)
+    } else {
+      country_v <- stringr::str_to_upper(as.character(country))
+    }
+    
+    if (length(unique(country_v))>1) {
+      usethis::ui_stop("All rows must belong to the same country.")
+    }
+
+    if (is.null(gisco_id)) {
+      gisco_id_v <- as.character(NA)
+    } else {
+      gisco_id_v <- stringr::str_to_upper(as.character(gisco_id))
+    }
+    
+    if (is.null(street_name)) {
+      street_name_v <- as.character(NA)
+    } else {
+      street_name_v <- as.character(street_name)
+    }
+    
+    if (is.null(wikidata_id)) {
+      wikidata_id_v <- as.character(NA)
+    } else {
+      wikidata_id_v <- as.character(wikidata_id)
+    }
+    
+    if (is.null(person)) {
+      person_v <- as.character(NA)
+    } else {
+      person_v <- as.character(person)
+    }
+    
+    if (is.null(gender)) {
+      gender_v <- as.character(NA)
+    } else {
+      gender_v <- as.character(gender)
+    }
+    
+    if (is.null(category)) {
+      category_v <- as.character(NA)
+    } else {
+      category_v <- as.character(category)
+    }
+    
+    if (is.null(checked)) {
+      checked_v <- as.integer(NA)
+    } else {
+      checked_v <- as.integer(checked)
+    }
+    
+    if (is.null(ignore)) {
+      ignore_v <- as.integer(NA)
+    } else {
+      ignore_v <- as.integer(ignore)
+    }
+    
+    if (is.null(dedicated_to_n)) {
+      dedicated_to_n_v <- as.integer(NA)
+    } else {
+      dedicated_to_n_v <- as.integer(dedicated_to_n)
+    }
+    
+    if (is.null(tag)) {
+      tag_v <- as.character(NA)
+    } else {
+      tag_v <- as.character(tag)
+    }
+    
+    if (is.null(session)) {
+      session_v <- as.character(NA)
+    } else {
+      session_v <- as.character(session)
+    }
+    
+    if (is.null(time)) {
+      time_v <- Sys.time()
+    } else {
+      time_v <- as.numeric(time)
+    }
+    
+    
 
     df <- tibble::tibble(
-      gisco_id = ifelse(is.null(gisco_id),
-        as.character(NA),
-        as.character(gisco_id)
-      ),
-      street_name = ifelse(is.null(street_name),
-        as.character(NA),
-        as.character(street_name)
-      ),
-      country = ifelse(is.null(country),
-        as.character(NA),
-        as.character(country)
-      ),
-      wikidata_id = ifelse(is.null(wikidata_id),
-        as.character(NA),
-        as.character(wikidata_id)
-      ),
-      person = ifelse(is.null(person),
-        as.integer(NA),
-        as.integer(person)
-      ),
-      gender = ifelse(is.null(gender),
-        as.character(NA),
-        as.character(gender)
-      ),
-      category = ifelse(is.null(category),
-        as.character(NA),
-        as.character(category)
-      ),
-      checked = ifelse(is.null(checked),
-        as.integer(NA),
-        as.integer(checked)
-      ),
-      ignore = ifelse(is.null(ignore),
-        as.integer(NA),
-        as.integer(ignore)
-      ),
-      dedicated_to_n = ifelse(is.null(dedicated_to_n),
-        as.integer(NA),
-        as.integer(dedicated_to_n)
-      ),
-      tag = ifelse(is.null(tag),
-        as.character(NA),
-        as.character(tag)
-      ),
-      session = ifelse(is.null(session),
-        as.character(NA),
-        as.character(session)
-      ),
-      time = as.numeric(Sys.time())
+      gisco_id = gisco_id_v,
+      street_name = street_name_v,
+      country = country_v,
+      wikidata_id = wikidata_id_v,
+      person = person_v,
+      gender = gender_v,
+      category = category_v,
+      checked = checked_v,
+      ignore = ignore_v,
+      dedicated_to_n = dedicated_to_n_v,
+      tag = tag_v,
+      session = session_v,
+      time = time_v
     )
   }
 
