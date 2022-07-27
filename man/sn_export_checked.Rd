@@ -2,7 +2,7 @@
 % Please edit documentation in R/sn_export_checked.R
 \name{sn_export_checked}
 \alias{sn_export_checked}
-\title{Title}
+\title{Exports checked file for further analysis}
 \usage{
 sn_export_checked(
   gisco_id = NULL,
@@ -11,7 +11,10 @@ sn_export_checked(
   additional_properties = c("P39", "P509", "P140", "P611", "P411", "P241", "P410", "P97",
     "P607", "P27", "P172"),
   include_image_credits = TRUE,
+  unlist = FALSE,
   fixed_folder = "sn_data_fixed",
+  export_folder = "sn_data_export",
+  export_csv = FALSE,
   cache = NULL,
   language = tidywikidatar::tw_get_language(),
   overwrite_cache = FALSE,
@@ -26,8 +29,14 @@ sn_export_checked(
 
 \item{source}{Source for data. Valid values include "database" and "fixed_csv".}
 
+\item{unlist}{Defaults to FALSE. If TRUE, all data are unlisted in place, with values separated by a `;`.}
+
 \item{fixed_folder}{Base location of folder where csv files with manual fixes are stored. They can be located in subfolders.}
+
+\item{export_folder}{Defaults to `sn_data_export`, created if not existing, overwrite files by default. If set to TRUE, unlist is also automatically set to TRUE.}
+
+\item{export_csv}{Logical, defaults to FALSE. If TRUE, output file is stored as a CSV file in a local sub-folder as defined by `export_folder`.}
 }
 \description{
-Title
+Exports checked file for further analysis
 }
