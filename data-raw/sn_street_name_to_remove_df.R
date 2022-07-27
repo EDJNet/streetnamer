@@ -9,6 +9,7 @@ sn_street_name_to_remove_df <- dplyr::bind_rows(
       "Bulevardi i ",
       "Bulevardi ",
       "Rruga ",
+      "Rruga e ",
       "Sheshi ",
       "Ura e "
     ) %>%
