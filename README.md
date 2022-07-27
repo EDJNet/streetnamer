@@ -199,7 +199,7 @@ More specifically:
     be checked most thoroughly: if the `tick_if_wrong` column is left
     empty for a given row, then it will be assumed that the automatic
     matching is right. On the contrary, in the `non_humans` files, rows
-    without the `tic_if_wrong` box will simply be ignored.
+    without the `tick_if_wrong` box will simply be ignored.
 -   `fixed_human`: if a given row has a tick (typically, `x`), then it
     means that the row refers to a human. If left empty, that it does
     not refer to a human
@@ -304,152 +304,51 @@ current_city_confirmed_df
 #> # ℹ Use `print(n = ...)` to see more rows, and `colnames()` to see all variable names
 ```
 
-So, let’s process these data and get some basic information about them.
+The easiest way to get this data in a format that can easily be shared,
+is to use `sn_export_checked()`. notice that this still assumes you will
+have the “fixed” files under a `sn_data_fixed` folder in the current
+working directory (the exact location within that folder doesn’t matter,
+as the function searches recursively for a `gisco_id` match).
 
-First step, let’s keep only humans:
+I will spell out parameters for clarity, but you may well be happy with
+the defaults.
 
 ``` r
-current_city_humans_df <- current_city_confirmed_df %>% 
-  dplyr::filter(as.logical(person), as.logical(checked))
-```
-
-``` r
-# consider uncommenting lines below if intergrating into function
-# additional_properties = c("P39", "P509", "P140", "P611", "P411", "P241", "P410", "P97", "P607", "P27", "P172")
-
-city_df <- current_city_humans_df %>% 
-  dplyr::pull(wikidata_id) %>% 
-tidywikidatar::tw_get_p_wide(
-        p = c(
-          "P31",
-          "P21",
-          "P106",
-          "P569",
-          "P19",
-          "P570",
-          "P20"
-          # ,
-          # additional_properties
-        ),
-        label = TRUE,
-        property_label_as_column_name = TRUE,
-        both_id_and_label = TRUE,
-        only_first = FALSE,
-        unlist = FALSE,
-        # cache = cache,
-        # language = language,
-        # overwrite_cache = overwrite_cache,
-        # cache_connection = connection_db,
-        # disconnect_db = FALSE
-      ) %>%
-        dplyr::select(
-          -.data$id,
-          -.data$label
-        )
+output_df <- sn_export_checked(
+  gisco_id = current_city,
+  source = "fixed_csv",  # this could be set to database 
+  include_image_credits = TRUE, # useful if you plan to use images, but time consuming, as this imp a separate API call
+  unlist = TRUE,  # needs to be set to TRUE for CSV, but better set to FALSE if doing further processing in R
+  # additional_properties = c("P39", "P509", "P140", "P611", "P411", "P241", "P410", "P97", "P607", "P27", "P172") # this is if you want more properties
+  export_folder = "sn_data_export", # here is where you'll find your files if you export them
+  export_format = "csv" # can also be "geojson". Leave it to NULL if you do not intend to export
+)
+#> Warning: One or more parsing issues, see `problems()` for details
 #> Warning: <Pool> uses an old dbplyr interface
 #> ℹ Please install a newer version of the package or contact the maintainer
 #> This warning is displayed once every 8 hours.
-
-      processed_df <- dplyr::bind_cols(current_city_humans_df, city_df) %>%
-        dplyr::mutate(
-          picture = tidywikidatar::tw_get_image_same_length(
-            id = wikidata_id, 
-            format = "embed",
-            width = 300,
-            # cache = cache,
-            # language = language,
-            # overwrite_cache = overwrite_cache,
-            # cache_connection = connection_db,
-            disconnect_db = FALSE
-          ),
-          wikipedia = tidywikidatar::tw_get_wikipedia(
-            id = wikidata_id,
-            # cache = cache,
-            # language = language,
-            # overwrite_cache = overwrite_cache,
-            # cache_connection = connection_db,
-            disconnect_db = FALSE
-          )
-        ) %>%
-        dplyr::mutate(
-          place_of_birth_single = purrr::map_chr(
-            .x = place_of_birth,
-            .f = function(x) {
-              x[[1]]
-            }
-          ),
-          place_of_death_single = purrr::map_chr(
-            .x = place_of_death,
-            .f = function(x) {
-              x[[1]]
-            }
-          )
-        ) %>%
-        dplyr::mutate(
-          place_of_birth_coordinates = tw_get_p(place_of_birth_single,
-            p = "P625",
-            only_first = TRUE,
-            preferred = TRUE,
-            # cache = cache,
-            # language = language,
-            # overwrite_cache = overwrite_cache,
-            # cache_connection = connection_db,
-            disconnect_db = FALSE
-          ),
-          place_of_death_coordinates = tw_get_p(place_of_death_single,
-            p = "P625",
-            only_first = TRUE,
-            preferred = TRUE,
-            # cache = cache,
-            # language = language,
-            # overwrite_cache = overwrite_cache,
-            # cache_connection = connection_db,
-            disconnect_db = FALSE
-          )
-        ) %>%
-        tidyr::separate(
-          col = place_of_birth_coordinates,
-          into = c(
-            "place_of_birth_latitude",
-            "place_of_birth_longitude"
-          ),
-          sep = ",",
-          remove = TRUE,
-          convert = TRUE
-        ) %>%
-        tidyr::separate(
-          col = place_of_death_coordinates,
-          into = c(
-            "place_of_death_latitude",
-            "place_of_death_longitude"
-          ),
-          sep = ",",
-          remove = TRUE,
-          convert = TRUE
-        ) %>% 
-        dplyr::mutate(row_number = dplyr::row_number())
-
-      output_df <- processed_df %>%
-       dplyr::group_by(row_number) %>%
-        dplyr::mutate(
-          dplyr::across(
-            where(is.list),
-            function(x) {
-              stringr::str_c(unique(unlist(x)),
-                collapse = "; "
-              )
-            }
-          )
-        ) %>%
-        dplyr::ungroup() %>% 
-  dplyr::mutate(
-    gender_label_combo = dplyr::case_when(is.na(sex_or_gender_label)==FALSE&sex_or_gender_label!="female"&sex_or_gender_label!="male" ~ as.character("other"),
-                                          is.na(sex_or_gender_label)==FALSE ~ sex_or_gender_label,
-                                          is.na(sex_or_gender_label)==TRUE ~ gender,
-                                          TRUE ~ gender)
-    )
-      
-readr::write_csv(x = output_df, file = paste0(current_city, ".csv"))
+output_df
+#> # A tibble: 3,198 × 69
+#>    gisco_id stree…¹ country wikid…² person gender categ…³ checked ignore dedic…⁴
+#>    <chr>    <chr>   <chr>   <chr>    <int> <chr>  <chr>     <int>  <int>   <int>
+#>  1 DE_1100… Abbe L… DE      Q30850…      1 <NA>   <NA>          1     NA      NA
+#>  2 DE_1100… Abbest… DE      Q76359       1 <NA>   <NA>          1     NA      NA
+#>  3 DE_1100… Abram-… DE      Q331067      1 <NA>   <NA>          1     NA      NA
+#>  4 DE_1100… Abtstr… DE      Q174178      1 <NA>   <NA>          1     NA      NA
+#>  5 DE_1100… Achenb… DE      Q76416       1 <NA>   <NA>          1     NA      NA
+#>  6 DE_1100… Achill… DE      Q33083…      1 <NA>   <NA>          1     NA      NA
+#>  7 DE_1100… Adalbe… DE      Q347939      1 <NA>   <NA>          1     NA      NA
+#>  8 DE_1100… Adam-K… DE      Q87850       1 <NA>   <NA>          1     NA      NA
+#>  9 DE_1100… Adam-v… DE      Q66002       1 <NA>   <NA>          1     NA      NA
+#> 10 DE_1100… Adamst… DE      Q33083…      1 <NA>   <NA>          1     NA      NA
+#> # … with 3,188 more rows, 59 more variables: fixed_name_clean <chr>, tag <chr>,
+#> #   session <chr>, time <dttm>, instance_of <chr>, instance_of_label <chr>,
+#> #   sex_or_gender <chr>, sex_or_gender_label <chr>, occupation <chr>,
+#> #   occupation_label <chr>, date_of_birth <chr>, date_of_birth_label <chr>,
+#> #   place_of_birth <chr>, place_of_birth_label <chr>, date_of_death <chr>,
+#> #   date_of_death_label <chr>, place_of_death <chr>,
+#> #   place_of_death_label <chr>, position_held <chr>, …
+#> # ℹ Use `print(n = ...)` to see more rows, and `colnames()` to see all variable names
 ```
 
 Some summary stats:
@@ -500,10 +399,10 @@ print(summary_df, n = 100)
 #>  2 municipality_name                                    Berlin, Stadt
 #>  3 total_streets                                        11 252       
 #>  4 total_streets_dedicated_to_humans                    3 027        
-#>  5 total_streets_dedicated_to_male                      2 632        
-#>  6 total_streets_dedicated_to_female                    400          
-#>  7 total_streets_dedicated_to_other_gender              1            
-#>  8 total_streets_dedicated_to_more_than_1_n             20           
+#>  5 total_streets_dedicated_to_male                      2 654        
+#>  6 total_streets_dedicated_to_female                    417          
+#>  7 total_streets_dedicated_to_other_gender              3            
+#>  8 total_streets_dedicated_to_more_than_1_n             22           
 #>  9 total_streets_dedicated_to_human_with_qid            2 895        
 #> 10 total_streets_dedicated_to_human_without_qid         153          
 #> 11 total_streets_dedicated_to_human_with_unknown_gender 2
@@ -527,7 +426,7 @@ ggplot2::ggplot() +
   ggplot2::theme_minimal()
 ```
 
-<img src="man/figures/README-unnamed-chunk-15-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-14-1.png" width="100%" />
 
 ## Function naming conventions
 
