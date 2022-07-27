@@ -751,7 +751,7 @@ sn_get_details_legacy <- function(id,
   tidywikidatar::tw_disconnect_from_cache(
     cache = cache,
     cache_connection = db_connection,
-    disconnect_db = TRUE,
+    disconnect_db = disconnect_db,
     language = language
   )
 
