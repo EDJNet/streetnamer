@@ -189,17 +189,17 @@ processed in order of population size, you can use
 `sn_get_details_by_lau()`.
 
 You can then fix data in the spreadsheet by ticking with an `x` the
-`tic_if_wrong` column, and the fill in the columns whose name starts
+`tick_if_wrong` column, and the fill in the columns whose name starts
 with `fixed_` (all others will be ignored).
 
 More specifically:
 
--   `tic_if_wrong`: expected either `x`, or empty. Since this package is
-    mostly focused on humans, it expects that the `humans` files will be
-    checked most thoroughly: if the `tic_if_wrong` column is left empty
-    for a given row, then it will be assumed that the automatic matching
-    is right. On the contrary, in the `non_humans` files, rows without
-    the `tic_if_wrong` box will simply be ignored.
+-   `tick_if_wrong`: expected either `x`, or empty. Since this package
+    is mostly focused on humans, it expects that the `humans` files will
+    be checked most thoroughly: if the `tick_if_wrong` column is left
+    empty for a given row, then it will be assumed that the automatic
+    matching is right. On the contrary, in the `non_humans` files, rows
+    without the `tic_if_wrong` box will simply be ignored.
 -   `fixed_human`: if a given row has a tick (typically, `x`), then it
     means that the row refers to a human. If left empty, that it does
     not refer to a human

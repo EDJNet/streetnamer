@@ -7,7 +7,7 @@
 sn_get_details_by_country(
   country,
   additional_properties = c("P39", "P509", "P140", "P611", "P411", "P241", "P410", "P97",
-    "P607", "P27", "P172"),
+    "P607", "P27", "P172", additional_properties),
   export_format = NULL,
   collapse_lists = FALSE,
   language = tidywikidatar::tw_get_language(),

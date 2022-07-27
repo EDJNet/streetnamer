@@ -30,3 +30,20 @@ sn_import_from_manually_fixed(
 \description{
 Import into the database manually fixed street names
 }
+\section{How are fix columns to be used}{
+
+
+- `tick_if_wrong`: expected either `x`, or empty. Since this package is mostly focused on humans, it expects that the `humans` files will be checked most thoroughly: if the `tick_if_wrong` column is left empty for a given row, then it will be assumed that the automatic matching is right. On the contrary, in the `non_humans` files, rows without the `tic_if_wrong` box will simply be ignored.
+- `fixed_human`: if a given row has a tick (typically, `x`), then it means that the row refers to a human. If left empty, that it does not refer to a human
+- `fixed_wikidata_id`: if left empty, it is assumed that the Wikidata identifier is not known. If given, it must correspond to a Wikidata Q identifier, such as `Q539`
+- `fixed_sex_or_gender`: if left empty, no particular assumption will be made. If the Wikidata identifier is given, this can mostly be left empty, as the information will be derived from there. If given, it should be one of the options available in the online interface, or a their shortened form: `female` (`f`), `male` (`m`), `other` (`o`), `uncertain`, (`u`).
+- `fixed_category`: can typically be left empty
+- `fixed_n_dedicated_to`: if left empty, assumed to be one. This can be used to express when a street is dedicated to more than one person: in that case, the row should be duplicated as many times as the needed, and the same number be included in each row of `fixed_n_dedicated_to`. 
+
+Recently produced files may also include the following columns:
+  - `fixed_name_clean`: this can be used when a full, clean name of the person a street is dedicated to can be desumed, or is otherwise known, but no Wikidata identifiers is available. Additional useful details can be added within brackets after the name.
+- `fixed_ignore`: if left empty, no assumption will be made. If ticked, it will be assumed that the row does not refer to a proper street,
+
+After a file is processed, then it can be re-read and stored in the local database or re-uploaded to the web interface.
+}
+
