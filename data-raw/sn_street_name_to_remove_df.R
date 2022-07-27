@@ -761,6 +761,10 @@ sn_street_name_to_remove_df <- sn_street_name_to_remove_df %>%
   bind_rows(sn_street_name_to_remove_df %>%
               dplyr::filter(country == "Ireland") %>%
               mutate(country = "United Kingdom") %>%
+              distinct()) %>% 
+  bind_rows(sn_street_name_to_remove_df %>%
+              dplyr::filter(country == "Greece") %>%
+              mutate(country = "Cyprus") %>%
               distinct())
 
 sn_street_name_to_remove_df %>% tail()
