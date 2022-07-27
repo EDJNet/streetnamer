@@ -6,7 +6,7 @@
 #' @param fixed_folder Base location of folder where csv files with manual fixes are stored. They can be located in subfolders.
 #' @param unlist Defaults to FALSE. If TRUE, all data are unlisted in place, with values separated by a `;`.
 #' @param export_folder Defaults to `sn_data_export`, created if not existing, overwrite files by default. If set to TRUE, unlist is also automatically set to TRUE.
-#' @param export_csv Logical, defaults to FALSE. If TRUE, output file is stored as a CSV file in a local sub-folder as defined by `export_folder`.
+#' @param export_format Character vector, defaults to NULL. If given, it exports outputs in the given format. Available values include "csv" and "geojson".
 #'
 #' @return
 #' @export
@@ -20,17 +20,20 @@ sn_export_checked <- function(gisco_id = NULL,
                               unlist = FALSE,
                               fixed_folder = "sn_data_fixed",
                               export_folder = "sn_data_export",
-                              export_csv = FALSE,
+                              export_format = NULL,
                               cache = NULL, 
                               language = tidywikidatar::tw_get_language(),
                               overwrite_cache = FALSE,
                               cache_connection = NULL,
                               disconnect_db = TRUE
-                              ) {
+) {
   
-  if (export_csv==TRUE) {
-    unlist <- TRUE
+  if (is.null(export_format)==FALSE) {
+    if (export_format == "csv") {
+      unlist <- TRUE
+    }
   }
+  
   
   connection_db <- tidywikidatar::tw_connect_to_cache(
     connection = cache_connection,
@@ -47,9 +50,22 @@ sn_export_checked <- function(gisco_id = NULL,
     if (is.null(gisco_id)==FALSE) {
       files_to_keep <- local_files[stringr::str_starts(string = fs::path_file(path = local_files),
                                                        pattern = stringr::str_c(gisco_id, "-"))]
+      
+      country_name <- sn_standard_country(
+        country = stringr::str_extract(string = gisco_id, pattern = "[A-Z][A-Z]") %>%
+          stringr::str_to_upper(),
+        type = "name"
+      )
+      
     } else if (is.null(country)==FALSE) {
       files_to_keep <- local_files[stringr::str_starts(string = fs::path_file(path = local_files),
                                                        pattern = stringr::str_c(stringr::str_to_upper(country), "_"))]
+      
+      country_name <- sn_standard_country(
+        country = country %>%
+          stringr::str_to_upper(),
+        type = "name"
+      )
     }
     current_confirmed_df <- purrr::map_dfr(.x = files_to_keep,
                                            .f = function(x) {
@@ -156,9 +172,20 @@ sn_export_checked <- function(gisco_id = NULL,
           cache_connection = connection_db,
           disconnect_db = FALSE
         ),
-        picture = tidywikidatar::tw_get_image_same_length(
+        picture_embed = tidywikidatar::tw_get_image_same_length(
           id = wikidata_id, 
           format = "embed",
+          only_first = TRUE,
+          width = 300,
+          cache = cache,
+          language = language,
+          overwrite_cache = overwrite_cache,
+          cache_connection = connection_db,
+          disconnect_db = FALSE
+        ),
+        picture_commons = tidywikidatar::tw_get_image_same_length(
+          id = wikidata_id, 
+          format = "commons",
           only_first = TRUE,
           width = 300,
           cache = cache,
@@ -185,7 +212,7 @@ sn_export_checked <- function(gisco_id = NULL,
                            dplyr::transmute(wikidata_id = .data$id, 
                                             imgage_attribution_required = .data$attribution_required,
                                             image_copyrighted = .data$copyrighted,
-                                            iamge_restrictions = .data$restrictions,
+                                            image_restrictions = .data$restrictions,
                                             image_credit = .data$credit,
                                             image_artist = .data$artist, 
                                             image_license_short_name = .data$license_short_name,
@@ -219,7 +246,7 @@ sn_export_checked <- function(gisco_id = NULL,
       output_df <- processed_df %>%
         dplyr::group_by(row_number) %>%
         
-
+        
         dplyr::mutate(
           unlisted_gender = stringr::str_c(unique(unlist(sex_or_gender_label)),
                                            collapse = "; "
@@ -233,9 +260,6 @@ sn_export_checked <- function(gisco_id = NULL,
         ) %>% 
         dplyr::select(-.data$unlisted_gender)
     }
- 
-    
-    
     
   }
   tidywikidatar::tw_disconnect_from_cache(
@@ -245,8 +269,56 @@ sn_export_checked <- function(gisco_id = NULL,
     language = language
   )
   
-  if (export_to_csv == TRUE) {
+  
+  if (is.null(export_format) == FALSE) {
+    city_name <- streetnamer::sn_lau_by_country %>%
+      dplyr::filter(GISCO_ID == gisco_id) %>%
+      dplyr::pull(LAU_NAME)
     
+    fs::dir_create(path = fs::path(export_folder, country_name, export_format), recurse = TRUE)
+    if (export_format == "csv") {
+      readr::write_csv(x = output_df,
+                       file = fs::path(export_folder,
+                                       country_name,
+                                       export_format,
+                                       stringr::str_c(stringr::str_c(
+                                         gisco_id,
+                                         "-",
+                                         city_name,
+                                         "."
+                                       ) %>%
+                                         fs::path_sanitize(),
+                                       ".",
+                                       export_format)))
+      
+    } else if (export_format == "geojson") {
+      if (is.null(gisco_id)) {
+        usethis::ui_stop("For export in the `geojson` format, `gisco_id` must be given.")
+      }
+      
+      export_sf <- latlon2map::ll_osm_get_lau_streets(
+        gisco_id = gisco_id,
+        unnamed_streets = FALSE
+      ) %>%
+        dplyr::rename(street_name = .data$name) %>% 
+        dplyr::left_join(y = output_df ,
+                         by = "street_name")
+      
+      sf::st_write(
+        obj = export_sf,
+        dsn = fs::path(export_folder,
+                       country_name,
+                       export_format,
+                       stringr::str_c(stringr::str_c(
+                         gisco_id,
+                         "-",
+                         city_name
+                       ) %>%
+                         fs::path_sanitize(),
+                       ".",
+                       export_format))
+      )
+    }
   }
   
   output_df

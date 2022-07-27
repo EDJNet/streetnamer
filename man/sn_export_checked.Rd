@@ -14,7 +14,7 @@ sn_export_checked(
   unlist = FALSE,
   fixed_folder = "sn_data_fixed",
   export_folder = "sn_data_export",
-  export_csv = FALSE,
+  export_format = NULL,
   cache = NULL,
   language = tidywikidatar::tw_get_language(),
   overwrite_cache = FALSE,
@@ -35,7 +35,7 @@ sn_export_checked(
 
 \item{export_folder}{Defaults to `sn_data_export`, created if not existing, overwrite files by default. If set to TRUE, unlist is also automatically set to TRUE.}
 
-\item{export_csv}{Logical, defaults to FALSE. If TRUE, output file is stored as a CSV file in a local sub-folder as defined by `export_folder`.}
+\item{export_format}{Character vector, defaults to NULL. If given, it exports outputs in the given format. Available values include "csv" and "geojson".}
 }
 \description{
 Exports checked file for further analysis
