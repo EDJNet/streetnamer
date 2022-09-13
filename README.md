@@ -116,6 +116,7 @@ Then, let’s say we want to find who streets are dedicated to in Berlin.
 We can find a full list with `ll_get_lau_eu()`
 
 ``` r
+
 ll_get_lau_eu() %>% 
   sf::st_drop_geometry() %>% 
   dplyr::filter(stringr::str_detect(string = LAU_NAME, pattern = "Berlin"))
@@ -263,7 +264,6 @@ current_city_confirmed_df
 #> # … with 3,188 more rows, 4 more variables: fixed_name_clean <chr>, tag <chr>,
 #> #   session <chr>, time <dttm>, and abbreviated variable names ¹​street_name,
 #> #   ²​wikidata_id, ³​category, ⁴​dedicated_to_n
-#> # ℹ Use `print(n = ...)` to see more rows, and `colnames()` to see all variable names
 ```
 
 For context: setting the parameter `return_df_only` returns the data,
@@ -277,7 +277,6 @@ sn_get_street_name_wikidata_id(gisco_id = current_city)
 #> #   wikidata_id <chr>, person <int>, gender <chr>, category <chr>,
 #> #   checked <int>, ignore <int>, dedicated_to_n <int>, tag <chr>,
 #> #   session <chr>, time <dbl>
-#> # ℹ Use `colnames()` to see all variable names
 ```
 
 Either way, `current_city_confirmed_df` should now include all confirmed
@@ -301,7 +300,6 @@ current_city_confirmed_df
 #> # … with 3,188 more rows, 4 more variables: fixed_name_clean <chr>, tag <chr>,
 #> #   session <chr>, time <dttm>, and abbreviated variable names ¹​street_name,
 #> #   ²​wikidata_id, ³​category, ⁴​dedicated_to_n
-#> # ℹ Use `print(n = ...)` to see more rows, and `colnames()` to see all variable names
 ```
 
 The easiest way to get this data in a format that can easily be shared,
@@ -328,7 +326,7 @@ output_df <- sn_export_checked(
 #> ℹ Please install a newer version of the package or contact the maintainer
 #> This warning is displayed once every 8 hours.
 output_df
-#> # A tibble: 3,198 × 69
+#> # A tibble: 3,198 × 71
 #>    gisco_id stree…¹ country wikid…² person gender categ…³ checked ignore dedic…⁴
 #>    <chr>    <chr>   <chr>   <chr>    <int> <chr>  <chr>     <int>  <int>   <int>
 #>  1 DE_1100… Abbe L… DE      Q30850…      1 <NA>   <NA>          1     NA      NA
@@ -341,14 +339,13 @@ output_df
 #>  8 DE_1100… Adam-K… DE      Q87850       1 <NA>   <NA>          1     NA      NA
 #>  9 DE_1100… Adam-v… DE      Q66002       1 <NA>   <NA>          1     NA      NA
 #> 10 DE_1100… Adamst… DE      Q33083…      1 <NA>   <NA>          1     NA      NA
-#> # … with 3,188 more rows, 59 more variables: fixed_name_clean <chr>, tag <chr>,
-#> #   session <chr>, time <dttm>, instance_of <chr>, instance_of_label <chr>,
-#> #   sex_or_gender <chr>, sex_or_gender_label <chr>, occupation <chr>,
-#> #   occupation_label <chr>, date_of_birth <chr>, date_of_birth_label <chr>,
-#> #   place_of_birth <chr>, place_of_birth_label <chr>, date_of_death <chr>,
-#> #   date_of_death_label <chr>, place_of_death <chr>,
-#> #   place_of_death_label <chr>, position_held <chr>, …
-#> # ℹ Use `print(n = ...)` to see more rows, and `colnames()` to see all variable names
+#> # … with 3,188 more rows, 61 more variables: fixed_name_clean <chr>, tag <chr>,
+#> #   session <chr>, time <dttm>, label <chr>, description <chr>,
+#> #   instance_of <chr>, instance_of_label <chr>, sex_or_gender <chr>,
+#> #   sex_or_gender_label <chr>, occupation <chr>, occupation_label <chr>,
+#> #   date_of_birth <chr>, date_of_birth_label <chr>, place_of_birth <chr>,
+#> #   place_of_birth_label <chr>, date_of_death <chr>, date_of_death_label <chr>,
+#> #   place_of_death <chr>, place_of_death_label <chr>, position_held <chr>, …
 ```
 
 Some summary stats:
@@ -411,6 +408,7 @@ print(summary_df, n = 100)
 And a quick summary map:
 
 ``` r
+
 streets_combo_sf <- 
   current_city_streets_sf %>% 
   dplyr::rename(street_name = name) %>% 
@@ -498,7 +496,6 @@ sn_write_street_name_wikidata_id(
 #> # … with 4 more variables: fixed_name_clean <chr>, tag <chr>, session <chr>,
 #> #   time <dttm>, and abbreviated variable names ¹​street_name, ²​wikidata_id,
 #> #   ³​category, ⁴​dedicated_to_n
-#> # ℹ Use `colnames()` to see all variable names
 
 
 street_info_df <- sn_get_street_name_wikidata_id(
