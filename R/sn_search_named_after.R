@@ -37,6 +37,7 @@ sn_search_named_after <- function(gisco_id,
                                   check_named_after_original_n = 1,
                                   check_named_after = TRUE,
                                   drop_if_street = TRUE,
+                                  drop_if_disambiguation_page = TRUE,
                                   streets_sf = NULL,
                                   street_names_df = NULL,
                                   checked_df = NULL,
@@ -347,26 +348,34 @@ sn_search_named_after <- function(gisco_id,
   }
 
   if (drop_if_street == TRUE) {
+    pre_process_join_df <- output_df %>%
+      dplyr::select(-.data$name_clean) %>%
+      dplyr::mutate(instance_of = tidywikidatar::tw_get_p1(
+        id = id, p = "P31",
+        language = response_language,
+        cache = cache,
+        disconnect_db = FALSE,
+        overwrite_cache = overwrite_cache,
+        cache_connection = db_connection
+      )) %>%
+      dplyr::filter(!.data$instance_of %in% c(
+        "Q79007", # street
+        "Q174782", # square
+        "Q12280", # bridge
+        "Q3352369", # footpath
+        "Q34442", # road
+        "Q54114" # boulevard
+      )) 
+    
+    if (drop_if_disambiguation_page == TRUE) {
+      pre_process_join_df <- pre_process_join_df %>% 
+        dplyr::filter(!.data$instance_of %in% c(
+          "Q4167410")) # disambiguation page
+    }
+    
     final_output_df <- current_street_names_df %>%
       dplyr::left_join(
-        y = output_df %>%
-          dplyr::select(-.data$name_clean) %>%
-          dplyr::mutate(instance_of = tidywikidatar::tw_get_p1(
-            id = id, p = "P31",
-            language = response_language,
-            cache = cache,
-            disconnect_db = FALSE,
-            overwrite_cache = overwrite_cache,
-            cache_connection = db_connection
-          )) %>%
-          dplyr::filter(!.data$instance_of %in% c(
-            "Q79007", # street
-            "Q174782", # square
-            "Q12280", # bridge
-            "Q3352369", # footpath
-            "Q34442", # road
-            "Q54114" # boulevard
-          )) %>%
+        y = pre_process_join_df %>%
           dplyr::select(-.data$instance_of),
         by = "name"
       )

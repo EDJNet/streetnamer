@@ -12,6 +12,7 @@ sn_search_named_after(
   check_named_after_original_n = 1,
   check_named_after = TRUE,
   drop_if_street = TRUE,
+  drop_if_disambiguation_page = TRUE,
   streets_sf = NULL,
   street_names_df = NULL,
   checked_df = NULL,
