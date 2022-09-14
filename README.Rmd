@@ -168,7 +168,7 @@ More specifically:
 
 Recently produced files may also include the following columns:
 - `fixed_name_clean`: this can be used when a full, clean name of the person a street is dedicated to can be desumed, or is otherwise known, but no Wikidata identifiers is available. Additional useful details can be added within brackets after the name.
-- `fixed_ignore`: if left empty, no assumption will be made. If ticked, it will be assumed that the row does not refer to a proper street,
+- `fixed_ignore`: if left empty, no assumption will be made. If ticked, it will be assumed that the row does not refer to a proper street.
 
 After a file is processed, then it can be re-read and stored in the local database or re-uploaded to the web interface.
 
@@ -210,7 +210,7 @@ I will spell out parameters for clarity, but you may well be happy with the defa
 output_df <- sn_export_checked(
   gisco_id = current_city,
   source = "fixed_csv",  # this could be set to database 
-  include_image_credits = TRUE, # useful if you plan to use images, but time consuming, as this imp a separate API call
+  include_image_credits = TRUE, # useful if you plan to use images, but time consuming, as this implies a separate API call
   unlist = TRUE,  # needs to be set to TRUE for CSV, but better set to FALSE if doing further processing in R
   # additional_properties = c("P39", "P509", "P140", "P611", "P411", "P241", "P410", "P97", "P607", "P27", "P172") # this is if you want more properties
   export_folder = "sn_data_export", # here is where you'll find your files if you export them
@@ -312,7 +312,6 @@ streetnamer:::mod_sn_street_info_app(street_name = "Belvedere San Francesco",
 ## What happens in the background
 
 The selectors on the top and the left allow to pick a municipality, and then a street. 
-
 
 
 When you click on a street name, a set of options to add data on a given street name appears. This is the choices that appear with this module:
