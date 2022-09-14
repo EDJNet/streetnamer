@@ -158,6 +158,10 @@ sn_app_ui <- function(request) {
             ),
             tabPanel(
               "Overview",
+              shiny::h2("Summary statistics")
+            ),
+            tabPanel(
+              "Map",
               shiny::uiOutput(outputId = "current_city_title"),
               leaflet::leafletOutput(
                 outputId = "current_city_map_leaflet",
