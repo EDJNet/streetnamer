@@ -34,7 +34,6 @@ sn_export_checked <- function(gisco_id = NULL,
     }
   }
   
-  
   connection_db <- tidywikidatar::tw_connect_to_cache(
     connection = cache_connection,
     language = language,
@@ -72,7 +71,19 @@ sn_export_checked <- function(gisco_id = NULL,
                                              sn_import_from_manually_fixed(input_df = x,
                                                                            return_df_only = TRUE)
                                            }) %>% 
-      dplyr::filter(as.logical(checked))
+      dplyr::filter(as.logical(checked)) %>% 
+      dplyr::mutate(label = tidywikidatar::tw_get_label(id = wikidata_id,
+                                                        cache = cache,
+                                                        language = language,
+                                                        overwrite_cache = overwrite_cache,
+                                                        cache_connection = connection_db,
+                                                        disconnect_db = FALSE),
+                    description = tidywikidatar::tw_get_description(id = wikidata_id,
+                                                                    cache = cache,
+                                                                    language = language,
+                                                                    overwrite_cache = overwrite_cache,
+                                                                    cache_connection = connection_db,
+                                                                    disconnect_db = FALSE))
     
     
     city_df <- current_confirmed_df %>% 
