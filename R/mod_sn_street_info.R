@@ -296,10 +296,18 @@ mod_sn_street_info_server <- function(id,
 
     ## Return
     selected_df_r <- shiny::reactive({
-      if (as.integer(input$person_switch) == 1) {
+      if (length(input$person_switch)==0) {
+        tag_v <- ""
+      } else if (as.integer(input$person_switch) == 1) {
         tag_v <- input$tag_selectize_person
       } else {
         tag_v <- input$tag_selectize_not_person
+      }
+      
+      if (length(input$category_radio)==0) {
+        category_v <- ""
+      } else {
+        category_v <- input$category_radio
       }
 
       sn_write_street_name_wikidata_id(
@@ -309,8 +317,8 @@ mod_sn_street_info_server <- function(id,
         wikidata_id = as.character(wikidata_id_selected),
         person = as.integer(input$person_switch),
         gender = gender_selected,
-        category = as.character(input$category_radio),
-        tag = tag_v,
+        category = as.character(category_v),
+        tag = as.character(tag_v),
         checked = as.integer(TRUE),
         ignore = as.integer(FALSE),
         dedicated_to_n = as.integer(input$dedicated_to_n),
