@@ -20,7 +20,7 @@ sn_get_street_name_wikidata_id(
 
 \item{gisco_id}{A characther vector of length one, must correpond to a gisco id. See `sn_lau_by_nuts` for available values.}
 
-\item{street_name}{A characther vector of length one, a street name.}
+\item{street_name}{A characther vector of length one, a street name. If not given, returns added data on all streets for given municipality.}
 
 \item{language}{Defaults to language set with `tw_set_language()`; if not set, "en". Use "all_available" to keep all languages. For available language values, see https://www.wikidata.org/wiki/Help:Wikimedia_language_codes/lists/all}
 
@@ -29,7 +29,7 @@ sn_get_street_name_wikidata_id(
 \item{disconnect_db}{Defaults to TRUE. If FALSE, leaves the connection open.}
 }
 \value{
-If data present in cache, returns a data frame with cached data.
+If data present in database, returns a data frame with relevant data stored in the database.
 }
 \description{
 Country must always be given, other parameters optional.

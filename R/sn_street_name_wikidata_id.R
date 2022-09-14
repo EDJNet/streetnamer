@@ -280,12 +280,12 @@ sn_write_street_name_wikidata_id <- function(gisco_id = NULL,
 #'
 #' @param country A two letter country code. See `unique(sn_lau_by_nuts$country)` for available values.
 #' @param gisco_id A characther vector of length one, must correpond to a gisco id. See `sn_lau_by_nuts` for available values.
-#' @param street_name A characther vector of length one, a street name.
+#' @param street_name A characther vector of length one, a street name. If not given, returns added data on all streets for given municipality.
 #' @param language Defaults to language set with `tw_set_language()`; if not set, "en". Use "all_available" to keep all languages. For available language values, see https://www.wikidata.org/wiki/Help:Wikimedia_language_codes/lists/all
 #' @param connection Defaults to NULL. If NULL, and caching is enabled, `streetnamer` will use a local sqlite database. A custom connection to other databases can be given (see vignette `caching` for details).
 #' @param disconnect_db Defaults to TRUE. If FALSE, leaves the connection open.
 #'
-#' @return If data present in cache, returns a data frame with cached data.
+#' @return If data present in database, returns a data frame with relevant data stored in the database.
 #' @export
 #'
 #' @examples
