@@ -29,20 +29,20 @@ sn_clean_street_name <- function(street_name,
     country_slice <- streetnamer::sn_country_codes %>%
       dplyr::mutate(country_lower = stringr::str_to_lower(Name)) %>%
       dplyr::filter(.data$country_lower == country_lower_v)
-
+    
     country_name <- country_slice %>%
       dplyr::pull(.data$Name)
     country_code <- country_slice %>%
       dplyr::pull(.data$Code)
   }
-
+  
   if (country_name == "Austria") {
     country_name <- "Germany"
   } else {
     country_name <- country
   }
-
-
+  
+  
   if (country_name %in% unique(sn_street_name_to_remove_df[["country"]])) {
     street_name <- stringr::str_remove_all(
       string = street_name,
@@ -55,7 +55,7 @@ sn_clean_street_name <- function(street_name,
   } else {
     usethis::ui_info("No available method for this country.")
   }
-
+  
   if (country_name == "Germany") {
     street_name <- stringr::str_replace_all(
       string = street_name,
@@ -98,7 +98,7 @@ sn_clean_street_name <- function(street_name,
       }
     )
   }
-
+  
   street_name %>%
     stringr::str_squish() %>%
     stringr::str_replace_all(pattern = stringr::fixed("\\"), replacement = " ")
@@ -119,9 +119,9 @@ sn_clean_street_name <- function(street_name,
 sn_clean_street_name_polish <- function(street_name) {
   if (stringr::str_detect(string = street_name, pattern = "ego$")) {
     split_string <- stringr::str_split(string = street_name, pattern = "[[:space:]]", simplify = TRUE) %>% as.character()
-
+    
     split_string[length(split_string)] <- split_string[length(split_string)] %>% stringr::str_remove(pattern = "ego")
-
+    
     for (i in 1:max(1, (length(split_string)))) {
       if (stringr::str_detect(string = split_string[i], pattern = "rzego$")) {
         split_string[i] <- stringr::str_replace(string = split_string[i], pattern = "rzego$", replacement = "rzy")
@@ -210,7 +210,7 @@ sn_clean_street_name_polish <- function(street_name) {
       Zygmunta = "Zygmunt",
       Świętego = "Święty"
     )
-
+    
     name_replace_f_v <- c(
       Aleksandry = "Aleksandra",
       Heleny = "Helena",
@@ -221,14 +221,14 @@ sn_clean_street_name_polish <- function(street_name) {
       Księżnej = "Księżna",
       Bitwa = "Bitwy"
     )
-
+    
     if (split_string[1] %in% names(name_replace_m_v)) {
       if (stringr::str_detect(string = split_string[1], pattern = "Świętego$")) {
         split_string[1] <- stringr::str_replace(string = split_string[1], pattern = "tego$", replacement = "ty")
       } else {
         split_string[1] <- stringr::str_replace_all(string = split_string[1], name_replace_m_v)
       }
-
+      
       if (length(split_string) > 1) {
         for (j in 2:length(split_string)) {
           if (stringr::str_detect(string = split_string[j], pattern = "ndra$")) {
@@ -246,13 +246,13 @@ sn_clean_street_name_polish <- function(street_name) {
           }
         }
       }
-
+      
       return(stringr::str_c(split_string, collapse = " ") %>%
-        stringr::str_squish())
+               stringr::str_squish())
     } else if (split_string[1] %in% names(name_replace_f_v)) {
       split_string[1] <- stringr::str_replace_all(string = split_string[1], name_replace_f_v)
-
-
+      
+      
       if (length(split_string) > 1) {
         for (j in 2:length(split_string)) {
           if (stringr::str_detect(string = split_string[j], pattern = "iej$")) {
@@ -288,10 +288,10 @@ sn_clean_street_name_polish <- function(street_name) {
           }
         }
       }
-
-
+      
+      
       return(stringr::str_c(split_string, collapse = " ") %>%
-        stringr::str_squish())
+               stringr::str_squish())
     }
     street_name
   }
@@ -316,14 +316,14 @@ sn_clean_street_name_romanian <- function(street_name) {
       simplify = TRUE
     ) %>%
       as.character()
-
+    
     split_string[length(split_string)] <- split_string[length(split_string)] %>%
       stringr::str_replace(
         pattern = "ății$",
         replacement = "atea"
       )
-
-
+    
+    
     stringr::str_c(split_string, collapse = " ")
   } else if (stringr::str_detect(string = street_name, pattern = "ului$")) {
     split_string <- stringr::str_split(
@@ -331,10 +331,10 @@ sn_clean_street_name_romanian <- function(street_name) {
       simplify = TRUE
     ) %>%
       as.character()
-
+    
     split_string[length(split_string)] <- split_string[length(split_string)] %>%
       stringr::str_remove(pattern = "ului$")
-
+    
     stringr::str_c(split_string, collapse = " ")
   } else if (stringr::str_detect(string = street_name, pattern = "ilor$|elor$")) {
     split_string <- stringr::str_split(
@@ -343,7 +343,7 @@ sn_clean_street_name_romanian <- function(street_name) {
       simplify = TRUE
     ) %>%
       as.character()
-
+    
     split_string[length(split_string)] <- split_string[length(split_string)] %>%
       stringr::str_remove(pattern = "lor$")
     stringr::str_c(split_string, collapse = " ")
@@ -354,7 +354,7 @@ sn_clean_street_name_romanian <- function(street_name) {
       simplify = TRUE
     ) %>%
       as.character()
-
+    
     split_string[length(split_string)] <- split_string[length(split_string)] %>%
       stringr::str_replace(
         pattern = "iei$",
@@ -368,7 +368,7 @@ sn_clean_street_name_romanian <- function(street_name) {
       simplify = TRUE
     ) %>%
       as.character()
-
+    
     split_string[length(split_string)] <- split_string[length(split_string)] %>%
       stringr::str_replace(
         pattern = "ței$",
@@ -382,7 +382,7 @@ sn_clean_street_name_romanian <- function(street_name) {
       simplify = TRUE
     ) %>%
       as.character()
-
+    
     split_string[length(split_string)] <- split_string[length(split_string)] %>%
       stringr::str_replace(
         pattern = "dei$",
@@ -396,7 +396,7 @@ sn_clean_street_name_romanian <- function(street_name) {
       simplify = TRUE
     ) %>%
       as.character()
-
+    
     split_string[length(split_string)] <- split_string[length(split_string)] %>%
       stringr::str_replace(
         pattern = "vei$",
@@ -410,7 +410,7 @@ sn_clean_street_name_romanian <- function(street_name) {
       simplify = TRUE
     ) %>%
       as.character()
-
+    
     if (length(split_string) == 1) {
       split_string[length(split_string)] <- split_string[length(split_string)] %>%
         stringr::str_replace(
@@ -418,7 +418,7 @@ sn_clean_street_name_romanian <- function(street_name) {
           replacement = "ca"
         )
     }
-
+    
     stringr::str_c(split_string, collapse = " ")
   } else {
     street_name
@@ -443,14 +443,14 @@ sn_clean_street_name_greek <- function(street_name) {
     simplify = TRUE
   ) %>%
     as.character()
-
+  
   if (stringr::str_detect(string = street_name, pattern = "^Αγίου ")) {
     split_string[1] <- stringr::str_replace(
       string = split_string[1],
       pattern = "^Αγίου",
       replacement = "Αγίος"
     )
-
+    
     split_string[2] <- stringr::str_replace(
       string = split_string[2],
       pattern = "ου$",
@@ -462,7 +462,7 @@ sn_clean_street_name_greek <- function(street_name) {
       pattern = "^Αγίας",
       replacement = "Αγία"
     )
-
+    
     split_string[2] <- stringr::str_replace(
       string = split_string[2],
       pattern = "ς$",
@@ -563,8 +563,8 @@ sn_clean_street_name_greek <- function(street_name) {
       }
     }
   }
-
-
+  
+  
   stringr::str_c(split_string, collapse = " ") %>%
     stringr::str_squish()
 }
@@ -589,15 +589,15 @@ sn_clean_street_name_croatian <- function(street_name) {
     simplify = TRUE
   ) %>%
     as.character()
-
-
+  
+  
   name_replace_m_v <- c(sn_first_names_combinations[["Croatia"]]$fixed_first_name)
   names(name_replace_m_v) <- c(sn_first_names_combinations[["Croatia"]]$original_first_name)
-
-
+  
+  
   if (split_string[1] %in% names(name_replace_m_v)) {
     split_string[1] <- stringr::str_replace_all(string = split_string[1], name_replace_m_v)
-
+    
     if (length(split_string) > 1) {
       for (j in 2:length(split_string)) {
         if (stringr::str_detect(string = split_string[j], pattern = "a$")) {
@@ -606,12 +606,25 @@ sn_clean_street_name_croatian <- function(street_name) {
             pattern = "a$",
             replacement = ""
           )
+        } else if (stringr::str_detect(string = split_string[j], pattern = "og$")) {
+          split_string[j] <- stringr::str_replace(
+            string = split_string[j],
+            pattern = "og$",
+            replacement = "i"
+          ) 
+        } else if (stringr::str_detect(string = split_string[j], pattern = "e$")) {
+          split_string[j] <- stringr::str_replace(
+            string = split_string[j],
+            pattern = "e$",
+            replacement = "a"
+          )
         }
       }
     }
-
+    
+    
     return(stringr::str_c(split_string, collapse = " ") %>%
-      stringr::str_squish())
+             stringr::str_squish())
   } else {
     for (j in seq_along(split_string)) {
       if (stringr::str_detect(string = split_string[j], pattern = "ska$")) {
@@ -658,10 +671,10 @@ sn_clean_street_name_croatian <- function(street_name) {
         )
       }
     }
-
-
+    
+    
     return(stringr::str_c(split_string, collapse = " ") %>%
-      stringr::str_squish())
+             stringr::str_squish())
   }
   street_name
 }
@@ -689,7 +702,7 @@ sn_clean_street_name_ukrainian <- function(street_name) {
     simplify = TRUE
   ) %>%
     as.character()
-
+  
   for (j in 1:length(split_string)) {
     if (stringr::str_detect(string = split_string[j], pattern = "нка$")) {
       split_string[j] <- stringr::str_replace(
@@ -766,5 +779,5 @@ sn_clean_street_name_ukrainian <- function(street_name) {
     }
   }
   return(stringr::str_c(split_string, collapse = " ") %>%
-    stringr::str_squish())
+           stringr::str_squish())
 }
