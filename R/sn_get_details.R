@@ -462,7 +462,7 @@ sn_get_details_by_lau <- function(gisco_id,
           dplyr::select(
             .data$gisco_id,
             .data$name,
-            .data$name_clean,
+            #.data$name_clean,
             .data$id,
             .data$label,
             .data$description,
