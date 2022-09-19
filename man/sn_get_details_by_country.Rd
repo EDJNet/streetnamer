@@ -50,8 +50,8 @@ the "cleaned" name of the street. If the result is a street, road, square,
 or similar, and this has values for the property "named after", this is
 kept instead of the standard method.}
 
-\item{checked_df}{Defaults to NULL. If given, a data frame with a `name` and
-`id`. Takes precedence over searches.}
+\item{checked_df}{Defaults to NULL. If given, a data frame with a `street_name` and
+`wikidata_id` column. Takes precedence over searches.}
 
 \item{manual_check_columns}{Logical, defaults to FALSE. If set to TRUE, it
 adds additional columns that can be used to introduce manually adjustments

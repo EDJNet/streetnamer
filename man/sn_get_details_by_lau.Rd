@@ -48,15 +48,15 @@ the "cleaned" name of the street. If the result is a street, road, square,
 or similar, and this has values for the property "named after", this is
 kept instead of the standard method.}
 
-\item{checked_df}{Defaults to NULL. If given, a data frame with a `name` and
-`id`. Takes precedence over searches.}
+\item{checked_df}{Defaults to NULL. If given, a data frame with a `street_name` and
+`wikidata_id` column. Takes precedence over searches.}
 
 \item{streets_sf}{Defaults to NULL. If given, used to speed up processing.
 Must be an sf object such as the ones output by `ll_osm_get_roads()`.
 Passed to `ll_osm_get_lau_streets()`.}
 
 \item{street_names_df}{Defaults to NULL. If TRUE, must be a data frame with
-two columns, named "name" and "name_clean" respectively. If given, these
+two columns, named "street_name" and "name_clean" respectively. If given, these
 are passed directly to the search routine. Useful when name cleaning
 provided by the package is not satisfying, e.g. in places such as some
 Belgian cities where street names are given in more than one language.}

@@ -16,12 +16,12 @@
 #'   Must be an sf object such as the ones output by `ll_osm_get_roads()`.
 #'   Passed to `ll_osm_get_lau_streets()`.
 #' @param street_names_df Defaults to NULL. If TRUE, must be a data frame with
-#'   two columns, named "name" and "name_clean" respectively. If given, these
+#'   two columns, named "street_name" and "name_clean" respectively. If given, these
 #'   are passed directly to the search routine. Useful when name cleaning
 #'   provided by the package is not satisfying, e.g. in places such as some
 #'   Belgian cities where street names are given in more than one language.
-#' @param checked_df Defaults to NULL. If given, a data frame with a `name` and
-#'   `id`. Takes precedence over searches.
+#' @param checked_df Defaults to NULL. If given, a data frame with a `street_name` and
+#'   `wikidata_id` column. Takes precedence over searches.
 #' @param drop_if_street Defaults to TRUE. If the result found is primarily an
 #'   instance of "street", "square", or such, as the result is probably the
 #'   street itself, not what or who it is dedicated to.
@@ -52,6 +52,7 @@ sn_search_named_after <- function(gisco_id,
     type = "name"
   )
 
+  
 
   if (is.null(search_language)) {
     search_language <- streetnamer::sn_language_defaults_by_country %>%
@@ -81,13 +82,20 @@ sn_search_named_after <- function(gisco_id,
       dplyr::mutate(
         name = name %>% stringr::str_replace_all(pattern = stringr::fixed("\\"), replacement = " ") %>% stringr::str_squish(),
         name_clean = name_clean %>% stringr::str_replace_all(pattern = stringr::fixed("\\"), replacement = " ") %>% stringr::str_squish()
-      )
+      ) %>% 
+      dplyr::rename(street_name = .data$name) 
   } else {
+    
+    if ("name" %in% colnames(street_names_df)) {
+      street_names_df <- street_names_df %>% 
+        dplyr::rename(street_name = .data$name)
+    }
+    
     current_street_names_df <- street_names_df %>%
       dplyr::mutate(
-        name = name %>% stringr::str_replace_all(pattern = stringr::fixed("\\"), replacement = " ") %>% stringr::str_squish(),
+        street_name = street_name %>% stringr::str_replace_all(pattern = stringr::fixed("\\"), replacement = " ") %>% stringr::str_squish(),
         name_clean = name_clean %>% stringr::str_replace_all(pattern = stringr::fixed("\\"), replacement = " ") %>% stringr::str_squish()
-      )
+      ) 
   }
 
   language_combo <- stringr::str_c(search_language, "_", response_language)
@@ -97,7 +105,6 @@ sn_search_named_after <- function(gisco_id,
     language = language_combo,
     cache = cache
   )
-  
   
   table_name <- sn_get_db_table_name(type = "sn_auto_named_after", country = country_code)
   
@@ -124,7 +131,7 @@ sn_search_named_after <- function(gisco_id,
   }
 
   current_street_names_df <- current_street_names_df %>% 
-    dplyr::anti_join(y = previously_cached_df %>% dplyr::rename(name = street_name), by = "name")
+    dplyr::anti_join(y = previously_cached_df, by = "street_name")
 
   if (nrow(current_street_names_df)==0) {
     tw_disconnect_from_cache(
@@ -140,18 +147,28 @@ sn_search_named_after <- function(gisco_id,
   exclude_v <- as.character(NA)[FALSE]
 
   if (is.null(checked_df) == FALSE) {
+    if ("name" %in% colnames(checked_df)) {
+      checked_df <- checked_df %>% 
+        dplyr::rename(street_name = .data$name)
+    }
+    
+    if ("id" %in% colnames(checked_df)) {
+      checked_df <- checked_df %>% 
+        dplyr::rename(wikidata_id = .data$id)
+    }
+    
     from_check_pre_df <- current_street_names_df %>%
-      dplyr::distinct(.data$name) %>%
+      dplyr::distinct(.data$street_name) %>%
       dplyr::left_join(
         y = checked_df %>%
           dplyr::distinct(
-            .data$name,
-            .data$id
+            .data$street_name,
+            .data$wikidata_id
           ),
-        by = "name"
+        by = "street_name"
       ) %>%
       dplyr::filter(tidywikidatar::tw_check_qid(
-        id = .data$id,
+        id = .data$wikidata_id,
         logical_vector = TRUE
       ))
 
@@ -159,7 +176,7 @@ sn_search_named_after <- function(gisco_id,
       from_check_df <- from_check_pre_df %>%
         dplyr::mutate(
           label = tidywikidatar::tw_get_label(
-            id = .data$id,
+            id = .data$wikidata_id,
             language = response_language,
             cache = cache,
             overwrite_cache = overwrite_cache,
@@ -167,7 +184,7 @@ sn_search_named_after <- function(gisco_id,
             disconnect_db = FALSE
           ),
           description = tw_get_description(
-            id = .data$id,
+            id = .data$wikidata_id,
             language = response_language,
             cache = cache,
             overwrite_cache = overwrite_cache,
@@ -190,13 +207,13 @@ sn_search_named_after <- function(gisco_id,
     current_street_names_df <- current_street_names_original_df %>%
       dplyr::anti_join(
         y = from_check_df,
-        by = "name"
+        by = "street_name"
       )
   }
 
   if (check_named_after_original) {
     search_no_clean_df_pre <- tidywikidatar::tw_search(
-      search = current_street_names_df[["name"]],
+      search = current_street_names_df[["street_name"]],
       language = search_language,
       response_language = response_language,
       include_search = TRUE,
@@ -222,7 +239,7 @@ sn_search_named_after <- function(gisco_id,
 
     search_no_clean_df <- search_no_clean_df_pre %>%
       dplyr::filter(is.na(.data$named_after) == FALSE) %>%
-      dplyr::distinct(name, label, .keep_all = TRUE)
+      dplyr::distinct(street_name, label, .keep_all = TRUE)
 
     named_after_original_df <- search_no_clean_df %>%
       dplyr::mutate(
@@ -248,16 +265,16 @@ sn_search_named_after <- function(gisco_id,
     output_df <- current_street_names_df %>%
       dplyr::left_join(
         y = named_after_original_df %>%
-          dplyr::transmute(.data$name,
-            id = .data$named_after,
+          dplyr::transmute(.data$street_name,
+            wikidata_id = .data$named_after,
             label = .data$named_after_label,
             description = .data$named_after_description
           ),
         by = "name"
       ) %>%
-      dplyr::filter(is.na(.data$id) == FALSE)
+      dplyr::filter(is.na(.data$wikidata_id) == FALSE)
 
-    exclude_v <- output_df[["name"]]
+    exclude_v <- output_df[["street_name"]]
   }
 
 
@@ -337,7 +354,7 @@ sn_search_named_after <- function(gisco_id,
 
   if (check_named_after == TRUE) {
     processed_df <- current_street_names_df %>%
-      dplyr::filter(!.data$name %in% exclude_v) %>%
+      dplyr::filter(!.data$street_name %in% exclude_v) %>%
       dplyr::left_join(
         y = named_after_df %>%
           dplyr::transmute(.data$name_clean,
@@ -356,7 +373,7 @@ sn_search_named_after <- function(gisco_id,
         output_df,
         processed_df
       ) %>%
-        dplyr::distinct(.data$name, .keep_all = TRUE)
+        dplyr::distinct(.data$street_name, .keep_all = TRUE)
     } else {
       output_df <- processed_df
     }
@@ -367,7 +384,7 @@ sn_search_named_after <- function(gisco_id,
       output_df %>%
         dplyr::mutate(named_after_from_wikidata = TRUE),
       current_street_names_df %>%
-        dplyr::filter(!.data$name %in% exclude_v) %>%
+        dplyr::filter(!.data$street_name %in% exclude_v) %>%
         dplyr::left_join(
           y = search_results_df %>%
             dplyr::mutate(named_after_from_wikidata = FALSE),
@@ -379,7 +396,7 @@ sn_search_named_after <- function(gisco_id,
     )
   } else {
     output_df <- current_street_names_df %>%
-      dplyr::filter(!.data$name %in% exclude_v) %>%
+      dplyr::filter(!.data$street_name %in% exclude_v) %>%
       dplyr::left_join(
         y = search_results_df,
         by = "name_clean"
@@ -390,7 +407,8 @@ sn_search_named_after <- function(gisco_id,
     pre_process_join_df <- output_df %>%
       dplyr::select(-.data$name_clean) %>%
       dplyr::mutate(instance_of = tidywikidatar::tw_get_p1(
-        id = id, p = "P31",
+        id = id,
+        p = "P31",
         language = response_language,
         cache = cache,
         disconnect_db = FALSE,
@@ -423,12 +441,12 @@ sn_search_named_after <- function(gisco_id,
       dplyr::left_join(
         y = output_df %>%
           dplyr::select(-.data$name_clean),
-        by = "name"
+        by = "street_name"
       )
   }
 
   df <- final_output_df %>% 
-    dplyr::transmute(street_name = .data$name, 
+    dplyr::transmute(.data$street_name, 
                      wikidata_id = .data$id, 
                      .data$label,
                      .data$description, 
@@ -505,7 +523,7 @@ sn_search_named_after <- function(gisco_id,
   
   final_output_df <- dplyr::bind_rows(previously_cached_df, 
                                            final_output_df %>% 
-                                             dplyr::transmute(street_name = .data$name, 
+                                             dplyr::transmute(.data$name, 
                                                               wikidata_id = .data$id, 
                                                               .data$label,
                                                               .data$description, 
@@ -526,8 +544,8 @@ sn_search_named_after <- function(gisco_id,
     }
   }
   final_output_df %>% 
-    dplyr::transmute(street_name = .data$name, 
-                     wikidata_id = .data$id, 
+    dplyr::transmute(.data$street_name, 
+                     named_after_id = .data$id, 
                      .data$label,
                      .data$description, 
                      .data$named_after_from_wikidata) %>% 

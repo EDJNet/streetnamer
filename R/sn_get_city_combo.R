@@ -34,13 +34,13 @@ sn_get_city_combo <- function(gisco_id,
   #basic_checked_df 
   manually_checked_core_df <- manually_checked_df %>% 
     dplyr::select(.data$street_name,
-                     .data$wikidata_id,
-                     .data$checked,
-                     .data$ignore, 
-                     .data$person,
-                     .data$gender,
-                     .data$category,
-                     .data$tag) %>% 
+                  .data$wikidata_id,
+                  .data$checked,
+                  .data$ignore, 
+                  .data$person,
+                  .data$gender,
+                  .data$category,
+                  .data$tag) %>% 
     dplyr::distinct(.data$street_name, .keep_all = TRUE)
   
   if (is.null(search_language)==TRUE) {
@@ -70,7 +70,7 @@ sn_get_city_combo <- function(gisco_id,
       dplyr::mutate(
         name = name %>% stringr::str_replace_all(pattern = stringr::fixed("\\"), replacement = " ") %>% stringr::str_squish(),
         name_clean = name_clean %>% stringr::str_replace_all(pattern = stringr::fixed("\\"), replacement = " ") %>% stringr::str_squish()
-      )
+      ) 
   } else {
     current_street_names_df <- street_names_df %>%
       dplyr::mutate(
@@ -80,8 +80,9 @@ sn_get_city_combo <- function(gisco_id,
   }
   
   street_names_for_automatic_checking_df <- current_street_names_df %>% 
+    dplyr::rename(street_name = .data$name) %>% 
     dplyr::anti_join(y = manually_checked_core_df,
-                     by = "name")
+                     by = "street_name")
   
   
   

@@ -2,7 +2,7 @@
 
 sn_empty_auto_named_after <- tibble::tibble(
   street_name = as.character(NA), 
-  wikidata_id = as.character(NA),
+  named_after_id = as.character(NA),
   named_after_from_wikidata = as.logical(NA)) %>% 
 
   dplyr::slice(0)

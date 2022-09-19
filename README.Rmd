@@ -230,32 +230,32 @@ summary_df <- tibble::tribble(~name, ~value,
                 "gisco_id", unique(output_df$gisco_id), 
                 "municipality_name", ll_get_lau_eu(gisco_id = unique(output_df$gisco_id), silent = TRUE) %>% dplyr::pull(LAU_NAME), 
                 "total_streets", scales::number(nrow(current_city_streets_sf %>% sf::st_drop_geometry() %>% dplyr::distinct(name))), 
-                "total_streets_dedicated_to_humans", output_df %>%
+                "total_streets_named_after_humans", output_df %>%
   dplyr::filter(as.logical(person), as.logical(checked)) %>% 
     dplyr::distinct(street_name) %>% 
     nrow() %>% 
     scales::number(), 
-  "total_streets_dedicated_to_male", output_df %>%
+  "total_streets_named_after_male", output_df %>%
   dplyr::filter(gender_label_combo == "male") %>% 
     dplyr::distinct(street_name) %>% 
     nrow() %>% 
     scales::number(),
-    "total_streets_dedicated_to_female", output_df %>%
+    "total_streets_named_after_female", output_df %>%
   dplyr::filter(gender_label_combo == "female") %>% 
     dplyr::distinct(street_name) %>% 
     nrow() %>% 
     scales::number(),
-  "total_streets_dedicated_to_other_gender", output_df %>%
+  "total_streets_named_after_other_gender", output_df %>%
   dplyr::filter(gender_label_combo == "other") %>% 
     dplyr::distinct(street_name) %>% 
     nrow() %>% 
     scales::number(),
-  "total_streets_dedicated_to_more_than_1_n",output_df %>% dplyr::filter(is.na(dedicated_to_n)==FALSE, dedicated_to_n>1) %>% dplyr::distinct(street_name) %>% nrow() %>% scales::number(),
-  "total_streets_dedicated_to_human_with_qid", output_df %>%
+  "total_streets_named_after_more_than_1_n",output_df %>% dplyr::filter(is.na(named_after_n)==FALSE, named_after_n>1) %>% dplyr::distinct(street_name) %>% nrow() %>% scales::number(),
+  "total_streets_named_after_human_with_qid", output_df %>%
   dplyr::filter(as.logical(person), as.logical(checked), is.na(wikidata_id)==FALSE) %>% nrow() %>% scales::number(),
-   "total_streets_dedicated_to_human_without_qid", output_df %>%
+   "total_streets_named_after_human_without_qid", output_df %>%
   dplyr::filter(as.logical(person), as.logical(checked), is.na(wikidata_id)==TRUE) %>% nrow() %>% scales::number(),
-  "total_streets_dedicated_to_human_with_unknown_gender", output_df %>%
+  "total_streets_named_after_human_with_unknown_gender", output_df %>%
   dplyr::filter(as.logical(person), as.logical(checked), is.na(gender_label_combo)==TRUE) %>% nrow() %>% scales::number())
 
 
@@ -369,7 +369,7 @@ Done:
 - make it possible to confirm that a street name is not named after a human, without adding anything else - this is useful because in some use cases the main point of interest is humans, and requiring to add a Wikidata identifier would needlessly prolong the checking times
   - this is expressed via the `person` column, with expected values either 1 (TRUE) or 0 (FALSE)
 - make it possible to claim that a street is named after more than one person/individual
-  - this is achieved by having a column with how many entities the street is dedicated to, `dedicated_to_n`. When reading the data, if `dedicated_to_n` is more than 1, then more than one row with data is expected to be found. Is is the responsibility of those who read the data do deal with potential inconsistencies
+  - this is achieved by having a column with how many entities the street is dedicated to, `named_after_n`. When reading the data, if `named_after_n` is more than 1, then more than one row with data is expected to be found. Is is the responsibility of those who read the data do deal with potential inconsistencies
 
 To do:
 
@@ -416,6 +416,13 @@ It should be possible deal with the following circumstances:
 ## On naming things
 
 OpenStreetMap groups all sorts of roads, streets, squares, and paths under the confusing label of "highway". Within this package, the generic word used in function and documentation will be "streets", as the package is expected to be used chiefly in reference to urban centres.
+
+This package relies on different packages and data sources, hence mantaining full consistency in naming of data columns is not always straightforward. 
+
+As a rule, the following column naming conventions should be found across outputs from this package:
+
+- `street_name`: full street name, as it appears on OpenStreetMap (legacy, possibly still found, was `name`)
+- `named_after_id`: Wikidata identifier of the person or entity to which a street has been named after (legacy, inconsistently, `id` or `wikidata_id`)
 
 ## Contributing
 

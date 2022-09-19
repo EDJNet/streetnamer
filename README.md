@@ -180,7 +180,7 @@ For ease of processing, files with humans and non-humans will be stored
 separately.
 
 ``` r
-sn_get_details_by_lau(gisco_id = curreny_city,
+sn_get_details_by_lau(gisco_id = current_city,
                       export_format = "csv",
                       manual_check_columns = TRUE)
 ```
@@ -226,7 +226,7 @@ person a street is dedicated to can be desumed, or is otherwise known,
 but no Wikidata identifiers is available. Additional useful details can
 be added within brackets after the name. - `fixed_ignore`: if left
 empty, no assumption will be made. If ticked, it will be assumed that
-the row does not refer to a proper street,
+the row does not refer to a proper street.
 
 After a file is processed, then it can be re-read and stored in the
 local database or re-uploaded to the web interface.
@@ -263,7 +263,7 @@ current_city_confirmed_df
 #> 10 DE_1100… Adamst… DE      Q33083…      1 <NA>   <NA>          1     NA      NA
 #> # … with 3,188 more rows, 4 more variables: fixed_name_clean <chr>, tag <chr>,
 #> #   session <chr>, time <dttm>, and abbreviated variable names ¹​street_name,
-#> #   ²​wikidata_id, ³​category, ⁴​dedicated_to_n
+#> #   ²​wikidata_id, ³​category, ⁴​named_after_n
 ```
 
 For context: setting the parameter `return_df_only` returns the data,
@@ -272,11 +272,11 @@ be read with the following command.
 
 ``` r
 sn_get_street_name_wikidata_id(gisco_id = current_city)
-#> # A tibble: 0 × 13
-#> # … with 13 variables: gisco_id <chr>, street_name <chr>, country <chr>,
+#> # A tibble: 0 × 14
+#> # … with 14 variables: gisco_id <chr>, street_name <chr>, country <chr>,
 #> #   wikidata_id <chr>, person <int>, gender <chr>, category <chr>,
-#> #   checked <int>, ignore <int>, dedicated_to_n <int>, tag <chr>,
-#> #   session <chr>, time <dbl>
+#> #   checked <int>, ignore <int>, named_after_n <int>, fixed_name_clean <chr>,
+#> #   tag <chr>, session <chr>, time <dttm>
 ```
 
 Either way, `current_city_confirmed_df` should now include all confirmed
@@ -299,11 +299,11 @@ current_city_confirmed_df
 #> 10 DE_1100… Adamst… DE      Q33083…      1 <NA>   <NA>          1     NA      NA
 #> # … with 3,188 more rows, 4 more variables: fixed_name_clean <chr>, tag <chr>,
 #> #   session <chr>, time <dttm>, and abbreviated variable names ¹​street_name,
-#> #   ²​wikidata_id, ³​category, ⁴​dedicated_to_n
+#> #   ²​wikidata_id, ³​category, ⁴​named_after_n
 ```
 
 The easiest way to get this data in a format that can easily be shared,
-is to use `sn_export_checked()`. notice that this still assumes you will
+is to use `sn_export_checked()`. Notice that this still assumes you will
 have the “fixed” files under a `sn_data_fixed` folder in the current
 working directory (the exact location within that folder doesn’t matter,
 as the function searches recursively for a `gisco_id` match).
@@ -315,7 +315,7 @@ the defaults.
 output_df <- sn_export_checked(
   gisco_id = current_city,
   source = "fixed_csv",  # this could be set to database 
-  include_image_credits = TRUE, # useful if you plan to use images, but time consuming, as this imp a separate API call
+  include_image_credits = TRUE, # useful if you plan to use images, but time consuming, as this implies a separate API call
   unlist = TRUE,  # needs to be set to TRUE for CSV, but better set to FALSE if doing further processing in R
   # additional_properties = c("P39", "P509", "P140", "P611", "P411", "P241", "P410", "P97", "P607", "P27", "P172") # this is if you want more properties
   export_folder = "sn_data_export", # here is where you'll find your files if you export them
@@ -359,32 +359,32 @@ summary_df <- tibble::tribble(~name, ~value,
                 "gisco_id", unique(output_df$gisco_id), 
                 "municipality_name", ll_get_lau_eu(gisco_id = unique(output_df$gisco_id), silent = TRUE) %>% dplyr::pull(LAU_NAME), 
                 "total_streets", scales::number(nrow(current_city_streets_sf %>% sf::st_drop_geometry() %>% dplyr::distinct(name))), 
-                "total_streets_dedicated_to_humans", output_df %>%
+                "total_streets_named_after_humans", output_df %>%
   dplyr::filter(as.logical(person), as.logical(checked)) %>% 
     dplyr::distinct(street_name) %>% 
     nrow() %>% 
     scales::number(), 
-  "total_streets_dedicated_to_male", output_df %>%
+  "total_streets_named_after_male", output_df %>%
   dplyr::filter(gender_label_combo == "male") %>% 
     dplyr::distinct(street_name) %>% 
     nrow() %>% 
     scales::number(),
-    "total_streets_dedicated_to_female", output_df %>%
+    "total_streets_named_after_female", output_df %>%
   dplyr::filter(gender_label_combo == "female") %>% 
     dplyr::distinct(street_name) %>% 
     nrow() %>% 
     scales::number(),
-  "total_streets_dedicated_to_other_gender", output_df %>%
+  "total_streets_named_after_other_gender", output_df %>%
   dplyr::filter(gender_label_combo == "other") %>% 
     dplyr::distinct(street_name) %>% 
     nrow() %>% 
     scales::number(),
-  "total_streets_dedicated_to_more_than_1_n",output_df %>% dplyr::filter(is.na(dedicated_to_n)==FALSE, dedicated_to_n>1) %>% dplyr::distinct(street_name) %>% nrow() %>% scales::number(),
-  "total_streets_dedicated_to_human_with_qid", output_df %>%
+  "total_streets_named_after_more_than_1_n",output_df %>% dplyr::filter(is.na(named_after_n)==FALSE, named_after_n>1) %>% dplyr::distinct(street_name) %>% nrow() %>% scales::number(),
+  "total_streets_named_after_human_with_qid", output_df %>%
   dplyr::filter(as.logical(person), as.logical(checked), is.na(wikidata_id)==FALSE) %>% nrow() %>% scales::number(),
-   "total_streets_dedicated_to_human_without_qid", output_df %>%
+   "total_streets_named_after_human_without_qid", output_df %>%
   dplyr::filter(as.logical(person), as.logical(checked), is.na(wikidata_id)==TRUE) %>% nrow() %>% scales::number(),
-  "total_streets_dedicated_to_human_with_unknown_gender", output_df %>%
+  "total_streets_named_after_human_with_unknown_gender", output_df %>%
   dplyr::filter(as.logical(person), as.logical(checked), is.na(gender_label_combo)==TRUE) %>% nrow() %>% scales::number())
 
 
@@ -395,14 +395,14 @@ print(summary_df, n = 100)
 #>  1 gisco_id                                             DE_11000000  
 #>  2 municipality_name                                    Berlin, Stadt
 #>  3 total_streets                                        11 252       
-#>  4 total_streets_dedicated_to_humans                    3 027        
-#>  5 total_streets_dedicated_to_male                      2 654        
-#>  6 total_streets_dedicated_to_female                    417          
-#>  7 total_streets_dedicated_to_other_gender              3            
-#>  8 total_streets_dedicated_to_more_than_1_n             22           
-#>  9 total_streets_dedicated_to_human_with_qid            2 895        
-#> 10 total_streets_dedicated_to_human_without_qid         153          
-#> 11 total_streets_dedicated_to_human_with_unknown_gender 2
+#>  4 total_streets_named_after_humans                    3 027        
+#>  5 total_streets_named_after_male                      2 654        
+#>  6 total_streets_named_after_female                    417          
+#>  7 total_streets_named_after_other_gender              3            
+#>  8 total_streets_named_after_more_than_1_n             22           
+#>  9 total_streets_named_after_human_with_qid            2 895        
+#> 10 total_streets_named_after_human_without_qid         153          
+#> 11 total_streets_named_after_human_with_unknown_gender 2
 ```
 
 And a quick summary map:
@@ -495,7 +495,7 @@ sn_write_street_name_wikidata_id(
 #> 1 IT_022205 Belved… IT      Q676555      1 male   religi…       1     NA      NA
 #> # … with 4 more variables: fixed_name_clean <chr>, tag <chr>, session <chr>,
 #> #   time <dttm>, and abbreviated variable names ¹​street_name, ²​wikidata_id,
-#> #   ³​category, ⁴​dedicated_to_n
+#> #   ³​category, ⁴​named_after_n
 
 
 street_info_df <- sn_get_street_name_wikidata_id(
@@ -524,7 +524,7 @@ street_info_df %>%
 #>  7 category         "religion"               
 #>  8 checked          "1"                      
 #>  9 ignore            <NA>                    
-#> 10 dedicated_to_n    <NA>                    
+#> 10 named_after_n    <NA>                    
 #> 11 fixed_name_clean  <NA>                    
 #> 12 tag              ""                       
 #> 13 session          "testing"                
@@ -560,8 +560,8 @@ needlessly prolong the checking times - this is expressed via the
 `person` column, with expected values either 1 (TRUE) or 0 (FALSE) -
 make it possible to claim that a street is named after more than one
 person/individual - this is achieved by having a column with how many
-entities the street is dedicated to, `dedicated_to_n`. When reading the
-data, if `dedicated_to_n` is more than 1, then more than one row with
+entities the street is dedicated to, `named_after_n`. When reading the
+data, if `named_after_n` is more than 1, then more than one row with
 data is expected to be found. Is is the responsibility of those who read
 the data do deal with potential inconsistencies
 
@@ -621,6 +621,19 @@ OpenStreetMap groups all sorts of roads, streets, squares, and paths
 under the confusing label of “highway”. Within this package, the generic
 word used in function and documentation will be “streets”, as the
 package is expected to be used chiefly in reference to urban centres.
+
+This package relies on different packages and data sources, hence
+mantaining full consistency in naming of data columns is not always
+straightforward.
+
+As a rule, the following column naming conventions should be found
+across outputs from this package:
+
+-   `street_name`: full street name, as it appears on OpenStreetMap
+    (legacy, possibly still found, was `name`)
+-   `named_after_id`: Wikidata identifier of the person or entity to
+    which a street has been named after (legacy, inconsistently, `id` or
+    `wikidata_id`)
 
 ## Contributing
 

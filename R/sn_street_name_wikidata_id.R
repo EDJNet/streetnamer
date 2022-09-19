@@ -7,7 +7,7 @@
 #' @param connection Defaults to NULL. If NULL, and caching is enabled, `streetnamer` will use a local sqlite database. A custom connection to other databases can be given (see vignette `caching` for details).
 #' @param disconnect_db Defaults to TRUE. If FALSE, leaves the connection to cache open.
 #' @param gisco_id Identifier of a municipality, typically a gisco identifier. Can be any code, as long as it used consistently, and it starts with a two-letter country code.
-#' @param dedicated_to_n An integer, defaults to NULL, but most commonly expected to be 1. Input more than one if the street is named after `n` entities.
+#' @param named_after_n An integer, defaults to NULL, but most commonly expected to be 1. Input more than one if the street is named after `n` entities.
 #' @param fixed_name_clean A character vector, defaults to NULL. To be used only when Wikidata identififer is not available, but it is possible to offer a "cleaner" version of the person/entity a street is dedicated to.
 #' @param return_df_only Logical, defaults to FALSE. If TRUE, does not write to database but simply returns the data frame that would be written to database when set to TRUE.
 #'
@@ -48,7 +48,7 @@ sn_write_street_name_wikidata_id <- function(gisco_id = NULL,
                                              tag = NULL,
                                              checked = NULL,
                                              ignore = NULL,
-                                             dedicated_to_n = NULL,
+                                             named_after_n = NULL,
                                              fixed_name_clean = NULL, 
                                              session = NULL,
                                              time = NULL,
@@ -134,10 +134,10 @@ sn_write_street_name_wikidata_id <- function(gisco_id = NULL,
       ignore_v <- as.integer(ignore)
     }
     
-    if (is.null(dedicated_to_n)) {
-      dedicated_to_n_v <- as.integer(NA)
+    if (is.null(named_after_n)) {
+      named_after_n_v <- as.integer(NA)
     } else {
-      dedicated_to_n_v <- as.integer(dedicated_to_n)
+      named_after_n_v <- as.integer(named_after_n)
     }
     
     if (is.null(fixed_name_clean)) {
@@ -170,13 +170,13 @@ sn_write_street_name_wikidata_id <- function(gisco_id = NULL,
       gisco_id = gisco_id_v,
       street_name = street_name_v,
       country = country_v,
-      wikidata_id = wikidata_id_v,
+      named_after_id = wikidata_id_v,
       person = person_v,
       gender = gender_v,
       category = category_v,
       checked = checked_v,
       ignore = ignore_v,
-      dedicated_to_n = dedicated_to_n_v,
+      named_after_n = named_after_n_v,
       fixed_name_clean = fixed_name_clean_v,
       tag = tag_v,
       session = session_v,
