@@ -49,7 +49,7 @@ or similar, and this has values for the property "named after", this is
 kept instead of the standard method.}
 
 \item{checked_df}{Defaults to NULL. If given, a data frame with a `street_name` and
-`wikidata_id` column. Takes precedence over searches.}
+`named_after_id` column. Takes precedence over searches.}
 
 \item{streets_sf}{Defaults to NULL. If given, used to speed up processing.
 Must be an sf object such as the ones output by `ll_osm_get_roads()`.

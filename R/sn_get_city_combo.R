@@ -1,6 +1,6 @@
 #' Get a data frame with all streets in a city with matching, including both automatic and manually checked inputs
 #'
-#' @inheritParams sn_write_street_name_wikidata_id
+#' @inheritParams sn_write_street_name_named_after_id
 #'
 #' @return
 #' @export
@@ -22,7 +22,7 @@ sn_get_city_combo <- function(gisco_id,
   country_code <- sn_standard_country(country = country, type = "code")
   country_name <- sn_standard_country(country = country, type = "name")
   
-  manually_checked_df <- sn_get_street_name_wikidata_id(gisco_id = gisco_id,
+  manually_checked_df <- sn_get_street_name_named_after_id(gisco_id = gisco_id,
                                                         country = country,
                                                         language = language,
                                                         connection = connection,
@@ -34,7 +34,7 @@ sn_get_city_combo <- function(gisco_id,
   #basic_checked_df 
   manually_checked_core_df <- manually_checked_df %>% 
     dplyr::select(.data$street_name,
-                  .data$wikidata_id,
+                  .data$named_after_id,
                   .data$checked,
                   .data$ignore, 
                   .data$person,
@@ -93,7 +93,7 @@ sn_get_city_combo <- function(gisco_id,
                                                     street_names_df = street_names_for_automatic_checking_df,
                                                     disconnect_db = FALSE)
   
-  all_wikidata_df <- tw_get(id = c(automatically_checked_df$wikidata_id, "Q112916330"),
+  all_wikidata_df <- tw_get(id = c(automatically_checked_df$named_after_id),
                             language = language,
                             cache = TRUE,
                             overwrite_cache = FALSE,
@@ -105,7 +105,7 @@ sn_get_city_combo <- function(gisco_id,
                   property == "P31", 
                   value == "Q5") %>% 
     dplyr::distinct(.data$id) %>% 
-    dplyr::transmute(wikidata_id = .data$id, 
+    dplyr::transmute(named_after_id = .data$id, 
                      person = as.numeric(1))
   
   gender_df <- all_wikidata_df %>% 
@@ -121,18 +121,18 @@ sn_get_city_combo <- function(gisco_id,
                                                dplyr::row_number()>1 ~ "other",
                                                TRUE ~ gender), .groups = "drop") %>% 
     dplyr::distinct() %>% 
-    dplyr::rename(wikidata_id = .data$id)
+    dplyr::rename(named_after_id = .data$id)
   
   
   automatically_checked_core_df <- automatically_checked_df %>% 
     dplyr::transmute(.data$street_name, 
-                     .data$wikidata_id,
+                     .data$named_after_id,
                      checked = as.integer(0),
                      ignore = as.integer(NA)) %>% 
-    dplyr::left_join(y = humans_df, by = "wikidata_id") %>% 
+    dplyr::left_join(y = humans_df, by = "named_after_id") %>% 
     dplyr::mutate(person = dplyr::case_when(person == 1 ~ person, 
-                                            is.na(wikidata_id) == FALSE ~ as.numeric(0))) %>% 
-    dplyr::left_join(y = gender_df, by = "wikidata_id") %>% 
+                                            is.na(named_after_id) == FALSE ~ as.numeric(0))) %>% 
+    dplyr::left_join(y = gender_df, by = "named_after_id") %>% 
     dplyr::mutate(category = as.character(NA), 
                   tag = as.character(NA))
   

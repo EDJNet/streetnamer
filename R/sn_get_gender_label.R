@@ -1,6 +1,6 @@
 #' Get gender label based on a Wikidata Q identifier
 #'
-#' @param wikidata_id Wikidata Q identifier.
+#' @param named_after_id Wikidata Q identifier.
 #' @param language  to be passed to `tidywikidatar` for caching. Label is always returned in English.
 #' @param cache_connection Defaults to NULL, Passed to `tidywikidatar`.
 #' @param cache Defaults to TRUE. Passed to `tidywikidatar`.
@@ -13,15 +13,15 @@
 #' if (interactive()) {
 #'   sn_get_gender_label("Q7186")
 #' }
-sn_get_gender_label <- function(wikidata_id,
+sn_get_gender_label <- function(named_after_id,
                                 language = tidywikidatar::tw_get_language(),
                                 cache_connection = NULL,
                                 cache = TRUE) {
-  if (is.null(wikidata_id)) {
+  if (is.null(named_after_id)) {
     return(NULL)
   }
   gender_id <- tidywikidatar::tw_get_property_same_length(
-    id = wikidata_id,
+    id = named_after_id,
     p = "P21",
     preferred = TRUE,
     only_first = TRUE,

@@ -4,7 +4,7 @@
 #'
 #' - `tick_if_wrong`: expected either `x`, or empty. Since this package is mostly focused on humans, it expects that the `humans` files will be checked most thoroughly: if the `tick_if_wrong` column is left empty for a given row, then it will be assumed that the automatic matching is right. On the contrary, in the `non_humans` files, rows without the `tick_if_wrong` box will simply be ignored.
 #' - `fixed_human`: if a given row has a tick (typically, `x`), then it means that the row refers to a human. If left empty, that it does not refer to a human
-#' - `fixed_wikidata_id`: if left empty, it is assumed that the Wikidata identifier is not known. If given, it must correspond to a Wikidata Q identifier, such as `Q539`
+#' - `fixed_named_after_id`: if left empty, it is assumed that the Wikidata identifier is not known. If given, it must correspond to a Wikidata Q identifier, such as `Q539`
 #' - `fixed_sex_or_gender`: if left empty, no particular assumption will be made. If the Wikidata identifier is given, this can mostly be left empty, as the information will be derived from there. If given, it should be one of the options available in the online interface, or a their shortened form: `female` (`f`), `male` (`m`), `other` (`o`), `uncertain`, (`u`).
 #' - `fixed_category`: can typically be left empty
 #' - `fixed_n_dedicated_to`: if left empty, assumed to be one. This can be used to express when a street is dedicated to more than one person: in that case, the row should be duplicated as many times as the needed, and the same number be included in each row of `fixed_n_dedicated_to`. 
@@ -18,7 +18,7 @@
 #' @param input_df A data frame or a link to csv file.
 #' @param type Defaults to NULL. Valid values are "humans" and "not_humans". If `df` is a path, it will be tentatively desumed from the name, by checking if the file name ends with either "not_humans" or only "humans". 
 #'
-#' @inheritParams sn_write_street_name_wikidata_id
+#' @inheritParams sn_write_street_name_named_after_id
 #' 
 #' @return
 #' @export
@@ -59,6 +59,11 @@ sn_import_from_manually_fixed <- function(input_df,
       dplyr::rename(tick_if_wrong = tic_if_wrong)
   }
   
+  if ("fixed_wikidata_id" %in% colnames(input_df)) {
+    input_df <- input_df %>% 
+      dplyr::rename(fixed_named_after_id = .data$fixed_wikidata_id)
+  }
+  
   relevant_df <- input_df %>%
     dplyr::select(
       .data$gisco_id,
@@ -66,7 +71,7 @@ sn_import_from_manually_fixed <- function(input_df,
       .data$id,
       .data$tick_if_wrong,
       .data$fixed_human,
-      .data$fixed_wikidata_id,
+      .data$fixed_named_after_id,
       .data$fixed_sex_or_gender,
       .data$fixed_category,
       .data$fixed_n_dedicated_to
@@ -80,11 +85,11 @@ sn_import_from_manually_fixed <- function(input_df,
       dplyr::filter(is.na(.data$tick_if_wrong))
     
     
-    wikidata_id_import <- dplyr::if_else(condition = is.na(tidywikidatar::tw_check_qid(id = confirmed_humans_df$fixed_wikidata_id,
+    named_after_id_import <- dplyr::if_else(condition = is.na(tidywikidatar::tw_check_qid(id = confirmed_humans_df$fixed_named_after_id,
                                                                                        non_id_as_NA = TRUE)),
                                          true = tidywikidatar::tw_check_qid(id = confirmed_humans_df$id,
                                                                             non_id_as_NA = TRUE), 
-                                         false = tidywikidatar::tw_check_qid(id = confirmed_humans_df$fixed_wikidata_id,
+                                         false = tidywikidatar::tw_check_qid(id = confirmed_humans_df$fixed_named_after_id,
                                                                              non_id_as_NA = TRUE)
     )
     gender_confirmed_v <- dplyr::case_when(is.na(confirmed_humans_df$fixed_sex_or_gender) ~ as.character(NA), 
@@ -94,10 +99,10 @@ sn_import_from_manually_fixed <- function(input_df,
                                            confirmed_humans_df$fixed_sex_or_gender == "u"|confirmed_humans_df$fixed_sex_or_gender=="uncertain" ~ "uncertain",
                                            TRUE ~ as.character(NA))
     
-    confirmed_output_df <- sn_write_street_name_wikidata_id(gisco_id = gisco_id,
+    confirmed_output_df <- sn_write_street_name_named_after_id(gisco_id = gisco_id,
                                                             country = country,
                                                             street_name = confirmed_humans_df$name,
-                                                            wikidata_id = wikidata_id_import,
+                                                            named_after_id = named_after_id_import,
                                                             named_after_n = confirmed_humans_df$fixed_n_dedicated_to,
                                                             category = confirmed_humans_df$fixed_category,
                                                             gender = gender_confirmed_v,
@@ -114,10 +119,10 @@ sn_import_from_manually_fixed <- function(input_df,
     
     person_lv <- is.na(fixed_humans_df$fixed_human)==FALSE
     
-    wikidata_id_fixed_import <- dplyr::if_else(condition = is.na(tidywikidatar::tw_check_qid(id = fixed_humans_df$fixed_wikidata_id,
+    named_after_id_fixed_import <- dplyr::if_else(condition = is.na(tidywikidatar::tw_check_qid(id = fixed_humans_df$fixed_named_after_id,
                                                                                              non_id_as_NA = TRUE)),
                                                true = as.character(NA), 
-                                               false = tidywikidatar::tw_check_qid(id = fixed_humans_df$fixed_wikidata_id,
+                                               false = tidywikidatar::tw_check_qid(id = fixed_humans_df$fixed_named_after_id,
                                                                                    non_id_as_NA = TRUE)
     )
     
@@ -129,10 +134,10 @@ sn_import_from_manually_fixed <- function(input_df,
                                        TRUE ~ as.character(NA))
     
     
-    fixed_output_df <- sn_write_street_name_wikidata_id(gisco_id = gisco_id,
+    fixed_output_df <- sn_write_street_name_named_after_id(gisco_id = gisco_id,
                                                         country = country,
                                                         street_name = fixed_humans_df$name,
-                                                        wikidata_id = wikidata_id_fixed_import,
+                                                        named_after_id = named_after_id_fixed_import,
                                                         named_after_n = fixed_humans_df$fixed_n_dedicated_to,
                                                         category = fixed_humans_df$fixed_category,
                                                         gender = gender_fixed_v,
@@ -152,11 +157,11 @@ sn_import_from_manually_fixed <- function(input_df,
       dplyr::filter(is.na(.data$tick_if_wrong)==FALSE)
     
     
-    wikidata_id_import <- dplyr::if_else(condition = is.na(tidywikidatar::tw_check_qid(id = all_fixed_df$fixed_wikidata_id,
+    named_after_id_import <- dplyr::if_else(condition = is.na(tidywikidatar::tw_check_qid(id = all_fixed_df$fixed_named_after_id,
                                                                                        non_id_as_NA = TRUE)),
                                          true = tidywikidatar::tw_check_qid(id = all_fixed_df$id,
                                                                             non_id_as_NA = TRUE), 
-                                         false = tidywikidatar::tw_check_qid(id = all_fixed_df$fixed_wikidata_id,
+                                         false = tidywikidatar::tw_check_qid(id = all_fixed_df$fixed_named_after_id,
                                                                              non_id_as_NA = TRUE)
     )
     
@@ -172,10 +177,10 @@ sn_import_from_manually_fixed <- function(input_df,
                                false = TRUE
     )
     
-    output_df <-  sn_write_street_name_wikidata_id(gisco_id = gisco_id,
+    output_df <-  sn_write_street_name_named_after_id(gisco_id = gisco_id,
                                                    country = country,
                                                    street_name = all_fixed_df$name,
-                                                   wikidata_id = wikidata_id_import,
+                                                   named_after_id = named_after_id_import,
                                                    named_after_n = all_fixed_df$fixed_n_dedicated_to,
                                                    category = all_fixed_df$fixed_category,
                                                    gender = gender_confirmed_v,

@@ -56,7 +56,7 @@ provided by the package is not satisfying, e.g. in places such as some
 Belgian cities where street names are given in more than one language.}
 
 \item{checked_df}{Defaults to NULL. If given, a data frame with a `street_name` and
-`wikidata_id` column. Takes precedence over searches.}
+`named_after_id` column. Takes precedence over searches.}
 }
 \description{
 Try to guess to whom a street is dedicated to

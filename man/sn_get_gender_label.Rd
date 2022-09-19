@@ -5,14 +5,14 @@
 \title{Get gender label based on a Wikidata Q identifier}
 \usage{
 sn_get_gender_label(
-  wikidata_id,
+  named_after_id,
   language = tidywikidatar::tw_get_language(),
   cache_connection = NULL,
   cache = TRUE
 )
 }
 \arguments{
-\item{wikidata_id}{Wikidata Q identifier.}
+\item{named_after_id}{Wikidata Q identifier.}
 
 \item{language}{to be passed to `tidywikidatar` for caching. Label is always returned in English.}
 

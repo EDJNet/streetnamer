@@ -72,13 +72,13 @@ sn_export_checked <- function(gisco_id = NULL,
                                                                            return_df_only = TRUE)
                                            }) %>% 
       dplyr::filter(as.logical(checked)) %>% 
-      dplyr::mutate(label = tidywikidatar::tw_get_label(id = wikidata_id,
+      dplyr::mutate(label = tidywikidatar::tw_get_label(id = named_after_id,
                                                         cache = cache,
                                                         language = language,
                                                         overwrite_cache = overwrite_cache,
                                                         cache_connection = connection_db,
                                                         disconnect_db = FALSE),
-                    description = tidywikidatar::tw_get_description(id = wikidata_id,
+                    description = tidywikidatar::tw_get_description(id = named_after_id,
                                                                     cache = cache,
                                                                     language = language,
                                                                     overwrite_cache = overwrite_cache,
@@ -87,7 +87,7 @@ sn_export_checked <- function(gisco_id = NULL,
     
     
     city_df <- current_confirmed_df %>% 
-      dplyr::pull(wikidata_id) %>% 
+      dplyr::pull(named_after_id) %>% 
       tidywikidatar::tw_get_p_wide(
         p = c(
           "P31",
@@ -176,7 +176,7 @@ sn_export_checked <- function(gisco_id = NULL,
       dplyr::mutate(row_number = dplyr::row_number()) %>% 
       dplyr::mutate(
         wikipedia = tidywikidatar::tw_get_wikipedia(
-          id = wikidata_id,
+          id = named_after_id,
           cache = cache,
           language = language,
           overwrite_cache = overwrite_cache,
@@ -184,7 +184,7 @@ sn_export_checked <- function(gisco_id = NULL,
           disconnect_db = FALSE
         ),
         picture_embed = tidywikidatar::tw_get_image_same_length(
-          id = wikidata_id, 
+          id = named_after_id, 
           format = "embed",
           only_first = TRUE,
           width = 300,
@@ -195,7 +195,7 @@ sn_export_checked <- function(gisco_id = NULL,
           disconnect_db = FALSE
         ),
         picture_commons = tidywikidatar::tw_get_image_same_length(
-          id = wikidata_id, 
+          id = named_after_id, 
           format = "commons",
           only_first = TRUE,
           width = 300,
@@ -210,8 +210,8 @@ sn_export_checked <- function(gisco_id = NULL,
     
     if (include_image_credits==TRUE) {
       img_metadata_df <- processed_df %>% 
-        dplyr::distinct(.data$wikidata_id) %>% 
-        dplyr::pull(.data$wikidata_id) %>% 
+        dplyr::distinct(.data$named_after_id) %>% 
+        dplyr::pull(.data$named_after_id) %>% 
         tw_get_image_metadata(only_first = TRUE,
                               language = language,
                               overwrite_cache = overwrite_cache,
@@ -220,7 +220,7 @@ sn_export_checked <- function(gisco_id = NULL,
       
       processed_df <- processed_df %>% 
         dplyr::left_join(y = img_metadata_df %>%
-                           dplyr::transmute(wikidata_id = .data$id, 
+                           dplyr::transmute(named_after_id = .data$id, 
                                             imgage_attribution_required = .data$attribution_required,
                                             image_copyrighted = .data$copyrighted,
                                             image_restrictions = .data$restrictions,
@@ -230,7 +230,7 @@ sn_export_checked <- function(gisco_id = NULL,
                                             image_license_url = .data$license_url,
                                             image_usage_terms = .data$usage_terms
                            ), 
-                         by = "wikidata_id")
+                         by = "named_after_id")
     }
     
     if (unlist == TRUE) {
@@ -275,7 +275,7 @@ sn_export_checked <- function(gisco_id = NULL,
   }
   
   output_df <- output_df %>% 
-    dplyr::rename(named_after_id = .data$wikidata_id)
+    dplyr::rename(named_after_id = .data$named_after_id)
   
   tidywikidatar::tw_disconnect_from_cache(
     cache = cache,

@@ -18,12 +18,12 @@
 #'
 #' sn_set_data_folder(path = tempdir())
 #'
-#' sn_write_street_name_wikidata_id(
+#' sn_write_street_name_named_after_id(
 #'   gisco_id = "IT_022205",
 #'   country = "IT",
 #'   street_name = "Belvedere San Francesco",
 #'   person = TRUE,
-#'   wikidata_id = "Q676555",
+#'   named_after_id = "Q676555",
 #'   gender = "male",
 #'   category = "religion",
 #'   tag = "",
@@ -33,15 +33,15 @@
 #'   overwrite = FALSE,
 #'   disconnect_db = TRUE
 #' )
-#' sn_get_street_name_wikidata_id(
+#' sn_get_street_name_named_after_id(
 #'   gisco_id = "IT_022205",
 #'   street_name = "Belvedere San Francesco",
 #'   country = "IT"
 #' )
-sn_write_street_name_wikidata_id <- function(gisco_id = NULL,
+sn_write_street_name_named_after_id <- function(gisco_id = NULL,
                                              street_name = NULL,
                                              country = NULL,
-                                             wikidata_id = NULL,
+                                             named_after_id = NULL,
                                              person = NULL,
                                              gender = NULL,
                                              category = NULL,
@@ -98,10 +98,10 @@ sn_write_street_name_wikidata_id <- function(gisco_id = NULL,
       street_name_v <- as.character(street_name)
     }
     
-    if (is.null(wikidata_id)) {
-      wikidata_id_v <- as.character(NA)
+    if (is.null(named_after_id)) {
+      named_after_id_v <- as.character(NA)
     } else {
-      wikidata_id_v <- as.character(wikidata_id)
+      named_after_id_v <- as.character(named_after_id)
     }
     
     if (is.null(person)) {
@@ -170,7 +170,7 @@ sn_write_street_name_wikidata_id <- function(gisco_id = NULL,
       gisco_id = gisco_id_v,
       street_name = street_name_v,
       country = country_v,
-      named_after_id = wikidata_id_v,
+      named_after_id = named_after_id_v,
       person = person_v,
       gender = gender_v,
       category = category_v,
@@ -196,7 +196,7 @@ sn_write_street_name_wikidata_id <- function(gisco_id = NULL,
   )
 
   table_name <- sn_get_db_table_name(
-    type = "street_name_wikidata_id",
+    type = "street_name_named_after_id",
     country = country
   )
 
@@ -292,10 +292,10 @@ sn_write_street_name_wikidata_id <- function(gisco_id = NULL,
 #'
 #'
 #' sn_set_data_folder(path = tempdir())
-#' sn_write_street_name_wikidata_id(
+#' sn_write_street_name_named_after_id(
 #'   gisco_id = "IT_022205",
 #'   street_name = "Belvedere San Francesco",
-#'   wikidata_id = "Q676555",
+#'   named_after_id = "Q676555",
 #'   country = "IT",
 #'   person = TRUE,
 #'   category = NA,
@@ -304,12 +304,12 @@ sn_write_street_name_wikidata_id <- function(gisco_id = NULL,
 #'   checked = TRUE
 #' )
 #'
-#' sn_get_street_name_wikidata_id(
+#' sn_get_street_name_named_after_id(
 #'   gisco_id = "IT_022205",
 #'   street_name = "Belvedere San Francesco",
 #'   country = "IT"
 #' )
-sn_get_street_name_wikidata_id <- function(country = NULL,
+sn_get_street_name_named_after_id <- function(country = NULL,
                                            gisco_id = NULL,
                                            street_name = NULL,
                                            only_checked = FALSE,
@@ -338,7 +338,7 @@ sn_get_street_name_wikidata_id <- function(country = NULL,
 
 
   table_name <- sn_get_db_table_name(
-    type = "street_name_wikidata_id",
+    type = "street_name_named_after_id",
     country = country
   )
 
@@ -350,7 +350,7 @@ sn_get_street_name_wikidata_id <- function(country = NULL,
       language = language
     )
 
-    return(sn_empty_street_name_wikidata_id)
+    return(sn_empty_street_name_named_after_id)
   }
 
   if (is.null(street_name) == FALSE & is.null(gisco_id) == FALSE) {
@@ -404,7 +404,7 @@ sn_get_street_name_wikidata_id <- function(country = NULL,
       disconnect_db = disconnect_db,
       language = language
     )
-    return(sn_empty_street_name_wikidata_id)
+    return(sn_empty_street_name_named_after_id)
   }
 
   if (only_ignore == TRUE) {

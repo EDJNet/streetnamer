@@ -20,7 +20,7 @@ mod_sn_street_info_ui <- function(id) {
 mod_sn_street_info_server <- function(id,
                                       street_name,
                                       gisco_id,
-                                      wikidata_id = NULL,
+                                      named_after_id = NULL,
                                       country = NULL,
                                       connection = NULL,
                                       language = tidywikidatar::tw_get_language()) {
@@ -39,23 +39,23 @@ mod_sn_street_info_server <- function(id,
 
     checked_lv <- NULL
 
-    if (is.null(wikidata_id) == FALSE) {
-      if (is.na(wikidata_id)) {
-        wikidata_id_selected <- as.character(NA)
+    if (is.null(named_after_id) == FALSE) {
+      if (is.na(named_after_id)) {
+        named_after_id_selected <- as.character(NA)
         gender_selected <- as.character(NA)
         checked_switch_selected <- TRUE
         guessing <- FALSE
-      } else if (wikidata_id == "drop") {
-        wikidata_id_selected <- as.character(NA)
+      } else if (named_after_id == "drop") {
+        named_after_id_selected <- as.character(NA)
         gender_selected <- as.character(NA)
         checked_switch_selected <- TRUE
         guessing <- FALSE
       } else {
         guessing <- FALSE
         checked_switch_selected <- TRUE
-        wikidata_id_selected <- wikidata_id
+        named_after_id_selected <- named_after_id
         gender_selected <- sn_get_gender_label(
-          wikidata_id = wikidata_id_selected,
+          named_after_id = named_after_id_selected,
           language = language,
           cache_connection = connection,
           cache = TRUE
@@ -63,7 +63,7 @@ mod_sn_street_info_server <- function(id,
       }
     } else {
       # check if street in database
-      details_from_db <- sn_get_street_name_wikidata_id(
+      details_from_db <- sn_get_street_name_named_after_id(
         gisco_id = gisco_id,
         street_name = street_name,
         country = country_code,
@@ -73,7 +73,7 @@ mod_sn_street_info_server <- function(id,
       if (is.null(details_from_db) == FALSE && nrow(details_from_db) == 1) {
         guessing <- FALSE
         checked_switch_selected <- as.logical(details_from_db[["checked"]])
-        wikidata_id_selected <- details_from_db[["wikidata_id"]]
+        named_after_id_selected <- details_from_db[["named_after_id"]]
         gender_selected <- details_from_db[["gender"]]
         checked_lv <- details_from_db$checked
       } else {
@@ -109,15 +109,15 @@ mod_sn_street_info_server <- function(id,
 
 
         if (nrow(search_df) > 0) {
-          wikidata_id_selected <- search_df[["id"]][[1]]
+          named_after_id_selected <- search_df[["id"]][[1]]
           gender_selected <- sn_get_gender_label(
-            wikidata_id = wikidata_id_selected,
+            named_after_id = named_after_id_selected,
             language = language,
             cache_connection = connection,
             cache = TRUE
           )
         } else {
-          wikidata_id_selected <- as.character(NA)
+          named_after_id_selected <- as.character(NA)
           gender_selected <- as.character(NA)
         }
       }
@@ -163,7 +163,7 @@ mod_sn_street_info_server <- function(id,
         shiny::hr(),
         shiny::p("Named after:"),
         streetnamer::sn_get_info_box(
-          wikidata_id = wikidata_id_selected,
+          named_after_id = named_after_id_selected,
           language = language,
           connection = connection
         ),
@@ -286,7 +286,7 @@ mod_sn_street_info_server <- function(id,
         #   onLabel = "Yes",
         #   offLabel = "No",
         #   size = "large",
-        #   value = dplyr::if_else(is.na(wikidata_id_selected), FALSE, TRUE),
+        #   value = dplyr::if_else(is.na(named_after_id_selected), FALSE, TRUE),
         #   labelWidth = "280px",
         #   handleWidth = "80px",
         #   width = "90%"
@@ -310,11 +310,11 @@ mod_sn_street_info_server <- function(id,
         category_v <- input$category_radio
       }
 
-      sn_write_street_name_wikidata_id(
+      sn_write_street_name_named_after_id(
         gisco_id = gisco_id,
         street_name = street_name,
         country = country,
-        wikidata_id = as.character(wikidata_id_selected),
+        named_after_id = as.character(named_after_id_selected),
         person = as.integer(input$person_switch),
         gender = gender_selected,
         category = as.character(category_v),

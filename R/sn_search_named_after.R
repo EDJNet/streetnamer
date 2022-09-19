@@ -21,7 +21,7 @@
 #'   provided by the package is not satisfying, e.g. in places such as some
 #'   Belgian cities where street names are given in more than one language.
 #' @param checked_df Defaults to NULL. If given, a data frame with a `street_name` and
-#'   `wikidata_id` column. Takes precedence over searches.
+#'   `named_after_id` column. Takes precedence over searches.
 #' @param drop_if_street Defaults to TRUE. If the result found is primarily an
 #'   instance of "street", "square", or such, as the result is probably the
 #'   street itself, not what or who it is dedicated to.
@@ -115,7 +115,7 @@ sn_search_named_after <- function(gisco_id,
     db_result <- tryCatch(
       dplyr::tbl(src = db_connection, table_name) %>%
         dplyr::filter(
-          .data$street_name %in% !!stringr::str_c(current_street_names_df$name)
+          .data$street_name %in% !!stringr::str_c(current_street_names_df$street_name)
         ),
       error = function(e) {
         logical(1L)
@@ -155,7 +155,7 @@ sn_search_named_after <- function(gisco_id,
     
     if ("id" %in% colnames(checked_df)) {
       checked_df <- checked_df %>% 
-        dplyr::rename(wikidata_id = .data$id)
+        dplyr::rename(named_after_id = .data$id)
     }
     
     from_check_pre_df <- current_street_names_df %>%
@@ -164,12 +164,12 @@ sn_search_named_after <- function(gisco_id,
         y = checked_df %>%
           dplyr::distinct(
             .data$street_name,
-            .data$wikidata_id
+            .data$named_after_id
           ),
         by = "street_name"
       ) %>%
       dplyr::filter(tidywikidatar::tw_check_qid(
-        id = .data$wikidata_id,
+        id = .data$named_after_id,
         logical_vector = TRUE
       ))
 
@@ -177,7 +177,7 @@ sn_search_named_after <- function(gisco_id,
       from_check_df <- from_check_pre_df %>%
         dplyr::mutate(
           label = tidywikidatar::tw_get_label(
-            id = .data$wikidata_id,
+            id = .data$named_after_id,
             language = response_language,
             cache = cache,
             overwrite_cache = overwrite_cache,
@@ -185,7 +185,7 @@ sn_search_named_after <- function(gisco_id,
             disconnect_db = FALSE
           ),
           description = tw_get_description(
-            id = .data$wikidata_id,
+            id = .data$named_after_id,
             language = response_language,
             cache = cache,
             overwrite_cache = overwrite_cache,
@@ -267,13 +267,13 @@ sn_search_named_after <- function(gisco_id,
       dplyr::left_join(
         y = named_after_original_df %>%
           dplyr::transmute(.data$street_name,
-            wikidata_id = .data$named_after,
+            named_after_id = .data$named_after,
             label = .data$named_after_label,
             description = .data$named_after_description
           ),
         by = "street_name"
       ) %>%
-      dplyr::filter(is.na(.data$wikidata_id) == FALSE)
+      dplyr::filter(is.na(.data$named_after_id) == FALSE)
 
     exclude_v <- output_df[["street_name"]]
   }

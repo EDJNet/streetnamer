@@ -169,7 +169,7 @@ sn_app_server <- function(input, output, session) {
         sf::st_drop_geometry() %>%
         dplyr::distinct(name) %>%
         dplyr::anti_join(
-          y = sn_get_street_name_wikidata_id(
+          y = sn_get_street_name_named_after_id(
             gisco_id = input$current_gisco_id,
             country = stringr::str_extract(
               string = input$current_gisco_id,
@@ -187,7 +187,7 @@ sn_app_server <- function(input, output, session) {
         sf::st_drop_geometry() %>%
         dplyr::distinct(name) %>%
         dplyr::anti_join(
-          y = sn_get_street_name_wikidata_id(
+          y = sn_get_street_name_named_after_id(
             gisco_id = input$current_gisco_id,
             country = stringr::str_extract(
               string = input$current_gisco_id,
@@ -334,14 +334,14 @@ sn_app_server <- function(input, output, session) {
 
   observeEvent(list(input$ignore_street),
     {
-      sn_write_street_name_wikidata_id(
+      sn_write_street_name_named_after_id(
         country = stringr::str_extract(
           string = input$current_gisco_id,
           pattern = "[A-Z][A-Z]"
         ),
         gisco_id = input$current_gisco_id,
         street_name = street_selected()$name,
-        wikidata_id = as.character(NA),
+        named_after_id = as.character(NA),
         person = as.integer(NA),
         gender = as.character(NA),
         category = as.character(NA),
@@ -376,7 +376,7 @@ sn_app_server <- function(input, output, session) {
   observeEvent(
     list(input$confirm_match),
     {
-      sn_write_street_name_wikidata_id(
+      sn_write_street_name_named_after_id(
         df_to_write = selected_df_rv$df(),
         connection = golem::get_golem_options("connection"),
         append = TRUE
@@ -465,7 +465,7 @@ sn_app_server <- function(input, output, session) {
       }
 
 
-      selected_wikidata_id_from_search_r <- mod_sn_search_wikidata_server(
+      selected_named_after_id_from_search_r <- mod_sn_search_wikidata_server(
         id = "sn_search_wikidata_ui_1",
         search_string = sn_clean_street_name(
           street_name = street_selected()$name,
@@ -481,7 +481,7 @@ sn_app_server <- function(input, output, session) {
     ignoreInit = TRUE
   )
 
-  selected_wikidata_id_from_search_r <- mod_sn_search_wikidata_server(
+  selected_named_after_id_from_search_r <- mod_sn_search_wikidata_server(
     id = "sn_search_wikidata_ui_1",
     search_string = street_selected()$name,
     search_language = "en",
@@ -537,9 +537,9 @@ sn_app_server <- function(input, output, session) {
 
 
   shiny::observeEvent(
-    eventExpr = input$drop_wikidata_id_switch,
+    eventExpr = input$drop_named_after_id_switch,
     handlerExpr = {
-      if (input$drop_wikidata_id_switch == TRUE) {
+      if (input$drop_named_after_id_switch == TRUE) {
         selected_df_rv$df <- mod_sn_street_info_server(
           id = "snm_street_info_ui_1",
           street_name = street_selected()$name,
@@ -548,13 +548,13 @@ sn_app_server <- function(input, output, session) {
             string = input$current_gisco_id,
             pattern = "[A-Z][A-Z]"
           ),
-          wikidata_id = "drop",
+          named_after_id = "drop",
           connection = golem::get_golem_options("connection")
         )
 
 
         shinyWidgets::updateSwitchInput(
-          inputId = "drop_wikidata_id_switch",
+          inputId = "drop_named_after_id_switch",
           value = FALSE
         )
       }
@@ -565,9 +565,9 @@ sn_app_server <- function(input, output, session) {
 
 
   shiny::observeEvent(
-    eventExpr = selected_wikidata_id_from_search_r(),
+    eventExpr = selected_named_after_id_from_search_r(),
     handlerExpr = {
-      if (length(selected_wikidata_id_from_search_r()) == 0) {
+      if (length(selected_named_after_id_from_search_r()) == 0) {
         return(NULL)
       }
       selected_df_rv$df <- mod_sn_street_info_server(
@@ -578,7 +578,7 @@ sn_app_server <- function(input, output, session) {
           string = input$current_gisco_id,
           pattern = "[A-Z][A-Z]"
         ),
-        wikidata_id = selected_wikidata_id_from_search_r(),
+        named_after_id = selected_named_after_id_from_search_r(),
         connection = golem::get_golem_options("connection")
       )
     },
@@ -591,7 +591,7 @@ sn_app_server <- function(input, output, session) {
 
 
 
-  # output$wikidata_id_selected_output <- shiny::renderUI(
+  # output$named_after_id_selected_output <- shiny::renderUI(
   #   shiny::p(selected_df_r())
   # )
 

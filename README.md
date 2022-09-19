@@ -204,9 +204,9 @@ More specifically:
 -   `fixed_human`: if a given row has a tick (typically, `x`), then it
     means that the row refers to a human. If left empty, that it does
     not refer to a human
--   `fixed_wikidata_id`: if left empty, it is assumed that the Wikidata
-    identifier is not known. If given, it must correspond to a Wikidata
-    Q identifier, such as `Q539`
+-   `fixed_named_after_id`: if left empty, it is assumed that the
+    Wikidata identifier is not known. If given, it must correspond to a
+    Wikidata Q identifier, such as `Q539`
 -   `fixed_sex_or_gender`: if left empty, no particular assumption will
     be made. If the Wikidata identifier is given, this can mostly be
     left empty, as the information will be derived from there. If given,
@@ -242,14 +242,15 @@ Here is the data frame summarising all confirmed information we have in
 those previously exported tables:
 
 ``` r
-current_city_confirmed_df <- purrr::map_dfr(.x = current_fixed_files_v, .f = function(x) {
+current_city_confirmed_df <- purrr::map_dfr(.x = current_fixed_files_v,
+                                            .f = function(x) {
   sn_import_from_manually_fixed(input_df = x,
                                 return_df_only = TRUE)
 })
 #> Warning: One or more parsing issues, see `problems()` for details
 current_city_confirmed_df
 #> # A tibble: 3,198 × 14
-#>    gisco_id stree…¹ country wikid…² person gender categ…³ checked ignore dedic…⁴
+#>    gisco_id stree…¹ country named…² person gender categ…³ checked ignore named…⁴
 #>    <chr>    <chr>   <chr>   <chr>    <int> <chr>  <chr>     <int>  <int>   <int>
 #>  1 DE_1100… Abbe L… DE      Q30850…      1 <NA>   <NA>          1     NA      NA
 #>  2 DE_1100… Abbest… DE      Q76359       1 <NA>   <NA>          1     NA      NA
@@ -263,7 +264,7 @@ current_city_confirmed_df
 #> 10 DE_1100… Adamst… DE      Q33083…      1 <NA>   <NA>          1     NA      NA
 #> # … with 3,188 more rows, 4 more variables: fixed_name_clean <chr>, tag <chr>,
 #> #   session <chr>, time <dttm>, and abbreviated variable names ¹​street_name,
-#> #   ²​wikidata_id, ³​category, ⁴​named_after_n
+#> #   ²​named_after_id, ³​category, ⁴​named_after_n
 ```
 
 For context: setting the parameter `return_df_only` returns the data,
@@ -271,10 +272,10 @@ setting it to `TRUE` stores it in the local database, from where it can
 be read with the following command.
 
 ``` r
-sn_get_street_name_wikidata_id(gisco_id = current_city)
+sn_get_street_name_named_after_id(gisco_id = current_city)
 #> # A tibble: 0 × 14
 #> # … with 14 variables: gisco_id <chr>, street_name <chr>, country <chr>,
-#> #   wikidata_id <chr>, person <int>, gender <chr>, category <chr>,
+#> #   named_after_id <chr>, person <int>, gender <chr>, category <chr>,
 #> #   checked <int>, ignore <int>, named_after_n <int>, fixed_name_clean <chr>,
 #> #   tag <chr>, session <chr>, time <dttm>
 ```
@@ -285,7 +286,7 @@ humans as well as the custom fixed non-humans.
 ``` r
 current_city_confirmed_df
 #> # A tibble: 3,198 × 14
-#>    gisco_id stree…¹ country wikid…² person gender categ…³ checked ignore dedic…⁴
+#>    gisco_id stree…¹ country named…² person gender categ…³ checked ignore named…⁴
 #>    <chr>    <chr>   <chr>   <chr>    <int> <chr>  <chr>     <int>  <int>   <int>
 #>  1 DE_1100… Abbe L… DE      Q30850…      1 <NA>   <NA>          1     NA      NA
 #>  2 DE_1100… Abbest… DE      Q76359       1 <NA>   <NA>          1     NA      NA
@@ -299,7 +300,7 @@ current_city_confirmed_df
 #> 10 DE_1100… Adamst… DE      Q33083…      1 <NA>   <NA>          1     NA      NA
 #> # … with 3,188 more rows, 4 more variables: fixed_name_clean <chr>, tag <chr>,
 #> #   session <chr>, time <dttm>, and abbreviated variable names ¹​street_name,
-#> #   ²​wikidata_id, ³​category, ⁴​named_after_n
+#> #   ²​named_after_id, ³​category, ⁴​named_after_n
 ```
 
 The easiest way to get this data in a format that can easily be shared,
@@ -327,7 +328,7 @@ output_df <- sn_export_checked(
 #> This warning is displayed once every 8 hours.
 output_df
 #> # A tibble: 3,198 × 71
-#>    gisco_id stree…¹ country wikid…² person gender categ…³ checked ignore dedic…⁴
+#>    gisco_id stree…¹ country named…² person gender categ…³ checked ignore named…⁴
 #>    <chr>    <chr>   <chr>   <chr>    <int> <chr>  <chr>     <int>  <int>   <int>
 #>  1 DE_1100… Abbe L… DE      Q30850…      1 <NA>   <NA>          1     NA      NA
 #>  2 DE_1100… Abbest… DE      Q76359       1 <NA>   <NA>          1     NA      NA
@@ -381,20 +382,20 @@ summary_df <- tibble::tribble(~name, ~value,
     scales::number(),
   "total_streets_named_after_more_than_1_n",output_df %>% dplyr::filter(is.na(named_after_n)==FALSE, named_after_n>1) %>% dplyr::distinct(street_name) %>% nrow() %>% scales::number(),
   "total_streets_named_after_human_with_qid", output_df %>%
-  dplyr::filter(as.logical(person), as.logical(checked), is.na(wikidata_id)==FALSE) %>% nrow() %>% scales::number(),
+  dplyr::filter(as.logical(person), as.logical(checked), is.na(named_after_id)==FALSE) %>% nrow() %>% scales::number(),
    "total_streets_named_after_human_without_qid", output_df %>%
-  dplyr::filter(as.logical(person), as.logical(checked), is.na(wikidata_id)==TRUE) %>% nrow() %>% scales::number(),
+  dplyr::filter(as.logical(person), as.logical(checked), is.na(named_after_id)==TRUE) %>% nrow() %>% scales::number(),
   "total_streets_named_after_human_with_unknown_gender", output_df %>%
   dplyr::filter(as.logical(person), as.logical(checked), is.na(gender_label_combo)==TRUE) %>% nrow() %>% scales::number())
 
 
 print(summary_df, n = 100)
 #> # A tibble: 11 × 2
-#>    name                                                 value        
-#>    <chr>                                                <chr>        
-#>  1 gisco_id                                             DE_11000000  
-#>  2 municipality_name                                    Berlin, Stadt
-#>  3 total_streets                                        11 252       
+#>    name                                                value        
+#>    <chr>                                               <chr>        
+#>  1 gisco_id                                            DE_11000000  
+#>  2 municipality_name                                   Berlin, Stadt
+#>  3 total_streets                                       11 252       
 #>  4 total_streets_named_after_humans                    3 027        
 #>  5 total_streets_named_after_male                      2 654        
 #>  6 total_streets_named_after_female                    417          
@@ -474,12 +475,12 @@ All the choices made in this interface are transformed into a data
 frame, that is written into a database:
 
 ``` r
-sn_write_street_name_wikidata_id(
+sn_write_street_name_named_after_id(
   gisco_id = "IT_022205",
   country = "IT",
   street_name = "Belvedere San Francesco",
   person = TRUE,
-  wikidata_id = "Q676555",
+  named_after_id = "Q676555",
   gender = "male",
   category = "religion",
   tag = "",
@@ -490,15 +491,15 @@ sn_write_street_name_wikidata_id(
   disconnect_db = TRUE
 )
 #> # A tibble: 1 × 14
-#>   gisco_id  stree…¹ country wikid…² person gender categ…³ checked ignore dedic…⁴
+#>   gisco_id  stree…¹ country named…² person gender categ…³ checked ignore named…⁴
 #>   <chr>     <chr>   <chr>   <chr>    <int> <chr>  <chr>     <int>  <int>   <int>
 #> 1 IT_022205 Belved… IT      Q676555      1 male   religi…       1     NA      NA
 #> # … with 4 more variables: fixed_name_clean <chr>, tag <chr>, session <chr>,
-#> #   time <dttm>, and abbreviated variable names ¹​street_name, ²​wikidata_id,
+#> #   time <dttm>, and abbreviated variable names ¹​street_name, ²​named_after_id,
 #> #   ³​category, ⁴​named_after_n
 
 
-street_info_df <- sn_get_street_name_wikidata_id(
+street_info_df <- sn_get_street_name_named_after_id(
   gisco_id = "IT_022205",
   street_name = "Belvedere San Francesco",
   country = "IT"
@@ -518,17 +519,17 @@ street_info_df %>%
 #>  1 gisco_id         "IT_022205"              
 #>  2 street_name      "Belvedere San Francesco"
 #>  3 country          "IT"                     
-#>  4 wikidata_id      "Q676555"                
+#>  4 named_after_id   "Q676555"                
 #>  5 person           "1"                      
 #>  6 gender           "male"                   
 #>  7 category         "religion"               
 #>  8 checked          "1"                      
 #>  9 ignore            <NA>                    
-#> 10 named_after_n    <NA>                    
+#> 10 named_after_n     <NA>                    
 #> 11 fixed_name_clean  <NA>                    
 #> 12 tag              ""                       
 #> 13 session          "testing"                
-#> 14 time             "1658874788.58616"
+#> 14 time             "1663581837.00403"
 ```
 
 Each time the “confirm” button is clicked, a new row is added to the

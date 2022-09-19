@@ -1,6 +1,6 @@
 #' Get data from Wikidata and generate a box with key information
 #'
-#' @param wikidata_id A wikidata identifiers, must start with "Q".
+#' @param named_after_id A wikidata identifiers, must start with "Q".
 #' @param language Defaults to "en". Must correspond to a two letter-code recognised by Wikidata.
 #' @param connection A database connection, or a list of parameters compatible with `tidywikidatar`.
 #'
@@ -10,15 +10,15 @@
 #' @examples
 #'
 #' sn_get_info_box("Q676555")
-sn_get_info_box <- function(wikidata_id,
+sn_get_info_box <- function(named_after_id,
                             language = "en",
                             connection = NULL) {
-  if (is.na(wikidata_id)) {
+  if (is.na(named_after_id)) {
     return(shiny::tagList())
   }
 
   item_df <- tidywikidatar::tw_get(
-    id = wikidata_id,
+    id = named_after_id,
     language = language,
     cache_connection = connection,
     cache = TRUE
@@ -124,7 +124,7 @@ sn_get_info_box <- function(wikidata_id,
   }
 
   wikidata_link <- htmltools::a(
-    href = stringr::str_c("https://www.wikidata.org/wiki/", wikidata_id),
+    href = stringr::str_c("https://www.wikidata.org/wiki/", named_after_id),
     "Wikidata",
     target = "_blank",
     style = "text-decoration: underline;",
@@ -132,7 +132,7 @@ sn_get_info_box <- function(wikidata_id,
   )
 
   wikipedia_link <- tidywikidatar::tw_get_wikipedia(
-    id = wikidata_id,
+    id = named_after_id,
     id_df = item_df,
     language = language,
     cache_connection = connection,

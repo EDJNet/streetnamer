@@ -159,11 +159,11 @@ mod_sn_search_app <- function(search_string,
                               testing = FALSE) {
   ui <- shiny::fluidPage(
     mod_sn_search_wikidata_ui(id = "sn_search_wikidata_ui_1"),
-    shiny::uiOutput(outputId = "selected_wikidata_id")
+    shiny::uiOutput(outputId = "selected_named_after_id")
   )
 
   server <- function(input, output, session) {
-    selected_wikidata_id <- mod_sn_search_wikidata_server(
+    selected_named_after_id <- mod_sn_search_wikidata_server(
       id = "sn_search_wikidata_ui_1",
       search_string = search_string,
       search_language = search_language,
@@ -173,8 +173,8 @@ mod_sn_search_app <- function(search_string,
     )
 
 
-    output$selected_wikidata_id <- shiny::renderUI({
-      shiny::p(selected_wikidata_id())
+    output$selected_named_after_id <- shiny::renderUI({
+      shiny::p(selected_named_after_id())
     })
   }
   shiny::shinyApp(ui, server)

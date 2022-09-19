@@ -161,7 +161,7 @@ More specifically:
 
 - `tick_if_wrong`: expected either `x`, or empty. Since this package is mostly focused on humans, it expects that the `humans` files will be checked most thoroughly: if the `tick_if_wrong` column is left empty for a given row, then it will be assumed that the automatic matching is right. On the contrary, in the `non_humans` files, rows without the `tick_if_wrong` box will simply be ignored.
 - `fixed_human`: if a given row has a tick (typically, `x`), then it means that the row refers to a human. If left empty, that it does not refer to a human
-- `fixed_wikidata_id`: if left empty, it is assumed that the Wikidata identifier is not known. If given, it must correspond to a Wikidata Q identifier, such as `Q539`
+- `fixed_named_after_id`: if left empty, it is assumed that the Wikidata identifier is not known. If given, it must correspond to a Wikidata Q identifier, such as `Q539`
 - `fixed_sex_or_gender`: if left empty, no particular assumption will be made. If the Wikidata identifier is given, this can mostly be left empty, as the information will be derived from there. If given, it should be one of the options available in the online interface, or a their shortened form: `female` (`f`), `male` (`m`), `other` (`o`), `uncertain`, (`u`).
 - `fixed_category`: can typically be left empty
 - `fixed_n_dedicated_to`: if left empty, assumed to be one. This can be used to express when a street is dedicated to more than one person: in that case, the row should be duplicated as many times as the needed, and the same number be included in each row of `fixed_n_dedicated_to`. 
@@ -182,7 +182,8 @@ current_fixed_files_v <- fs::dir_ls(path = fs::path("sn_data_fixed", "Germany"),
 Here is the data frame summarising all confirmed information we have in those previously exported tables:
 
 ```{r}
-current_city_confirmed_df <- purrr::map_dfr(.x = current_fixed_files_v, .f = function(x) {
+current_city_confirmed_df <- purrr::map_dfr(.x = current_fixed_files_v,
+                                            .f = function(x) {
   sn_import_from_manually_fixed(input_df = x,
                                 return_df_only = TRUE)
 })
@@ -192,7 +193,7 @@ current_city_confirmed_df
 For context: setting the parameter `return_df_only` returns the data, setting it to `TRUE` stores it in the local database, from where it can be read with the following command. 
 
 ```{r}
-sn_get_street_name_wikidata_id(gisco_id = current_city)
+sn_get_street_name_named_after_id(gisco_id = current_city)
 ```
 
 Either way, `current_city_confirmed_df` should now include all confirmed humans as well as the custom fixed non-humans. 
@@ -252,9 +253,9 @@ summary_df <- tibble::tribble(~name, ~value,
     scales::number(),
   "total_streets_named_after_more_than_1_n",output_df %>% dplyr::filter(is.na(named_after_n)==FALSE, named_after_n>1) %>% dplyr::distinct(street_name) %>% nrow() %>% scales::number(),
   "total_streets_named_after_human_with_qid", output_df %>%
-  dplyr::filter(as.logical(person), as.logical(checked), is.na(wikidata_id)==FALSE) %>% nrow() %>% scales::number(),
+  dplyr::filter(as.logical(person), as.logical(checked), is.na(named_after_id)==FALSE) %>% nrow() %>% scales::number(),
    "total_streets_named_after_human_without_qid", output_df %>%
-  dplyr::filter(as.logical(person), as.logical(checked), is.na(wikidata_id)==TRUE) %>% nrow() %>% scales::number(),
+  dplyr::filter(as.logical(person), as.logical(checked), is.na(named_after_id)==TRUE) %>% nrow() %>% scales::number(),
   "total_streets_named_after_human_with_unknown_gender", output_df %>%
   dplyr::filter(as.logical(person), as.logical(checked), is.na(gender_label_combo)==TRUE) %>% nrow() %>% scales::number())
 
@@ -324,12 +325,12 @@ streetnamer:::mod_sn_street_info_app(street_name = "Belvedere San Francesco",
 All the choices made in this interface are transformed into a data frame, that is written into a database:
 
 ```{r}
-sn_write_street_name_wikidata_id(
+sn_write_street_name_named_after_id(
   gisco_id = "IT_022205",
   country = "IT",
   street_name = "Belvedere San Francesco",
   person = TRUE,
-  wikidata_id = "Q676555",
+  named_after_id = "Q676555",
   gender = "male",
   category = "religion",
   tag = "",
@@ -341,7 +342,7 @@ sn_write_street_name_wikidata_id(
 )
 
 
-street_info_df <- sn_get_street_name_wikidata_id(
+street_info_df <- sn_get_street_name_named_after_id(
   gisco_id = "IT_022205",
   street_name = "Belvedere San Francesco",
   country = "IT"

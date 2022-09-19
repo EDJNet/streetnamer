@@ -143,7 +143,7 @@ sn_app_ui <- function(request) {
                     mod_sn_search_wikidata_ui(id = "sn_search_wikidata_ui_1")
                   ),
                   shinyWidgets::switchInput(
-                    inputId = "drop_wikidata_id_switch",
+                    inputId = "drop_named_after_id_switch",
                     label = "Drop Wikidata id?",
                     onLabel = "Yes",
                     offLabel = "No",
