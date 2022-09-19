@@ -33,32 +33,32 @@
 #'   overwrite = FALSE,
 #'   disconnect_db = TRUE
 #' )
-#' sn_get_street_name_named_after_id(
+#' sn_get_street_named_after_id(
 #'   gisco_id = "IT_022205",
 #'   street_name = "Belvedere San Francesco",
 #'   country = "IT"
 #' )
 sn_write_street_name_named_after_id <- function(gisco_id = NULL,
-                                             street_name = NULL,
-                                             country = NULL,
-                                             named_after_id = NULL,
-                                             person = NULL,
-                                             gender = NULL,
-                                             category = NULL,
-                                             tag = NULL,
-                                             checked = NULL,
-                                             ignore = NULL,
-                                             named_after_n = NULL,
-                                             fixed_name_clean = NULL, 
-                                             session = NULL,
-                                             time = NULL,
-                                             overwrite = FALSE,
-                                             append = TRUE,
-                                             connection = NULL,
-                                             language = tidywikidatar::tw_get_language(),
-                                             disconnect_db = TRUE,
-                                             return_df_only = FALSE,
-                                             df_to_write = NULL) {
+                                                street_name = NULL,
+                                                country = NULL,
+                                                named_after_id = NULL,
+                                                person = NULL,
+                                                gender = NULL,
+                                                category = NULL,
+                                                tag = NULL,
+                                                checked = NULL,
+                                                ignore = NULL,
+                                                named_after_n = NULL,
+                                                fixed_name_clean = NULL,
+                                                session = NULL,
+                                                time = NULL,
+                                                overwrite = FALSE,
+                                                append = TRUE,
+                                                connection = NULL,
+                                                language = tidywikidatar::tw_get_language(),
+                                                disconnect_db = TRUE,
+                                                return_df_only = FALSE,
+                                                df_to_write = NULL) {
   if (is.null(df_to_write) == FALSE & is.data.frame(df_to_write) == TRUE) {
     df <- df_to_write
 
@@ -74,15 +74,13 @@ sn_write_street_name_named_after_id <- function(gisco_id = NULL,
       gisco_id <- df$gisco_id
     }
   } else {
-
-
     if (is.null(country)) {
       country_v <- as.character(NA)
     } else {
       country_v <- stringr::str_to_upper(as.character(country))
     }
-    
-    if (length(unique(country_v))>1) {
+
+    if (length(unique(country_v)) > 1) {
       usethis::ui_stop("All rows must belong to the same country.")
     }
 
@@ -91,80 +89,80 @@ sn_write_street_name_named_after_id <- function(gisco_id = NULL,
     } else {
       gisco_id_v <- stringr::str_to_upper(as.character(gisco_id))
     }
-    
+
     if (is.null(street_name)) {
       street_name_v <- as.character(NA)
     } else {
       street_name_v <- as.character(street_name)
     }
-    
+
     if (is.null(named_after_id)) {
       named_after_id_v <- as.character(NA)
     } else {
       named_after_id_v <- as.character(named_after_id)
     }
-    
+
     if (is.null(person)) {
       person_v <- as.integer(NA)
     } else {
       person_v <- as.integer(person)
     }
-    
+
     if (is.null(gender)) {
       gender_v <- as.character(NA)
     } else {
       gender_v <- as.character(gender)
     }
-    
+
     if (is.null(category)) {
       category_v <- as.character(NA)
     } else {
       category_v <- as.character(category)
     }
-    
+
     if (is.null(checked)) {
       checked_v <- as.integer(NA)
     } else {
       checked_v <- as.integer(checked)
     }
-    
+
     if (is.null(ignore)) {
       ignore_v <- as.integer(NA)
     } else {
       ignore_v <- as.integer(ignore)
     }
-    
+
     if (is.null(named_after_n)) {
       named_after_n_v <- as.integer(NA)
     } else {
       named_after_n_v <- as.integer(named_after_n)
     }
-    
+
     if (is.null(fixed_name_clean)) {
       fixed_name_clean_v <- as.character(NA)
     } else {
       fixed_name_clean_v <- as.character(fixed_name_clean)
     }
-    
+
     if (is.null(tag)) {
       tag_v <- as.character(NA)
     } else {
       tag_v <- as.character(tag)
     }
-    
+
     if (is.null(session)) {
       session_v <- as.character(NA)
     } else {
       session_v <- as.character(session)
     }
-    
+
     if (is.null(time)) {
       time_v <- Sys.time()
     } else {
       time_v <- as.numeric(time)
     }
-    
-    
+
+
 
     df <- tibble::tibble(
       gisco_id = gisco_id_v,
@@ -304,23 +302,23 @@ sn_write_street_name_named_after_id <- function(gisco_id = NULL,
 #'   checked = TRUE
 #' )
 #'
-#' sn_get_street_name_named_after_id(
+#' sn_get_street_named_after_id(
 #'   gisco_id = "IT_022205",
 #'   street_name = "Belvedere San Francesco",
 #'   country = "IT"
 #' )
-sn_get_street_name_named_after_id <- function(country = NULL,
-                                           gisco_id = NULL,
-                                           street_name = NULL,
-                                           only_checked = FALSE,
-                                           only_ignore = FALSE,
-                                           language = tidywikidatar::tw_get_language(),
-                                           connection = NULL,
-                                           disconnect_db = TRUE) {
+sn_get_street_named_after_id <- function(country = NULL,
+                                         gisco_id = NULL,
+                                         street_name = NULL,
+                                         only_checked = FALSE,
+                                         only_ignore = FALSE,
+                                         language = tidywikidatar::tw_get_language(),
+                                         connection = NULL,
+                                         disconnect_db = TRUE) {
   if (is.null(gisco_id) == FALSE) {
     gisco_id <- stringr::str_to_upper(gisco_id)
   }
-  
+
   if (is.null(country)) {
     country <- stringr::str_extract(
       string = stringr::str_to_upper(string = gisco_id),

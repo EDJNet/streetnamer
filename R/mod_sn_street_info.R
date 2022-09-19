@@ -63,7 +63,7 @@ mod_sn_street_info_server <- function(id,
       }
     } else {
       # check if street in database
-      details_from_db <- sn_get_street_name_named_after_id(
+      details_from_db <- sn_get_street_named_after_id(
         gisco_id = gisco_id,
         street_name = street_name,
         country = country_code,
@@ -296,15 +296,15 @@ mod_sn_street_info_server <- function(id,
 
     ## Return
     selected_df_r <- shiny::reactive({
-      if (length(input$person_switch)==0) {
+      if (length(input$person_switch) == 0) {
         tag_v <- ""
       } else if (as.integer(input$person_switch) == 1) {
         tag_v <- input$tag_selectize_person
       } else {
         tag_v <- input$tag_selectize_not_person
       }
-      
-      if (length(input$category_radio)==0) {
+
+      if (length(input$category_radio) == 0) {
         category_v <- ""
       } else {
         category_v <- input$category_radio

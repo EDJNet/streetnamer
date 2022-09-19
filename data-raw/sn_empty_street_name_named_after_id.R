@@ -12,7 +12,7 @@ sn_write_street_name_named_after_id(
   # time = Sys.time(),
   checked = TRUE
 )
-sn_empty_street_name_named_after_id <- sn_get_street_name_named_after_id(
+sn_empty_street_name_named_after_id <- sn_get_street_named_after_id(
   gisco_id = "IT_022205",
   street_name = "Belvedere San Francesco",
   country = "IT"

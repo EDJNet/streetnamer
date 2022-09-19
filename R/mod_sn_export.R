@@ -46,7 +46,7 @@ mod_sn_export_server <- function(id,
         )
       },
       content = function(con) {
-        download_df <- sn_get_street_name_named_after_id(
+        download_df <- sn_get_street_named_after_id(
           country = country,
           language = language,
           connection = connection
@@ -78,7 +78,7 @@ mod_sn_export_server <- function(id,
         )
       },
       content = function(con) {
-        download_df <- sn_get_street_name_named_after_id(
+        download_df <- sn_get_street_named_after_id(
           gisco_id = gisco_id,
           country = country,
           language = language,

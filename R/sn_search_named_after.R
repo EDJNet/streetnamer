@@ -52,7 +52,7 @@ sn_search_named_after <- function(gisco_id,
     type = "name"
   )
 
-  
+
 
   if (is.null(search_language)) {
     search_language <- streetnamer::sn_language_defaults_by_country %>%
@@ -82,20 +82,19 @@ sn_search_named_after <- function(gisco_id,
       dplyr::mutate(
         name = name %>% stringr::str_replace_all(pattern = stringr::fixed("\\"), replacement = " ") %>% stringr::str_squish(),
         name_clean = name_clean %>% stringr::str_replace_all(pattern = stringr::fixed("\\"), replacement = " ") %>% stringr::str_squish()
-      ) %>% 
-      dplyr::rename(street_name = .data$name) 
+      ) %>%
+      dplyr::rename(street_name = .data$name)
   } else {
-    
     if ("name" %in% colnames(street_names_df)) {
-      street_names_df <- street_names_df %>% 
+      street_names_df <- street_names_df %>%
         dplyr::rename(street_name = .data$name)
     }
-    
+
     current_street_names_df <- street_names_df %>%
       dplyr::mutate(
         street_name = street_name %>% stringr::str_replace_all(pattern = stringr::fixed("\\"), replacement = " ") %>% stringr::str_squish(),
         name_clean = name_clean %>% stringr::str_replace_all(pattern = stringr::fixed("\\"), replacement = " ") %>% stringr::str_squish()
-      ) 
+      )
   }
 
   language_combo <- stringr::str_c(search_language, "_", response_language)
@@ -105,9 +104,9 @@ sn_search_named_after <- function(gisco_id,
     language = language_combo,
     cache = cache
   )
-  
+
   table_name <- sn_get_db_table_name(type = "sn_auto_named_after", country = country_code)
-  
+
   if (pool::dbExistsTable(conn = db_connection, name = table_name) == FALSE) {
     # do nothing, if table does not exist, data cannot be there
     previously_cached_df <- sn_empty_auto_named_after
@@ -121,43 +120,44 @@ sn_search_named_after <- function(gisco_id,
         logical(1L)
       }
     )
-    
+
     if (isFALSE(db_result)) {
       previously_cached_df <- sn_empty_auto_named_after
     } else {
       previously_cached_df <- tibble::as_tibble(db_result)
     }
-    
   }
 
-  current_street_names_df <- current_street_names_df %>% 
-    dplyr::anti_join(y = previously_cached_df,
-                     by = "street_name")
+  current_street_names_df <- current_street_names_df %>%
+    dplyr::anti_join(
+      y = previously_cached_df,
+      by = "street_name"
+    )
 
-  if (nrow(current_street_names_df)==0) {
+  if (nrow(current_street_names_df) == 0) {
     tw_disconnect_from_cache(
       cache = cache,
       cache_connection = db_connection,
       disconnect_db = disconnect_db,
       language = language
     )
-    
+
     return(previously_cached_df)
   }
-  
+
   exclude_v <- as.character(NA)[FALSE]
 
   if (is.null(checked_df) == FALSE) {
     if ("name" %in% colnames(checked_df)) {
-      checked_df <- checked_df %>% 
+      checked_df <- checked_df %>%
         dplyr::rename(street_name = .data$name)
     }
-    
+
     if ("id" %in% colnames(checked_df)) {
-      checked_df <- checked_df %>% 
+      checked_df <- checked_df %>%
         dplyr::rename(named_after_id = .data$id)
     }
-    
+
     from_check_pre_df <- current_street_names_df %>%
       dplyr::distinct(.data$street_name) %>%
       dplyr::left_join(
@@ -423,14 +423,15 @@ sn_search_named_after <- function(gisco_id,
         "Q3352369", # footpath
         "Q34442", # road
         "Q54114" # boulevard
-      )) 
-    
+      ))
+
     if (drop_if_disambiguation_page == TRUE) {
-      pre_process_join_df <- pre_process_join_df %>% 
+      pre_process_join_df <- pre_process_join_df %>%
         dplyr::filter(!.data$instance_of %in% c(
-          "Q4167410")) # disambiguation page
+          "Q4167410"
+        )) # disambiguation page
     }
-    
+
     final_output_df <- current_street_names_df %>%
       dplyr::left_join(
         y = pre_process_join_df %>%
@@ -446,27 +447,28 @@ sn_search_named_after <- function(gisco_id,
       )
   }
 
-  df <- final_output_df %>% 
-    dplyr::transmute(.data$street_name, 
-                     named_after_id = .data$id, 
-                     .data$label,
-                     .data$description, 
-                     .data$named_after_from_wikidata)
-  
+  df <- final_output_df %>%
+    dplyr::transmute(.data$street_name,
+      named_after_id = .data$id,
+      .data$label,
+      .data$description,
+      .data$named_after_from_wikidata
+    )
+
   if (pool::dbExistsTable(conn = db_connection, name = table_name) == FALSE) {
     # if table does not exist...
-      DBI::dbWriteTable(db_connection,
-                        name = table_name,
-                        value = df,
-                        append = TRUE
-      )
+    DBI::dbWriteTable(db_connection,
+      name = table_name,
+      value = df,
+      append = TRUE
+    )
   } else {
     # if table exists...
     if (append == TRUE) {
       DBI::dbWriteTable(db_connection,
-                        name = table_name,
-                        value = df,
-                        append = TRUE
+        name = table_name,
+        value = df,
+        append = TRUE
       )
     } else {
       previously_available <- dplyr::tbl(
@@ -480,32 +482,32 @@ sn_search_named_after <- function(gisco_id,
         dplyr::pull(.data$street_name) %>%
         length() %>%
         as.logical()
-      
+
       if (previously_available == FALSE) {
         # if not previously available, then write to database
         if (overwrite_cache == TRUE | append == TRUE) {
           DBI::dbWriteTable(db_connection,
-                            name = table_name,
-                            value = df,
-                            append = TRUE
+            name = table_name,
+            value = df,
+            append = TRUE
           )
         }
       } else {
         if (overwrite_cache == TRUE) {
           statement <- glue::glue_sql("DELETE FROM {`table_name`} WHERE gisco_id = {gisco_id*} AND street_name = {street_name*}",
-                                      gisco_id = unique(df$gisco_id),
-                                      table_name = table_name,
-                                      street_name = street_name,
-                                      .con = db_connection
+            gisco_id = unique(df$gisco_id),
+            table_name = table_name,
+            street_name = street_name,
+            .con = db_connection
           )
           result <- DBI::dbExecute(
             conn = db_connection,
             statement = statement
           )
           DBI::dbWriteTable(db_connection,
-                            name = table_name,
-                            value = df,
-                            append = TRUE
+            name = table_name,
+            value = df,
+            append = TRUE
           )
         } else {
           # do nothing if data already present and both overwrite_cache and append are set to FALSE
@@ -513,27 +515,30 @@ sn_search_named_after <- function(gisco_id,
       }
     }
   }
-  
-  
+
+
   tw_disconnect_from_cache(
     cache = cache,
     cache_connection = db_connection,
     disconnect_db = disconnect_db,
     language = language
   )
-  
-  final_output_df <- dplyr::bind_rows(previously_cached_df, 
-                                           final_output_df %>% 
-                                             dplyr::transmute(.data$name, 
-                                                              named_after_id = .data$id, 
-                                                              .data$label,
-                                                              .data$description, 
-                                                              .data$named_after_from_wikidata))
+
+  final_output_df <- dplyr::bind_rows(
+    previously_cached_df,
+    final_output_df %>%
+      dplyr::transmute(.data$name,
+        named_after_id = .data$id,
+        .data$label,
+        .data$description,
+        .data$named_after_from_wikidata
+      )
+  )
 
   if (is.null(checked_df) == FALSE) {
     if (nrow(checked_df) > 0) {
       final_output_df <- current_street_names_original_df %>%
-        dplyr::select(-.data$name_clean) %>% 
+        dplyr::select(-.data$name_clean) %>%
         dplyr::left_join(
           y = dplyr::bind_rows(
             from_check_df,
@@ -544,11 +549,13 @@ sn_search_named_after <- function(gisco_id,
         )
     }
   }
-  final_output_df %>% 
-    dplyr::transmute(.data$street_name, 
-                     .data$named_after_id, 
-                     .data$named_after_label,
-                     .data$named_after_description, 
-                     .data$named_after_from_wikidata) %>% 
-    dplyr::arrange(street_name) 
+  final_output_df %>%
+    dplyr::transmute(
+      .data$street_name,
+      .data$named_after_id,
+      .data$named_after_label,
+      .data$named_after_description,
+      .data$named_after_from_wikidata
+    ) %>%
+    dplyr::arrange(street_name)
 }

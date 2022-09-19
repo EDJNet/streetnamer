@@ -752,23 +752,23 @@ sn_street_name_to_remove_df <- dplyr::bind_rows(
 
 sn_street_name_to_remove_df <- sn_street_name_to_remove_df %>%
   bind_rows(sn_street_name_to_remove_df %>%
-              dplyr::filter(country == "France" | country == "Netherlands") %>%
-              mutate(country = "Belgium") %>%
-              distinct()) %>%
+    dplyr::filter(country == "France" | country == "Netherlands") %>%
+    mutate(country = "Belgium") %>%
+    distinct()) %>%
   bind_rows(sn_street_name_to_remove_df %>%
-              dplyr::filter(country == "Romania") %>%
-              mutate(country = "Moldova") %>%
-              distinct()) %>%
+    dplyr::filter(country == "Romania") %>%
+    mutate(country = "Moldova") %>%
+    distinct()) %>%
   bind_rows(sn_street_name_to_remove_df %>%
-              dplyr::filter(country == "Ireland") %>%
-              mutate(country = "United Kingdom") %>%
-              distinct()) %>% 
+    dplyr::filter(country == "Ireland") %>%
+    mutate(country = "United Kingdom") %>%
+    distinct()) %>%
   bind_rows(sn_street_name_to_remove_df %>%
-              dplyr::filter(country == "Greece") %>%
-              mutate(country = "Cyprus") %>%
-              distinct())
+    dplyr::filter(country == "Greece") %>%
+    mutate(country = "Cyprus") %>%
+    distinct())
 
 sn_street_name_to_remove_df %>% tail()
 usethis::use_data(sn_street_name_to_remove_df,
-                  overwrite = TRUE
+  overwrite = TRUE
 )

@@ -169,7 +169,7 @@ sn_app_server <- function(input, output, session) {
         sf::st_drop_geometry() %>%
         dplyr::distinct(name) %>%
         dplyr::anti_join(
-          y = sn_get_street_name_named_after_id(
+          y = sn_get_street_named_after_id(
             gisco_id = input$current_gisco_id,
             country = stringr::str_extract(
               string = input$current_gisco_id,
@@ -187,7 +187,7 @@ sn_app_server <- function(input, output, session) {
         sf::st_drop_geometry() %>%
         dplyr::distinct(name) %>%
         dplyr::anti_join(
-          y = sn_get_street_name_named_after_id(
+          y = sn_get_street_named_after_id(
             gisco_id = input$current_gisco_id,
             country = stringr::str_extract(
               string = input$current_gisco_id,

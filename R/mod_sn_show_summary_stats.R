@@ -4,10 +4,10 @@
 #'
 #' @param id,input,output,session Internal parameters for {shiny}.
 #'
-#' @noRd 
+#' @noRd
 #'
-#' @importFrom shiny NS tagList 
-mod_sn_show_summary_stats_ui <- function(id){
+#' @importFrom shiny NS tagList
+mod_sn_show_summary_stats_ui <- function(id) {
   ns <- NS(id)
   tagList(
     shiny::uiOutput(ns("summary_stats_info_box"))
@@ -16,7 +16,7 @@ mod_sn_show_summary_stats_ui <- function(id){
 
 #' mod_show_summary_stats Server Functions
 #'
-#' @noRd 
+#' @noRd
 mod_sn_show_summary_stats_server <- function(id,
                                              gisco_id,
                                              country = NULL,
@@ -24,24 +24,28 @@ mod_sn_show_summary_stats_server <- function(id,
                                              street_names_df = NULL,
                                              connection = NULL,
                                              language = tidywikidatar::tw_get_language(),
-                                             search_language = NULL, 
-                                             disconnect_db = FALSE){
-  moduleServer( id, function(input, output, session){
+                                             search_language = NULL,
+                                             disconnect_db = FALSE) {
+  moduleServer(id, function(input, output, session) {
     ns <- session$ns
-    core_df <- sn_get_city_combo(gisco_id = gisco_id,
-                                 country = country,
-                                 streets_sf = streets_sf,
-                                 street_names_df = street_names_df,
-                                 connection = connection,
-                                 language = language,
-                                 search_language = search_language, 
-                                 disconnect_db = disconnect_db)
-    
+    core_df <- sn_get_city_combo(
+      gisco_id = gisco_id,
+      country = country,
+      streets_sf = streets_sf,
+      street_names_df = street_names_df,
+      connection = connection,
+      language = language,
+      search_language = search_language,
+      disconnect_db = disconnect_db
+    )
+
     output$street_name_info_box <- shiny::renderUI(
       shiny::tagList(shiny::h2("Summary stats"))
     )
-    
-    core_df_r <- shiny::reactive({core_df})
+
+    core_df_r <- shiny::reactive({
+      core_df
+    })
     shiny::reactive(core_df_r())
   })
 }
@@ -85,8 +89,6 @@ mod_sn_show_summary_stats_app <- function(gisco_id,
       connection = connection,
       language = language
     )
-    
   }
   shiny::shinyApp(ui, server)
 }
-

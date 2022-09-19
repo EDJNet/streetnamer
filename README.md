@@ -272,7 +272,7 @@ setting it to `TRUE` stores it in the local database, from where it can
 be read with the following command.
 
 ``` r
-sn_get_street_name_named_after_id(gisco_id = current_city)
+sn_get_street_named_after_id(gisco_id = current_city)
 #> # A tibble: 0 × 14
 #> # … with 14 variables: gisco_id <chr>, street_name <chr>, country <chr>,
 #> #   named_after_id <chr>, person <int>, gender <chr>, category <chr>,
@@ -499,7 +499,7 @@ sn_write_street_name_named_after_id(
 #> #   ³​category, ⁴​named_after_n
 
 
-street_info_df <- sn_get_street_name_named_after_id(
+street_info_df <- sn_get_street_named_after_id(
   gisco_id = "IT_022205",
   street_name = "Belvedere San Francesco",
   country = "IT"
