@@ -157,8 +157,8 @@ sn_app_ui <- function(request) {
               )
             ),
             tabPanel(
-              "Overview",
-              shiny::h2("Summary statistics")
+              "Summary statistics",
+              mod_sn_show_summary_stats_ui("mod_sn_show_summary_stats_1")
             ),
             tabPanel(
               "Map",

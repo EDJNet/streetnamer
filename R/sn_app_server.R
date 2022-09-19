@@ -52,6 +52,38 @@ sn_app_server <- function(input, output, session) {
     )
   })
 
+  
+  
+  current_core_df_r <- shiny::observeEvent(
+    eventExpr = list(input$current_gisco_id),
+    handlerExpr = {
+      if (is.null(input$current_gisco_id)) {
+        return(NULL)
+      }
+      
+      if (input$current_gisco_id == " ") {
+        return(NULL)
+      }
+      
+      print("Getting summary stats")
+      
+      mod_sn_show_summary_stats_server(
+        id = "mod_sn_show_summary_stats_1",
+        gisco_id = input$current_gisco_id,
+        country = stringr::str_extract(
+          string = input$current_gisco_id,
+          pattern = "[A-Z][A-Z]"
+        ),
+        connection = golem::get_golem_options("connection"),
+        language = "en"
+      )
+    },
+    ignoreNULL = TRUE,
+    ignoreInit = TRUE,
+    label = "current_summary_stats"
+  )
+  
+  
   #### end of modules #####
 
   #### city selector ####

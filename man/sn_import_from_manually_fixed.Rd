@@ -38,7 +38,7 @@ Import into the database manually fixed street names
 - `fixed_named_after_id`: if left empty, it is assumed that the Wikidata identifier is not known. If given, it must correspond to a Wikidata Q identifier, such as `Q539`
 - `fixed_sex_or_gender`: if left empty, no particular assumption will be made. If the Wikidata identifier is given, this can mostly be left empty, as the information will be derived from there. If given, it should be one of the options available in the online interface, or a their shortened form: `female` (`f`), `male` (`m`), `other` (`o`), `uncertain`, (`u`).
 - `fixed_category`: can typically be left empty
-- `fixed_n_dedicated_to`: if left empty, assumed to be one. This can be used to express when a street is dedicated to more than one person: in that case, the row should be duplicated as many times as the needed, and the same number be included in each row of `fixed_n_dedicated_to`. 
+- `fixed_n_dedicated_to`: if left empty, assumed to be one. This can be used to express when a street is dedicated to more than one person: in that case, the row should be duplicated as many times as the needed, and the same number be included in each row of `fixed_n_dedicated_to`.
 
 Recently produced files may also include the following columns:
   - `fixed_name_clean`: this can be used when a full, clean name of the person a street is dedicated to can be desumed, or is otherwise known, but no Wikidata identifiers is available. Additional useful details can be added within brackets after the name.

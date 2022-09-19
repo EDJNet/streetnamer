@@ -41,7 +41,8 @@ sn_get_city_combo <- function(gisco_id,
       .data$person,
       .data$gender,
       .data$category,
-      .data$tag
+      .data$tag,
+      .data$fixed_name_clean
     ) %>%
     dplyr::distinct(.data$street_name, .keep_all = TRUE)
 
