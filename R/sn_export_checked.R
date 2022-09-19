@@ -273,6 +273,10 @@ sn_export_checked <- function(gisco_id = NULL,
     }
     
   }
+  
+  output_df <- output_df %>% 
+    dplyr::rename(named_after_id = .data$wikidata_id)
+  
   tidywikidatar::tw_disconnect_from_cache(
     cache = cache,
     cache_connection = connection_db,
