@@ -16,7 +16,7 @@ sn_write_street_name_named_after_id(
   checked = NULL,
   ignore = NULL,
   named_after_n = NULL,
-  fixed_name_clean = NULL,
+  named_after_custom_label = NULL,
   session = NULL,
   time = NULL,
   overwrite = FALSE,
@@ -35,7 +35,7 @@ sn_write_street_name_named_after_id(
 
 \item{named_after_n}{An integer, defaults to NULL, but most commonly expected to be 1. Input more than one if the street is named after `n` entities.}
 
-\item{fixed_name_clean}{A character vector, defaults to NULL. To be used only when Wikidata identififer is not available, but it is possible to offer a "cleaner" version of the person/entity a street is dedicated to.}
+\item{named_after_custom_label}{A character vector, defaults to NULL. To be used only when Wikidata identififer is not available, but it is possible to offer a "cleaner" version of the person/entity a street is dedicated to.}
 
 \item{overwrite}{Logical, defaults to FALSE. If TRUE, it first deletes all rows associated with the item(s) included in `item_df`. Useful if the original Wikidata object has been updated.}
 

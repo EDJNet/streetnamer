@@ -458,7 +458,7 @@ sn_get_details_by_lau <- function(gisco_id,
             fixed_sex_or_gender = "",
             fixed_category = "",
             fixed_n_dedicated_to = "",
-            fixed_name_clean = "",
+            named_after_custom_label = "",
             fixed_ignore = "",
           ) %>%
           dplyr::select(
@@ -474,7 +474,7 @@ sn_get_details_by_lau <- function(gisco_id,
             .data$fixed_sex_or_gender,
             .data$fixed_category,
             .data$fixed_n_dedicated_to,
-            .data$fixed_name_clean,
+            .data$named_after_custom_label,
             .data$fixed_ignore,
             dplyr::everything()
           )

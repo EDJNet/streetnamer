@@ -42,7 +42,7 @@ sn_get_city_combo <- function(gisco_id,
       .data$gender,
       .data$category,
       .data$tag,
-      .data$fixed_name_clean
+      .data$named_after_custom_label
     ) %>%
     dplyr::distinct(.data$street_name, .keep_all = TRUE)
 

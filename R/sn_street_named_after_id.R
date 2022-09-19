@@ -8,7 +8,7 @@
 #' @param disconnect_db Defaults to TRUE. If FALSE, leaves the connection to cache open.
 #' @param gisco_id Identifier of a municipality, typically a gisco identifier. Can be any code, as long as it used consistently, and it starts with a two-letter country code.
 #' @param named_after_n An integer, defaults to NULL, but most commonly expected to be 1. Input more than one if the street is named after `n` entities.
-#' @param fixed_name_clean A character vector, defaults to NULL. To be used only when Wikidata identififer is not available, but it is possible to offer a "cleaner" version of the person/entity a street is dedicated to.
+#' @param named_after_custom_label A character vector, defaults to NULL. To be used only when Wikidata identififer is not available, but it is possible to offer a "cleaner" version of the person/entity a street is dedicated to.
 #' @param return_df_only Logical, defaults to FALSE. If TRUE, does not write to database but simply returns the data frame that would be written to database when set to TRUE.
 #'
 #' @return Nothing, used for its side effects.
@@ -49,7 +49,7 @@ sn_write_street_name_named_after_id <- function(gisco_id = NULL,
                                                 checked = NULL,
                                                 ignore = NULL,
                                                 named_after_n = NULL,
-                                                fixed_name_clean = NULL,
+                                                named_after_custom_label = NULL,
                                                 session = NULL,
                                                 time = NULL,
                                                 overwrite = FALSE,
@@ -138,10 +138,10 @@ sn_write_street_name_named_after_id <- function(gisco_id = NULL,
       named_after_n_v <- as.integer(named_after_n)
     }
 
-    if (is.null(fixed_name_clean)) {
-      fixed_name_clean_v <- as.character(NA)
+    if (is.null(named_after_custom_label)) {
+      named_after_custom_label_v <- as.character(NA)
     } else {
-      fixed_name_clean_v <- as.character(fixed_name_clean)
+      named_after_custom_label_v <- as.character(named_after_custom_label)
     }
 
     if (is.null(tag)) {
@@ -175,7 +175,7 @@ sn_write_street_name_named_after_id <- function(gisco_id = NULL,
       checked = checked_v,
       ignore = ignore_v,
       named_after_n = named_after_n_v,
-      fixed_name_clean = fixed_name_clean_v,
+      named_after_custom_label = named_after_custom_label_v,
       tag = tag_v,
       session = session_v,
       time = time_v
@@ -348,7 +348,7 @@ sn_get_street_named_after_id <- function(country = NULL,
       language = language
     )
 
-    return(sn_empty_street_name_named_after_id)
+    return(sn_empty_street_named_after_id)
   }
 
   if (is.null(street_name) == FALSE & is.null(gisco_id) == FALSE) {
@@ -402,7 +402,7 @@ sn_get_street_named_after_id <- function(country = NULL,
       disconnect_db = disconnect_db,
       language = language
     )
-    return(sn_empty_street_name_named_after_id)
+    return(sn_empty_street_named_after_id)
   }
 
   if (only_ignore == TRUE) {

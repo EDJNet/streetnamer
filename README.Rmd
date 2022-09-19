@@ -167,7 +167,7 @@ More specifically:
 - `fixed_n_dedicated_to`: if left empty, assumed to be one. This can be used to express when a street is dedicated to more than one person: in that case, the row should be duplicated as many times as the needed, and the same number be included in each row of `fixed_n_dedicated_to`. 
 
 Recently produced files may also include the following columns:
-- `fixed_name_clean`: this can be used when a full, clean name of the person a street is dedicated to can be desumed, or is otherwise known, but no Wikidata identifiers is available. Additional useful details can be added within brackets after the name.
+- `named_after_custom_label`: this can be used when a full, clean name of the person a street is dedicated to can be desumed, or is otherwise known, but no Wikidata identifiers is available. Additional useful details can be added within brackets after the name.
 - `fixed_ignore`: if left empty, no assumption will be made. If ticked, it will be assumed that the row does not refer to a proper street.
 
 After a file is processed, then it can be re-read and stored in the local database or re-uploaded to the web interface.

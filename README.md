@@ -221,7 +221,7 @@ More specifically:
     `fixed_n_dedicated_to`.
 
 Recently produced files may also include the following columns: -
-`fixed_name_clean`: this can be used when a full, clean name of the
+`named_after_custom_label`: this can be used when a full, clean name of the
 person a street is dedicated to can be desumed, or is otherwise known,
 but no Wikidata identifiers is available. Additional useful details can
 be added within brackets after the name. - `fixed_ignore`: if left
@@ -262,7 +262,7 @@ current_city_confirmed_df
 #>  8 DE_1100… Adam-K… DE      Q87850       1 <NA>   <NA>          1     NA      NA
 #>  9 DE_1100… Adam-v… DE      Q66002       1 <NA>   <NA>          1     NA      NA
 #> 10 DE_1100… Adamst… DE      Q33083…      1 <NA>   <NA>          1     NA      NA
-#> # … with 3,188 more rows, 4 more variables: fixed_name_clean <chr>, tag <chr>,
+#> # … with 3,188 more rows, 4 more variables: named_after_custom_label <chr>, tag <chr>,
 #> #   session <chr>, time <dttm>, and abbreviated variable names ¹​street_name,
 #> #   ²​named_after_id, ³​category, ⁴​named_after_n
 ```
@@ -276,7 +276,7 @@ sn_get_street_named_after_id(gisco_id = current_city)
 #> # A tibble: 0 × 14
 #> # … with 14 variables: gisco_id <chr>, street_name <chr>, country <chr>,
 #> #   named_after_id <chr>, person <int>, gender <chr>, category <chr>,
-#> #   checked <int>, ignore <int>, named_after_n <int>, fixed_name_clean <chr>,
+#> #   checked <int>, ignore <int>, named_after_n <int>, named_after_custom_label <chr>,
 #> #   tag <chr>, session <chr>, time <dttm>
 ```
 
@@ -298,7 +298,7 @@ current_city_confirmed_df
 #>  8 DE_1100… Adam-K… DE      Q87850       1 <NA>   <NA>          1     NA      NA
 #>  9 DE_1100… Adam-v… DE      Q66002       1 <NA>   <NA>          1     NA      NA
 #> 10 DE_1100… Adamst… DE      Q33083…      1 <NA>   <NA>          1     NA      NA
-#> # … with 3,188 more rows, 4 more variables: fixed_name_clean <chr>, tag <chr>,
+#> # … with 3,188 more rows, 4 more variables: named_after_custom_label <chr>, tag <chr>,
 #> #   session <chr>, time <dttm>, and abbreviated variable names ¹​street_name,
 #> #   ²​named_after_id, ³​category, ⁴​named_after_n
 ```
@@ -340,7 +340,7 @@ output_df
 #>  8 DE_1100… Adam-K… DE      Q87850       1 <NA>   <NA>          1     NA      NA
 #>  9 DE_1100… Adam-v… DE      Q66002       1 <NA>   <NA>          1     NA      NA
 #> 10 DE_1100… Adamst… DE      Q33083…      1 <NA>   <NA>          1     NA      NA
-#> # … with 3,188 more rows, 61 more variables: fixed_name_clean <chr>, tag <chr>,
+#> # … with 3,188 more rows, 61 more variables: named_after_custom_label <chr>, tag <chr>,
 #> #   session <chr>, time <dttm>, label <chr>, description <chr>,
 #> #   instance_of <chr>, instance_of_label <chr>, sex_or_gender <chr>,
 #> #   sex_or_gender_label <chr>, occupation <chr>, occupation_label <chr>,
@@ -494,7 +494,7 @@ sn_write_street_name_named_after_id(
 #>   gisco_id  stree…¹ country named…² person gender categ…³ checked ignore named…⁴
 #>   <chr>     <chr>   <chr>   <chr>    <int> <chr>  <chr>     <int>  <int>   <int>
 #> 1 IT_022205 Belved… IT      Q676555      1 male   religi…       1     NA      NA
-#> # … with 4 more variables: fixed_name_clean <chr>, tag <chr>, session <chr>,
+#> # … with 4 more variables: named_after_custom_label <chr>, tag <chr>, session <chr>,
 #> #   time <dttm>, and abbreviated variable names ¹​street_name, ²​named_after_id,
 #> #   ³​category, ⁴​named_after_n
 
@@ -526,7 +526,7 @@ street_info_df %>%
 #>  8 checked          "1"                      
 #>  9 ignore            <NA>                    
 #> 10 named_after_n     <NA>                    
-#> 11 fixed_name_clean  <NA>                    
+#> 11 named_after_custom_label  <NA>                    
 #> 12 tag              ""                       
 #> 13 session          "testing"                
 #> 14 time             "1663581837.00403"
