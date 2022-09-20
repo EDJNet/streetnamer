@@ -39,11 +39,11 @@ sn_get_details_by_lau(
 \item{response_language}{Defaults to `tidywikidatar::tw_get_language()`. Used
 for defining the language in which label and description are returned.}
 
-\item{check_named_after_original}{Defaults to TRUE. If TRUE, a search is
+\item{check_named_after_original}{Defaults to FALSE. If TRUE, a search is
 performed on the original street name. If the first result has values for
 the property "named after", this takes precedence over other methods.}
 
-\item{check_named_after}{Defaults to TRUE. If TRUE, a search is performed on
+\item{check_named_after}{Defaults to FALSE. If TRUE, a search is performed on
 the "cleaned" name of the street. If the result is a street, road, square,
 or similar, and this has values for the property "named after", this is
 kept instead of the standard method.}

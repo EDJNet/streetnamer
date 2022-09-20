@@ -6,6 +6,7 @@
 \usage{
 mod_sn_show_summary_stats_app(
   gisco_id,
+  gisco_label = NULL,
   country = NULL,
   connection = NULL,
   language = tidywikidatar::tw_get_language()
@@ -26,6 +27,7 @@ A minimal shiny app used for showing summary statistics
 if (interactive) {
   mod_sn_show_summary_stats_app(
     gisco_id = "IT_022205",
+    gisco_label = "Trento",
     country = "IT"
   )
 }

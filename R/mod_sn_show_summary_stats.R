@@ -19,6 +19,7 @@ mod_sn_show_summary_stats_ui <- function(id) {
 #' @noRd
 mod_sn_show_summary_stats_server <- function(id,
                                              gisco_id,
+                                             gisco_label = NULL,
                                              country = NULL,
                                              streets_sf = NULL,
                                              street_names_df = NULL,
@@ -28,6 +29,11 @@ mod_sn_show_summary_stats_server <- function(id,
                                              disconnect_db = FALSE) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
+    
+    
+    if (is.null(gisco_label)) {
+      gisco_label <- ""
+    } 
     
     core_df <- sn_get_city_combo(
       gisco_id = gisco_id,
@@ -122,7 +128,7 @@ mod_sn_show_summary_stats_server <- function(id,
     
     
     summary_taglist <- shiny::tagList(
-      shiny::h2("Summary statistics"),
+      shiny::h2(stringr::str_c("Summary statistics for ", gisco_label, " (", gisco_id, ")")),
       shiny::tags$ul(
         purrr::map(.x = c(stringr::str_c("Streets in OpenStreetMap: ", scales::number(total_streets)),
                           stringr::str_c("Streets to be ignored: ", scales::number(total_ignored),
@@ -135,10 +141,10 @@ mod_sn_show_summary_stats_server <- function(id,
                                          " (", scales::percent(total_with_named_after_id/total_valid), " of valid street names),",
                                          " including ", scales::number(total_with_named_after_id_checked), " that were manually checked and ",
                                          scales::number(total_valid-total_with_named_after_id_checked), " that have been tentatively matched automatically")
-        )),
+        ),
         
         function(.x) shiny::tags$li(.x))
-      ,
+      ),
       shiny::h2("Summary statistics about streets named after identifiable individuals"),
       
       shiny::tags$ul(
@@ -160,13 +166,12 @@ mod_sn_show_summary_stats_server <- function(id,
       shiny::h2("How much does Wikidata know about confirmed individuals?"),
       shiny::tags$ul(
         purrr::map(.x = c(
-          stringr::str_c(stringr::str_c("Total confirmed individuals with Wikidata identifier: ", scales::number(nrow(core_confirmed_individuals_with_id_df)))),
-          stringr::str_c(stringr::str_c("Gender: ", scales::number(qid_with_gender))),
-          stringr::str_c(stringr::str_c("Date of birth: ", scales::number(qid_with_dob))),
-          stringr::str_c(stringr::str_c("Date of death: ", scales::number(qid_with_dod))),
-          stringr::str_c(stringr::str_c("Place of birth: ", scales::number(qid_with_pob))),
-          stringr::str_c(stringr::str_c("Place of death: ", scales::number(qid_with_pod))),
-          stringr::str_c(stringr::str_c("Occupation: ", scales::number(qid_with_occupation)))
+          stringr::str_c("Total confirmed individuals with Wikidata identifier: ", scales::number(nrow(core_confirmed_individuals_with_id_df))),
+          stringr::str_c("With gender: ", scales::number(qid_with_gender)),
+          stringr::str_c("With date of birth: ", scales::number(qid_with_dob)),
+          stringr::str_c("With date of death: ", scales::number(qid_with_dod)),
+          stringr::str_c("With place of birth: ", scales::number(qid_with_pob)),
+          stringr::str_c("With place of death: ", scales::number(qid_with_pod))
         ),
         function(.x) shiny::tags$li(.x))
       ),
@@ -212,10 +217,12 @@ mod_sn_show_summary_stats_server <- function(id,
 #' if (interactive) {
 #'   mod_sn_show_summary_stats_app(
 #'     gisco_id = "IT_022205",
+#'     gisco_label = "Trento",
 #'     country = "IT"
 #'   )
 #' }
 mod_sn_show_summary_stats_app <- function(gisco_id,
+                                          gisco_label = NULL,
                                           country = NULL,
                                           connection = NULL,
                                           language = tidywikidatar::tw_get_language()) {
@@ -226,6 +233,7 @@ mod_sn_show_summary_stats_app <- function(gisco_id,
     mod_sn_show_summary_stats_server(
       id = "mod_sn_show_summary_stats_1",
       gisco_id = gisco_id,
+      gisco_label = gisco_label,
       country = country,
       connection = connection,
       language = language

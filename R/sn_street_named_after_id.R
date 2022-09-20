@@ -172,11 +172,11 @@ sn_write_street_name_named_after_id <- function(gisco_id = NULL,
       person = person_v,
       gender = gender_v,
       category = category_v,
+      tag = tag_v,
       checked = checked_v,
       ignore = ignore_v,
       named_after_n = named_after_n_v,
       named_after_custom_label = named_after_custom_label_v,
-      tag = tag_v,
       session = session_v,
       time = time_v
     )

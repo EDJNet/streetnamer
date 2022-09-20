@@ -65,31 +65,29 @@ sn_get_city_combo <- function(gisco_id,
       streets_sf = streets_sf
     ) %>%
       sf::st_drop_geometry() %>%
-      dplyr::distinct(name) %>%
+      dplyr::rename(street_name = .data$name) %>% 
+      dplyr::distinct(street_name) %>%
       dplyr::mutate(name_clean = sn_clean_street_name(
-        street_name = name,
+        street_name = street_name,
         country = country_name
       )) %>%
       dplyr::mutate(
-        name = name %>% stringr::str_replace_all(pattern = stringr::fixed("\\"), replacement = " ") %>% stringr::str_squish(),
+        street_name = street_name %>% stringr::str_replace_all(pattern = stringr::fixed("\\"), replacement = " ") %>% stringr::str_squish(),
         name_clean = name_clean %>% stringr::str_replace_all(pattern = stringr::fixed("\\"), replacement = " ") %>% stringr::str_squish()
       )
   } else {
     current_street_names_df <- street_names_df %>%
       dplyr::mutate(
-        name = name %>% stringr::str_replace_all(pattern = stringr::fixed("\\"), replacement = " ") %>% stringr::str_squish(),
+        street_name = street_name %>% stringr::str_replace_all(pattern = stringr::fixed("\\"), replacement = " ") %>% stringr::str_squish(),
         name_clean = name_clean %>% stringr::str_replace_all(pattern = stringr::fixed("\\"), replacement = " ") %>% stringr::str_squish()
       )
   }
 
   street_names_for_automatic_checking_df <- current_street_names_df %>%
-    dplyr::rename(street_name = .data$name) %>%
     dplyr::anti_join(
       y = manually_checked_core_df,
       by = "street_name"
     )
-
-
 
   automatically_checked_df <- sn_search_named_after(
     gisco_id = gisco_id,

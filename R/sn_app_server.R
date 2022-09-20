@@ -55,7 +55,7 @@ sn_app_server <- function(input, output, session) {
   
   
   current_core_df_r <- shiny::observeEvent(
-    eventExpr = list(input$current_gisco_id),
+    eventExpr = list(input$update_summary_stats),
     handlerExpr = {
       if (is.null(input$current_gisco_id)) {
         return(NULL)
@@ -70,6 +70,9 @@ sn_app_server <- function(input, output, session) {
       mod_sn_show_summary_stats_server(
         id = "mod_sn_show_summary_stats_1",
         gisco_id = input$current_gisco_id,
+        gisco_label = golem::get_golem_options("lau_by_nuts") %>%
+          dplyr::filter(gisco_id == input$current_gisco_id) %>%
+          dplyr::pull(.data$lau_label),
         country = stringr::str_extract(
           string = input$current_gisco_id,
           pattern = "[A-Z][A-Z]"
