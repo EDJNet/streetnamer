@@ -59,11 +59,36 @@ sn_write_street_named_after_id <- function(gisco_id = NULL,
                                                 disconnect_db = TRUE,
                                                 return_df_only = FALSE,
                                                 df_to_write = NULL) {
+
+  
   if (is.null(df_to_write) == FALSE & is.data.frame(df_to_write) == TRUE) {
     df <- df_to_write
     
+    if (is.null(country)) {
+      country_pre_v <- stringr::str_extract_all(string = stringr::str_to_upper(df[["gisco_id"]]), pattern = "[A-Z][A-Z]", simplify = TRUE)
+      country_v <- as.character(unique(country_pre_v))
+    } else {
+      country_v <-  stringr::str_to_upper(country)
+    }
+    if (length(unique(country_v)) > 1) {
+      usethis::ui_stop("All rows must belong to the same country.")
+    }
   } else {
 
+    if (is.null(country)) {
+      if (is.null(gisco_id)==FALSE) {
+        country_v <- stringr::str_extract(string = stringr::str_to_upper(gisco_id), pattern = "[A-Z][A-Z]")
+      } else {
+        usethis::ui_stop("country or gisco_id must be given.")
+      }
+    } else {
+      country_v <-  stringr::str_to_upper(country)
+    }
+    
+    if (length(unique(country_v)) > 1) {
+      usethis::ui_stop("All rows must belong to the same country.")
+    }
+    
     if (is.null(gisco_id)) {
       gisco_id_v <- as.character(NA)
     } else {
@@ -142,16 +167,6 @@ sn_write_street_named_after_id <- function(gisco_id = NULL,
       time_v <- as.numeric(time)
     }
 
-    if (is.null(country)) {
-      country_pre_v <- stringr::str_extract_all(string = stringr::str_to_upper(df[["gisco_id"]]), pattern = "[A-Z][A-Z]", simplify = TRUE)
-      country_v <- as.character(unique(country_pre_v))
-    } else {
-      country_v <-  stringr::str_to_upper(country)
-    }
-    
-    if (length(unique(country_v)) > 1) {
-      usethis::ui_stop("All rows must belong to the same country.")
-    }
 
     df <- tibble::tibble(
       gisco_id = gisco_id_v,
