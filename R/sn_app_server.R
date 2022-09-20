@@ -369,7 +369,7 @@ sn_app_server <- function(input, output, session) {
 
   observeEvent(list(input$ignore_street),
     {
-      sn_write_street_name_named_after_id(
+      sn_write_street_named_after_id(
         country = stringr::str_extract(
           string = input$current_gisco_id,
           pattern = "[A-Z][A-Z]"
@@ -411,7 +411,7 @@ sn_app_server <- function(input, output, session) {
   observeEvent(
     list(input$confirm_match),
     {
-      sn_write_street_name_named_after_id(
+      sn_write_street_named_after_id(
         df_to_write = selected_df_rv$df(),
         connection = golem::get_golem_options("connection"),
         append = TRUE

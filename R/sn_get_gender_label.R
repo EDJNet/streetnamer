@@ -29,14 +29,20 @@ sn_get_gender_label <- function(named_after_id,
     cache_connection = cache_connection,
     cache = cache
   )
-  if (is.na(gender_id)) {
-    gender_selected <- as.character(NA)
-  } else if (gender_id == "Q6581097") {
-    gender_selected <- "male"
-  } else if (gender_id == "Q6581072") {
-    gender_selected <- "female"
-  } else if (stringr::str_starts(string = gender_id, pattern = "Q")) {
-    gender_selected <- "other"
-  }
-  gender_selected
+  purrr::map_chr(
+    .x = gender_id,
+    .f = function(x) {
+      if (is.na(x)) {
+        gender_selected <- as.character(NA)
+      } else if (x == "Q6581097") {
+        gender_selected <- "male"
+      } else if (x == "Q6581072") {
+        gender_selected <- "female"
+      } else if (stringr::str_starts(string = x, pattern = "Q")) {
+        gender_selected <- "other"
+      }
+      gender_selected
+    }
+  )
+
 }
