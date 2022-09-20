@@ -18,7 +18,7 @@
 #'
 #' sn_set_data_folder(path = tempdir())
 #'
-#' sn_write_street_name_named_after_id(
+#' sn_write_street_named_after_id(
 #'   gisco_id = "IT_022205",
 #'   country = "IT",
 #'   street_name = "Belvedere San Francesco",
@@ -38,7 +38,7 @@
 #'   street_name = "Belvedere San Francesco",
 #'   country = "IT"
 #' )
-sn_write_street_name_named_after_id <- function(gisco_id = NULL,
+sn_write_street_named_after_id <- function(gisco_id = NULL,
                                                 street_name = NULL,
                                                 country = NULL,
                                                 named_after_id = NULL,
@@ -290,7 +290,7 @@ sn_write_street_name_named_after_id <- function(gisco_id = NULL,
 #'
 #'
 #' sn_set_data_folder(path = tempdir())
-#' sn_write_street_name_named_after_id(
+#' sn_write_street_named_after_id(
 #'   gisco_id = "IT_022205",
 #'   street_name = "Belvedere San Francesco",
 #'   named_after_id = "Q676555",

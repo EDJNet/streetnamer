@@ -475,7 +475,7 @@ All the choices made in this interface are transformed into a data
 frame, that is written into a database:
 
 ``` r
-sn_write_street_name_named_after_id(
+sn_write_street_named_after_id(
   gisco_id = "IT_022205",
   country = "IT",
   street_name = "Belvedere San Francesco",

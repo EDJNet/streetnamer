@@ -1,6 +1,6 @@
 #' Get a data frame with all streets in a city with matching, including both automatic and manually checked inputs
 #'
-#' @inheritParams sn_write_street_name_named_after_id
+#' @inheritParams sn_write_street_named_after_id
 #'
 #' @return
 #' @export

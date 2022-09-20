@@ -310,7 +310,7 @@ mod_sn_street_info_server <- function(id,
         category_v <- input$category_radio
       }
 
-      sn_write_street_name_named_after_id(
+      sn_write_street_named_after_id(
         gisco_id = gisco_id,
         street_name = street_name,
         country = country,

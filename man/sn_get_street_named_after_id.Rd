@@ -38,7 +38,7 @@ Country must always be given, other parameters optional.
 
 
 sn_set_data_folder(path = tempdir())
-sn_write_street_name_named_after_id(
+sn_write_street_named_after_id(
   gisco_id = "IT_022205",
   street_name = "Belvedere San Francesco",
   named_after_id = "Q676555",
