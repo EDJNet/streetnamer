@@ -61,18 +61,6 @@ sn_write_street_named_after_id <- function(gisco_id = NULL,
                                                 df_to_write = NULL) {
   if (is.null(df_to_write) == FALSE & is.data.frame(df_to_write) == TRUE) {
     df <- df_to_write
-
-    if (is.null(country)) {
-      country <- df$country
-    }
-
-    if (is.null(street_name)) {
-      street_name <- df$street_name
-    }
-
-    if (is.null(gisco_id)) {
-      gisco_id <- df$gisco_id
-    }
   } else {
     if (is.null(country)) {
       country_v <- as.character(NA)
@@ -194,7 +182,7 @@ sn_write_street_named_after_id <- function(gisco_id = NULL,
   )
 
   table_name <- sn_get_db_table_name(
-    type = "street_name_named_after_id",
+    type = "street_named_after_id",
     country = country
   )
 
@@ -336,7 +324,7 @@ sn_get_street_named_after_id <- function(country = NULL,
 
 
   table_name <- sn_get_db_table_name(
-    type = "street_name_named_after_id",
+    type = "street_named_after_id",
     country = country
   )
 
