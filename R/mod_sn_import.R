@@ -88,7 +88,8 @@ mod_sn_import_server <- function(id,
     
     observeEvent(input$confirm_upload, {
       
-      sn_write_street_named_after_id(df_to_write = manually_fixed_df())
+      sn_write_street_named_after_id(df_to_write = manually_fixed_df(),
+                                     connection = connection)
       
       
       
