@@ -61,16 +61,8 @@ sn_write_street_named_after_id <- function(gisco_id = NULL,
                                                 df_to_write = NULL) {
   if (is.null(df_to_write) == FALSE & is.data.frame(df_to_write) == TRUE) {
     df <- df_to_write
+    
   } else {
-    if (is.null(country)) {
-      country_v <- as.character(NA)
-    } else {
-      country_v <- stringr::str_to_upper(as.character(country))
-    }
-
-    if (length(unique(country_v)) > 1) {
-      usethis::ui_stop("All rows must belong to the same country.")
-    }
 
     if (is.null(gisco_id)) {
       gisco_id_v <- as.character(NA)
@@ -150,7 +142,16 @@ sn_write_street_named_after_id <- function(gisco_id = NULL,
       time_v <- as.numeric(time)
     }
 
-
+    if (is.null(country)) {
+      country_pre_v <- stringr::str_extract_all(string = stringr::str_to_upper(df[["gisco_id"]]), pattern = "[A-Z][A-Z]", simplify = TRUE)
+      country_v <- as.character(unique(country_pre_v))
+    } else {
+      country_v <-  stringr::str_to_upper(country)
+    }
+    
+    if (length(unique(country_v)) > 1) {
+      usethis::ui_stop("All rows must belong to the same country.")
+    }
 
     df <- tibble::tibble(
       gisco_id = gisco_id_v,
@@ -169,7 +170,7 @@ sn_write_street_named_after_id <- function(gisco_id = NULL,
       time = time_v
     )
   }
-
+ 
 
   if (return_df_only == TRUE) {
     return(df)
@@ -183,7 +184,7 @@ sn_write_street_named_after_id <- function(gisco_id = NULL,
 
   table_name <- sn_get_db_table_name(
     type = "street_named_after_id",
-    country = country
+    country = country_v
   )
 
   if (pool::dbExistsTable(conn = db, name = table_name) == FALSE) {
@@ -248,7 +249,6 @@ sn_write_street_named_after_id <- function(gisco_id = NULL,
       }
     }
   }
-
 
   tidywikidatar::tw_disconnect_from_cache(
     cache = TRUE,

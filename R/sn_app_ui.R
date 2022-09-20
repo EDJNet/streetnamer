@@ -180,6 +180,7 @@ sn_app_ui <- function(request) {
             tabPanel(
               "Export",
               shinyauthr::loginUI(id = "login"),
+              mod_sn_import_ui("snm_import_ui_1"),
               mod_sn_export_ui("snm_export_ui_1")
             )
           ),

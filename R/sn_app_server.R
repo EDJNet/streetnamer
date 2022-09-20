@@ -50,6 +50,12 @@ sn_app_server <- function(input, output, session) {
       enable = credentials()$user_auth,
       connection = golem::get_golem_options("connection")
     )
+    
+    mod_sn_import_server(
+      id = "snm_import_ui_1",
+      connection = golem::get_golem_options("connection"),
+      enable = credentials()$user_auth
+    )
   })
 
   

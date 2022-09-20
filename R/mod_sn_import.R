@@ -11,6 +11,7 @@ mod_sn_import_ui <- function(id) {
   ns <- NS(id)
   shiny::tagList(
     shiny::uiOutput(ns("upload_buttons_ui")),
+    shiny::uiOutput(ns("upload_confirmed_ui")),
     shiny::uiOutput(ns("preview_ui"))
   )
 }
@@ -81,6 +82,16 @@ mod_sn_import_server <- function(id,
       output$upload_buttons_ui <- renderUI(tagList())
     }
     
+    observeEvent(input$confirm_upload, {
+      
+      sn_write_street_named_after_id(df_to_write = manually_fixed_df())
+      
+      
+      
+      output$upload_confirmed_ui <- renderUI(tagList(htmltools::strong(stringr::str_c("Data on the following municipalities stored in database: ", stringr::str_c(unique(manually_fixed_df()[["gisco_id"]]), collapse = "; ", sep = "; ")))))
+    })
+    
+    output$upload_confirmed_ui <- renderUI(tagList())
     
   })
 }
