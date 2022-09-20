@@ -51,10 +51,28 @@ sn_app_server <- function(input, output, session) {
       connection = golem::get_golem_options("connection")
     )
     
+    
+    if (is.null(credentials()$info)) {
+      return(NULL)
+    } else if (is.data.frame(credentials()$info)==FALSE) {
+      return(NULL)
+    } else if (nrow(credentials()$info)==0) {
+      return(NULL)
+    } else {
+      upload_check <- credentials()$info[["permissions"]]=="import"
+    }
+    
+    if (length(upload_check)==0) {
+      upload_l <- FALSE
+    } else {
+      upload_l <- upload_check
+    }
+      
+    #credentials()$info[["permissions"]]=="upload"
     mod_sn_import_server(
       id = "snm_import_ui_1",
       connection = golem::get_golem_options("connection"),
-      enable = credentials()$user_auth
+      enable = upload_check
     )
   })
 

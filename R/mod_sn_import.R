@@ -26,6 +26,10 @@ mod_sn_import_server <- function(id,
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
     
+    if (is.null(enable)) {
+      return(NULL)
+    } 
+    
     ### prepare UI ###
     if (enable == TRUE) {
       output$upload_buttons_ui <- renderUI(tagList(
