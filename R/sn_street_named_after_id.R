@@ -434,8 +434,8 @@ sn_get_street_named_after_id <- function(country = NULL,
       dplyr::mutate(
         named_after_n =
           dplyr::if_else(condition = is.na(named_after_n),
-            true = 1,
-            false = named_after_n
+            true = as.numeric(1),
+            false = as.numeric(named_after_n)
           )
       ) %>%
       dplyr::group_by(street_name, named_after_n) %>%
