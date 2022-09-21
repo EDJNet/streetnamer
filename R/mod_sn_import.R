@@ -70,9 +70,9 @@ mod_sn_import_server <- function(id,
         {
           
           if (nrow(manually_fixed_df())>0) {
-            confirm_button_tag <- tagList(shiny::actionButton(inputId = ns("confirm_upload"),
-                                                              label = "Confirm upload"),
-                                          shiny::p("Preview of first rows of files to be uploaded:"))
+            confirm_button_tag <- tagList(shiny::actionButton(inputId = ns("confirm_import"),
+                                                              label = "Confirm import"),
+                                          shiny::p("Preview of first rows of files to be imported:"))
           } else {
             confirm_button_tag <- tagList()
           }
@@ -86,7 +86,7 @@ mod_sn_import_server <- function(id,
       output$upload_buttons_ui <- renderUI(tagList())
     }
     
-    observeEvent(input$confirm_upload, {
+    observeEvent(input$confirm_import, {
       
       sn_write_street_named_after_id(df_to_write = manually_fixed_df(),
                                      connection = connection)

@@ -92,11 +92,12 @@ sn_app_ui <- function(request) {
         sidebarPanel = sidebarPanel(
           shiny::conditionalPanel(
             condition = "input.current_city_name != ''&&input.current_city_name != '-'",
-            shiny::radioButtons(
+            shiny::selectizeInput(
               inputId = "streets_to_show_in_dt",
               label = "List...",
               choices = c(
                 "Not yet checked",
+                "Checked humans without confirmed gender",
                 "Not yet checked in this municipality",
                 "All streets",
                 "All streets (including ignored)"
