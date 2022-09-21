@@ -116,7 +116,7 @@ sn_import_from_manually_fixed <- function(input_df,
                               language = language,
                               cache_connection = connection,
                               cache = TRUE),
-        TRUE ~ fixed_sex_or_gender))
+        TRUE ~ as.character(fixed_sex_or_gender)))
     
     gender_confirmed_v <- dplyr::case_when(
       is.na(confirmed_humans_df$fixed_sex_or_gender) ~ as.character(NA),
