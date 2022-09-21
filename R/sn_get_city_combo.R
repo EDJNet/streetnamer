@@ -65,7 +65,7 @@ sn_get_city_combo <- function(gisco_id,
       streets_sf = streets_sf
     ) %>%
       sf::st_drop_geometry() %>%
-      dplyr::rename(street_name = .data$name) %>% 
+      dplyr::rename(street_name = .data$name) %>%
       dplyr::distinct(street_name) %>%
       dplyr::mutate(name_clean = sn_clean_street_name(
         street_name = street_name,

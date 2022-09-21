@@ -44,5 +44,4 @@ sn_get_gender_label <- function(named_after_id,
       gender_selected
     }
   )
-
 }

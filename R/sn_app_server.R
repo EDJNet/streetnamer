@@ -50,25 +50,25 @@ sn_app_server <- function(input, output, session) {
       enable = credentials()$user_auth,
       connection = golem::get_golem_options("connection")
     )
-    
-    
+
+
     if (is.null(credentials()$info)) {
       return(NULL)
-    } else if (is.data.frame(credentials()$info)==FALSE) {
+    } else if (is.data.frame(credentials()$info) == FALSE) {
       return(NULL)
-    } else if (nrow(credentials()$info)==0) {
+    } else if (nrow(credentials()$info) == 0) {
       return(NULL)
     } else {
-      upload_check <- credentials()$info[["permissions"]]=="import"
+      upload_check <- credentials()$info[["permissions"]] == "import"
     }
-    
-    if (length(upload_check)==0) {
+
+    if (length(upload_check) == 0) {
       upload_l <- FALSE
     } else {
       upload_l <- upload_check
     }
-      
-    #credentials()$info[["permissions"]]=="upload"
+
+    # credentials()$info[["permissions"]]=="upload"
     mod_sn_import_server(
       id = "snm_import_ui_1",
       connection = golem::get_golem_options("connection"),
@@ -76,21 +76,21 @@ sn_app_server <- function(input, output, session) {
     )
   })
 
-  
-  
+
+
   current_core_df_r <- shiny::observeEvent(
     eventExpr = list(input$update_summary_stats),
     handlerExpr = {
       if (is.null(input$current_gisco_id)) {
         return(NULL)
       }
-      
+
       if (input$current_gisco_id == " ") {
         return(NULL)
       }
-      
+
       print("Getting summary stats")
-      
+
       mod_sn_show_summary_stats_server(
         id = "mod_sn_show_summary_stats_1",
         gisco_id = input$current_gisco_id,
@@ -109,8 +109,8 @@ sn_app_server <- function(input, output, session) {
     ignoreInit = TRUE,
     label = "current_summary_stats"
   )
-  
-  
+
+
   #### end of modules #####
 
   #### city selector ####
@@ -259,7 +259,7 @@ sn_app_server <- function(input, output, session) {
             dplyr::rename(name = street_name),
           by = "name"
         )
-    } else if (input$streets_to_show_in_dt == "Checked humans without confirmed gender"){
+    } else if (input$streets_to_show_in_dt == "Checked humans without confirmed gender") {
       sn_get_street_named_after_id(
         gisco_id = input$current_gisco_id,
         country = stringr::str_extract(
@@ -268,9 +268,11 @@ sn_app_server <- function(input, output, session) {
         ),
         connection = golem::get_golem_options("connection")
       ) %>%
-        dplyr::filter(checked == TRUE, 
-                      person == TRUE,
-                      is.na(.data$gender)==TRUE) %>%
+        dplyr::filter(
+          checked == TRUE,
+          person == TRUE,
+          is.na(.data$gender) == TRUE
+        ) %>%
         dplyr::distinct(street_name) %>%
         dplyr::rename(name = street_name)
     } else {
