@@ -75,7 +75,6 @@ mod_sn_show_summary_stats_server <- function(id,
     
     total_humans_with_gender <- nrow(core_df %>%
                                        dplyr::filter(is.na(ignore)|as.logical(ignore)==FALSE,
-                                                     is.na(named_after_id)==FALSE,
                                                      as.logical(checked),
                                                      as.logical(person),
                                                      is.na(gender)==FALSE))
