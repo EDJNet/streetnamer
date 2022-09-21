@@ -203,7 +203,7 @@ current_city_confirmed_df
 ```
 
 
-The easiest way to get this data in a format that can easily be shared, is to use `sn_export_checked()`. Notice that this still assumes you will have the "fixed" files under a `sn_data_fixed` folder in the current working directory (the exact location within that folder doesn't matter, as the function searches recursively for a `gisco_id` match).
+The easiest way to get this data in a format that can easily be shared, is to use `sn_export_checked()`.
 
 I will spell out parameters for clarity, but you may well be happy with the defaults.
 

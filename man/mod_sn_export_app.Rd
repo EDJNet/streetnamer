@@ -7,7 +7,8 @@
 mod_sn_export_app(
   country,
   gisco_id,
-  language = tidywikidatar::tw_get_language()
+  language = tidywikidatar::tw_get_language(),
+  connection = NULL
 )
 }
 \arguments{

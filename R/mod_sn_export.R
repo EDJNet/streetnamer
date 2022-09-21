@@ -92,16 +92,187 @@ mod_sn_export_server <- function(id,
       }
     )
 
+
+
+    output$download_current_municipality_with_details_csv <- downloadHandler(
+      filename = function() {
+        gisco_id_v <- gisco_id
+
+        lau_label <- sn_lau_by_nuts %>%
+          dplyr::filter(.data$gisco_id == gisco_id_v) %>%
+          dplyr::pull(.data$lau_label)
+
+        stringr::str_c(
+          gisco_id,
+          "-",
+          stringr::str_to_lower(iconv(
+            x = lau_label,
+            to = "ASCII//TRANSLIT"
+          )),
+          "-with_details_",
+          as.integer(Sys.time()),
+          ".csv"
+        )
+      },
+      content = function(con) {
+        download_df <- sn_export(
+          gisco_id = gisco_id,
+          country = country,
+          export_format = "csv",
+          unlist = TRUE,
+          write_file = FALSE,
+          language = language,
+          connection = connection, cache = TRUE
+        )
+        if (is.null(download_df)) {
+          return(NULL)
+        }
+        readr::write_csv(download_df, con)
+      }
+    )
+
+    output$download_current_municipality_with_details_geojson <- downloadHandler(
+      filename = function() {
+        gisco_id_v <- gisco_id
+
+        lau_label <- sn_lau_by_nuts %>%
+          dplyr::filter(.data$gisco_id == gisco_id_v) %>%
+          dplyr::pull(.data$lau_label)
+
+        stringr::str_c(
+          gisco_id,
+          "-",
+          stringr::str_to_lower(iconv(
+            x = lau_label,
+            to = "ASCII//TRANSLIT"
+          )),
+          "-with_details_",
+          as.integer(Sys.time()),
+          ".geojson"
+        )
+      },
+      content = function(con) {
+        download_sf <- sn_export(
+          gisco_id = gisco_id,
+          country = country,
+          export_format = "geojson",
+          unlist = TRUE,
+          write_file = FALSE,
+          language = language,
+          connection = connection, cache = TRUE
+        )
+        if (is.null(download_sf)) {
+          return(NULL)
+        }
+        sf::st_write(
+          obj = download_sf,
+          dsn = con
+        )
+      }
+    )
+
+    output$download_current_municipality_with_details_rds_sf <- downloadHandler(
+      filename = function() {
+        gisco_id_v <- gisco_id
+
+        lau_label <- sn_lau_by_nuts %>%
+          dplyr::filter(.data$gisco_id == gisco_id_v) %>%
+          dplyr::pull(.data$lau_label)
+
+        stringr::str_c(
+          gisco_id,
+          "-",
+          stringr::str_to_lower(iconv(
+            x = lau_label,
+            to = "ASCII//TRANSLIT"
+          )),
+          "-with_details_",
+          as.integer(Sys.time()),
+          ".rds"
+        )
+      },
+      content = function(con) {
+        download_sf <- sn_export(
+          gisco_id = gisco_id,
+          country = country,
+          export_format = "rds_sf",
+          unlist = FALSE,
+          write_file = FALSE,
+          language = language,
+          connection = connection, cache = TRUE
+        )
+        if (is.null(download_sf)) {
+          return(NULL)
+        }
+        saveRDS(object = download_sf, file = con)
+      }
+    )
+
+
+    output$download_current_municipality_with_details_rds_sf <- downloadHandler(
+      filename = function() {
+        gisco_id_v <- gisco_id
+
+        lau_label <- sn_lau_by_nuts %>%
+          dplyr::filter(.data$gisco_id == gisco_id_v) %>%
+          dplyr::pull(.data$lau_label)
+
+        stringr::str_c(
+          gisco_id,
+          "-",
+          stringr::str_to_lower(iconv(
+            x = lau_label,
+            to = "ASCII//TRANSLIT"
+          )),
+          "-with_details_",
+          as.integer(Sys.time()),
+          ".rds"
+        )
+      },
+      content = function(con) {
+        download_df <- sn_export(
+          gisco_id = gisco_id,
+          country = country,
+          export_format = "rds",
+          unlist = FALSE,
+          write_file = FALSE,
+          language = language,
+          connection = connection, cache = TRUE
+        )
+        if (is.null(download_df)) {
+          return(NULL)
+        }
+        saveRDS(object = download_df, file = con)
+      }
+    )
+
+
     ### prepare UI ###
     if (enable == TRUE) {
       output$download_buttons_ui <- renderUI(tagList(
         downloadButton(
           outputId = ns("download_current_municipality"),
-          label = "Download municipality"
+          label = "Export checked streets in current municipality"
         ),
         downloadButton(
           outputId = ns("download_current_country"),
-          label = "Download country"
+          label = "Export checked streets in current country"
+        ),
+        downloadButton(
+          outputId = ns("download_current_municipality_with_details_csv"),
+          label = "Export checked streets with details in current municipality (csv)"
+        ),
+        downloadButton(
+          outputId = ns("download_current_municipality_with_details_geojson"),
+          label = "Export checked streets with details in current municipality (geojson)"
+        ),
+        downloadButton(
+          outputId = ns("download_current_municipality_with_details_rds"),
+          label = "Export checked streets with details in current municipality (rds)"
+        ),
+        downloadButton(
+          outputId = ns("download_current_municipality_with_details_rds_sf"),
+          label = "Export checked streets with details in current municipality (rds_sf)"
         )
       ))
     } else {
@@ -137,7 +308,8 @@ mod_sn_export_server <- function(id,
 #' }
 mod_sn_export_app <- function(country,
                               gisco_id,
-                              language = tidywikidatar::tw_get_language()) {
+                              language = tidywikidatar::tw_get_language(), 
+                              connection = NULL) {
   ui <- shiny::fluidPage(
     mod_sn_export_ui("snm_export_ui_1")
   )
@@ -146,7 +318,8 @@ mod_sn_export_app <- function(country,
       id = "snm_export_ui_1",
       gisco_id = gisco_id,
       country = country,
-      language = language
+      language = language,
+      connection = connection
     )
   }
   shiny::shinyApp(ui, server)

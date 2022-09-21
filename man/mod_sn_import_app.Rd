@@ -15,7 +15,6 @@ A minimal shiny app used for categorising streets
 \examples{
 
 if (interactive) {
-  mod_sn_import_app(
-  )
+  mod_sn_import_app()
 }
 }
