@@ -159,13 +159,17 @@ sn_app_ui <- function(request) {
             ),
             tabPanel(
               "Summary statistics",
-              shiny::fluidRow(align = "center",
-                              shiny::column(width = 10, offset = 1, align = "center",
-                                            shiny::actionButton(inputId = "update_summary_stats",
-                                                                label = "Update and show summary stats for the current municipality",
-                                                                width = "80%",
-                                                                style = "margin-top:20px;")         
-                              )
+              shiny::fluidRow(
+                align = "center",
+                shiny::column(
+                  width = 10, offset = 1, align = "center",
+                  shiny::actionButton(
+                    inputId = "update_summary_stats",
+                    label = "Update and show summary stats for the current municipality",
+                    width = "80%",
+                    style = "margin-top:20px;"
+                  )
+                )
               ),
               mod_sn_show_summary_stats_ui("mod_sn_show_summary_stats_1")
             ),
