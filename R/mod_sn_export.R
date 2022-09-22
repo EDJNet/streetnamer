@@ -124,7 +124,8 @@ mod_sn_export_server <- function(id,
           unlist = TRUE,
           write_file = FALSE,
           language = language,
-          connection = connection, cache = TRUE
+          connection = connection,
+          cache = TRUE
         )
         if (is.null(download_df)) {
           return(NULL)
@@ -161,7 +162,8 @@ mod_sn_export_server <- function(id,
           unlist = TRUE,
           write_file = FALSE,
           language = language,
-          connection = connection, cache = TRUE
+          connection = connection,
+          cache = TRUE
         )
         if (is.null(download_sf)) {
           return(NULL)
@@ -201,7 +203,8 @@ mod_sn_export_server <- function(id,
           unlist = FALSE,
           write_file = FALSE,
           language = language,
-          connection = connection, cache = TRUE
+          connection = connection,
+          cache = TRUE
         )
         if (is.null(download_sf)) {
           return(NULL)
@@ -211,7 +214,7 @@ mod_sn_export_server <- function(id,
     )
 
 
-    output$download_current_municipality_with_details_rds_sf <- downloadHandler(
+    output$download_current_municipality_with_details_rds <- downloadHandler(
       filename = function() {
         gisco_id_v <- gisco_id
 
@@ -239,7 +242,8 @@ mod_sn_export_server <- function(id,
           unlist = FALSE,
           write_file = FALSE,
           language = language,
-          connection = connection, cache = TRUE
+          connection = connection,
+          cache = TRUE
         )
         if (is.null(download_df)) {
           return(NULL)
