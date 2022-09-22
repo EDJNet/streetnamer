@@ -39,7 +39,8 @@ sn_app_server <- function(input, output, session) {
 
   #### modules #####
 
-  observeEvent(credentials()$user_auth, {
+  observeEvent(list(credentials()$user_auth, 
+                    input$current_gisco_id), {
     mod_sn_export_server(
       id = "snm_export_ui_1",
       gisco_id = input$current_gisco_id,
