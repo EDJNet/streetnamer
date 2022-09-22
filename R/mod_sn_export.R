@@ -49,7 +49,8 @@ mod_sn_export_server <- function(id,
         download_df <- sn_get_street_named_after_id(
           country = country,
           language = language,
-          connection = connection
+          connection = connection,
+          remove_ignored = FALSE
         )
 
         readr::write_csv(download_df, con)
@@ -82,7 +83,8 @@ mod_sn_export_server <- function(id,
           gisco_id = gisco_id,
           country = country,
           language = language,
-          connection = connection
+          connection = connection,
+          remove_ignored = FALSE
         )
         if (is.null(download_df)) {
           return(NULL)
