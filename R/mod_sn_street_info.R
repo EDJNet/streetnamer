@@ -309,6 +309,12 @@ mod_sn_street_info_server <- function(id,
       } else {
         category_v <- input$category_radio
       }
+      
+      if (length(input$gender_switch) == 0) {
+        gender_selected_v <- as.character(NA)
+      } else {
+        gender_selected_v <- input$gender_switch
+      }
 
       sn_write_street_named_after_id(
         gisco_id = gisco_id,
@@ -316,7 +322,7 @@ mod_sn_street_info_server <- function(id,
         country = country,
         named_after_id = as.character(named_after_id_selected),
         person = as.integer(input$person_switch),
-        gender = gender_selected,
+        gender = gender_selected_v,
         category = as.character(category_v),
         tag = as.character(tag_v),
         checked = as.integer(TRUE),
