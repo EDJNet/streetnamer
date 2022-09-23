@@ -32,7 +32,8 @@ mod_sn_show_summary_stats_server <- function(id,
 
     w <- waiter::Waiter$new(id = ns("summary_stats_ui"),
                             html = waiter::spin_loaders(id = 15,color = "#FF5454"),
-                            fadeout = TRUE)
+                            fadeout = TRUE,
+                            color = "#fef7ed")
     
     if (is.null(gisco_label)) {
       gisco_label <- ""
