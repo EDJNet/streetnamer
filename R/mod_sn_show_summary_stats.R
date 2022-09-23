@@ -30,10 +30,10 @@ mod_sn_show_summary_stats_server <- function(id,
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
 
-    w <- Waiter$new(id = ns("summary_stats_ui"),
-                    html = waiter::spin_loaders(id = 15,color = "#FF5454"),
-                    fadeout = TRUE)
-
+    w <- waiter::Waiter$new(id = ns("summary_stats_ui"),
+                            html = waiter::spin_loaders(id = 15,color = "#FF5454"),
+                            fadeout = TRUE)
+    
     if (is.null(gisco_label)) {
       gisco_label <- ""
     }
