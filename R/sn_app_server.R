@@ -253,6 +253,7 @@ sn_app_server <- function(input, output, session) {
               string = input$current_gisco_id,
               pattern = "[A-Z][A-Z]"
             ),
+            remove_ignored = FALSE,
             connection = golem::get_golem_options("connection")
           ) %>%
             dplyr::filter(checked == TRUE) %>%
