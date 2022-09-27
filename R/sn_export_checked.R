@@ -419,7 +419,7 @@ sn_export <- function(gisco_id = NULL,
     only_checked = only_checked,
     remove_ignored = remove_ignored,
     language = language,
-    connection = connection,
+    connection = connection_db,
     disconnect_db = FALSE
   ) %>%
     dplyr::select(-.data$session, -.data$time)
@@ -493,7 +493,7 @@ sn_export <- function(gisco_id = NULL,
       )
     ) %>%
     dplyr::mutate(
-      place_of_birth_coordinates = tw_get_p(place_of_birth_single,
+      place_of_birth_coordinates = tidywikidatar::tw_get_p(place_of_birth_single,
         p = "P625",
         only_first = TRUE,
         preferred = TRUE,
@@ -503,7 +503,7 @@ sn_export <- function(gisco_id = NULL,
         cache_connection = connection_db,
         disconnect_db = FALSE
       ),
-      place_of_death_coordinates = tw_get_p(place_of_death_single,
+      place_of_death_coordinates = tidywikidatar::tw_get_p(place_of_death_single,
         p = "P625",
         only_first = TRUE,
         preferred = TRUE,
@@ -572,12 +572,13 @@ sn_export <- function(gisco_id = NULL,
     img_metadata_df <- processed_df %>%
       dplyr::distinct(.data$named_after_id) %>%
       dplyr::pull(.data$named_after_id) %>%
-      tw_get_image_metadata(
+      tidywikidatar::tw_get_image_metadata(
         only_first = TRUE,
         language = language,
         overwrite_cache = overwrite_cache,
         cache_connection = connection_db,
-        disconnect_db = FALSE
+        disconnect_db = FALSE,
+        cache = cache
       )
 
     processed_df <- processed_df %>%
