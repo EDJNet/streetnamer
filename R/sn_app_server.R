@@ -248,15 +248,15 @@ sn_app_server <- function(input, output, session) {
         dplyr::distinct(name) %>%
         dplyr::anti_join(
           y = sn_get_street_named_after_id(
-            gisco_id = input$current_gisco_id,
             country = stringr::str_extract(
               string = input$current_gisco_id,
               pattern = "[A-Z][A-Z]"
             ),
             remove_ignored = FALSE,
+            only_checked = TRUE,
+            keep_only_latest = TRUE,
             connection = golem::get_golem_options("connection")
           ) %>%
-            dplyr::filter(checked == TRUE) %>%
             dplyr::distinct(street_name) %>%
             dplyr::rename(name = street_name),
           by = "name"
