@@ -27,97 +27,44 @@ mod_sn_export_server <- function(id,
     ns <- session$ns
 
 
-    output$download_current_country <- downloadHandler(
-      filename = function() {
-        country_v <- country
-        country_name <- sn_lau_by_nuts %>%
-          dplyr::distinct(.data$country, .data$country_name) %>%
-          dplyr::filter(.data$country == country_v) %>%
-          dplyr::pull(.data$country_name)
+    #### waiter ####
+    w <- waiter::Waiter$new(
+      id = ns("download_buttons_ui"),
+      html = waiter::spin_loaders(id = 15, color = "#FF5454"),
+      fadeout = TRUE,
+      color = "#fef7ed"
+    )
 
-        stringr::str_c(
-          stringr::str_to_lower(iconv(
-            x = country_name,
-            to = "ASCII//TRANSLIT"
-          )),
-          "-",
-          as.integer(Sys.time()),
-          ".csv"
-        )
-      },
-      content = function(con) {
-        download_df <- sn_get_street_named_after_id(
+    #### prepare export data with reactive ####
+
+    export_r <- reactive({
+      if (is.null(input$export_type)) {
+        return(NULL)
+      } else if (input$export_type == "") {
+        return(NULL)
+      }
+
+      w$show()
+
+      if (input$export_type == "Export checked streets in current country") {
+        export_df <- sn_get_street_named_after_id(
           country = country,
           language = language,
           connection = connection,
           remove_ignored = FALSE
         )
-
-        readr::write_csv(download_df, con)
-      }
-    )
-
-
-    output$download_current_municipality <- downloadHandler(
-      filename = function() {
-        gisco_id_v <- gisco_id
-
-        lau_label <- sn_lau_by_nuts %>%
-          dplyr::filter(.data$gisco_id == gisco_id_v) %>%
-          dplyr::pull(.data$lau_label)
-
-        stringr::str_c(
-          gisco_id,
-          "-",
-          stringr::str_to_lower(iconv(
-            x = lau_label,
-            to = "ASCII//TRANSLIT"
-          )),
-          "-",
-          as.integer(Sys.time()),
-          ".csv"
-        )
-      },
-      content = function(con) {
-        download_df <- sn_get_street_named_after_id(
+        return(export_df)
+      } else if (input$export_type == "Export checked streets in current municipality") {
+        export_df <- sn_get_street_named_after_id(
           gisco_id = gisco_id,
           country = country,
           language = language,
           connection = connection,
           remove_ignored = FALSE
         )
-        if (is.null(download_df)) {
-          return(NULL)
-        }
-
-        readr::write_csv(download_df, con)
-      }
-    )
-
-
-
-    output$download_current_municipality_with_details_csv <- downloadHandler(
-      filename = function() {
-        gisco_id_v <- gisco_id
-
-        lau_label <- sn_lau_by_nuts %>%
-          dplyr::filter(.data$gisco_id == gisco_id_v) %>%
-          dplyr::pull(.data$lau_label)
-
-        stringr::str_c(
-          gisco_id,
-          "-",
-          stringr::str_to_lower(iconv(
-            x = lau_label,
-            to = "ASCII//TRANSLIT"
-          )),
-          "-with_details_",
-          as.integer(Sys.time()),
-          ".csv"
-        )
-      },
-      content = function(con) {
-        download_df <- sn_export(
+        return(export_df)
+      } else if (input$export_type == "Export checked streets with details in current municipality (csv)") {
+        export_df <- sn_export(
           gisco_id = gisco_id,
           country = country,
           export_format = "csv",
@@ -127,35 +74,9 @@ mod_sn_export_server <- function(id,
           connection = connection,
           cache = TRUE
         )
-        if (is.null(download_df)) {
-          return(NULL)
-        }
-        readr::write_csv(download_df, con)
-      }
-    )
-
-    output$download_current_municipality_with_details_geojson <- downloadHandler(
-      filename = function() {
-        gisco_id_v <- gisco_id
-
-        lau_label <- sn_lau_by_nuts %>%
-          dplyr::filter(.data$gisco_id == gisco_id_v) %>%
-          dplyr::pull(.data$lau_label)
-
-        stringr::str_c(
-          gisco_id,
-          "-",
-          stringr::str_to_lower(iconv(
-            x = lau_label,
-            to = "ASCII//TRANSLIT"
-          )),
-          "-with_details_",
-          as.integer(Sys.time()),
-          ".geojson"
-        )
-      },
-      content = function(con) {
-        download_sf <- sn_export(
+        return(export_df)
+      } else if (input$export_type == "Export checked streets with details in current municipality (geojson)") {
+        export_sf <- sn_export(
           gisco_id = gisco_id,
           country = country,
           export_format = "geojson",
@@ -165,121 +86,171 @@ mod_sn_export_server <- function(id,
           connection = connection,
           cache = TRUE
         )
-        if (is.null(download_sf)) {
-          return(NULL)
-        }
-        sf::st_write(
-          obj = download_sf,
-          dsn = con
-        )
-      }
-    )
-
-    output$download_current_municipality_with_details_rds_sf <- downloadHandler(
-      filename = function() {
-        gisco_id_v <- gisco_id
-
-        lau_label <- sn_lau_by_nuts %>%
-          dplyr::filter(.data$gisco_id == gisco_id_v) %>%
-          dplyr::pull(.data$lau_label)
-
-        stringr::str_c(
-          gisco_id,
-          "-",
-          stringr::str_to_lower(iconv(
-            x = lau_label,
-            to = "ASCII//TRANSLIT"
-          )),
-          "-with_details_",
-          as.integer(Sys.time()),
-          ".rds"
-        )
-      },
-      content = function(con) {
-        download_sf <- sn_export(
+        return(export_sf)
+      } else if (input$export_type == "Export checked streets with details in current municipality (rds_sf)") {
+        export_sf <- sn_export(
           gisco_id = gisco_id,
           country = country,
           export_format = "rds_sf",
-          unlist = FALSE,
+          unlist = TRUE,
           write_file = FALSE,
           language = language,
           connection = connection,
           cache = TRUE
         )
-        if (is.null(download_sf)) {
+        return(export_sf)
+      }
+    })
+
+    #### prepare reactive UI with custom download button ####
+
+    observeEvent(
+      export_r(),
+      output$download_buttons_ui <- renderUI({
+        if (is.null(export_r())) {
           return(NULL)
         }
-        saveRDS(object = download_sf, file = con)
-      }
+
+        if (is.data.frame(export_r()) == FALSE) {
+          return(NULL)
+        }
+
+
+        shiny::fluidRow(
+          column(
+            width = 12,
+            shiny::tagList(
+              shiny::selectInput(
+                inputId = ns("export_type"),
+                label = "Select type and format of data you wish to export",
+                choices = c(
+                  "",
+                  "Export checked streets in current municipality",
+                  "Export checked streets in current country",
+                  "Export checked streets with details in current municipality (csv)",
+                  "Export checked streets with details in current municipality (geojson)",
+                  "Export checked streets with details in current municipality (rds)",
+                  "Export checked streets with details in current municipality (rds_sf)"
+                ),
+                multiple = FALSE,
+                selectize = TRUE,
+                selected = input$export_type,
+                width = "80%"
+              ),
+              downloadButton(
+                outputId = ns("export"),
+                label = stringr::str_replace(
+                  string = input$export_type,
+                  pattern = "Export ",
+                  replacement = "Download "
+                )
+              )
+            )
+          )
+        )
+      })
     )
 
+    #### Actual download ####
 
-    output$download_current_municipality_with_details_rds <- downloadHandler(
+    output$export <- downloadHandler(
       filename = function() {
-        gisco_id_v <- gisco_id
+        if (input$export_type == "Export checked streets with details in current municipality (rds)" | input$export_type == "Export checked streets with details in current municipality (rds_sf)") {
+          file_format <- ".rds"
+        } else if (input$export_type == "Export checked streets with details in current municipality (geojson)") {
+          file_format <- ".geojson"
+        } else {
+          file_format <- ".csv"
+        }
 
-        lau_label <- sn_lau_by_nuts %>%
-          dplyr::filter(.data$gisco_id == gisco_id_v) %>%
-          dplyr::pull(.data$lau_label)
+        if (input$export_type == "Export checked streets in current country") {
+          country_v <- country
+          country_name <- sn_lau_by_nuts %>%
+            dplyr::distinct(.data$country, .data$country_name) %>%
+            dplyr::filter(.data$country == country_v) %>%
+            dplyr::pull(.data$country_name)
 
-        stringr::str_c(
-          gisco_id,
-          "-",
-          stringr::str_to_lower(iconv(
-            x = lau_label,
-            to = "ASCII//TRANSLIT"
-          )),
-          "-with_details_",
-          as.integer(Sys.time()),
-          ".rds"
-        )
+          file_name <- stringr::str_c(
+            stringr::str_to_lower(iconv(
+              x = country_name,
+              to = "ASCII//TRANSLIT"
+            )),
+            "-",
+            as.integer(Sys.time()),
+            file_format
+          )
+        } else {
+          gisco_id_v <- gisco_id
+
+          lau_label <- sn_lau_by_nuts %>%
+            dplyr::filter(.data$gisco_id == gisco_id_v) %>%
+            dplyr::pull(.data$lau_label)
+
+          if (input$export_type == "Export checked streets in current municipality") {
+            file_name <- stringr::str_c(
+              gisco_id,
+              "-",
+              stringr::str_to_lower(iconv(
+                x = lau_label,
+                to = "ASCII//TRANSLIT"
+              )),
+              "-",
+              as.integer(Sys.time()),
+              file_format
+            )
+          } else {
+            file_name <- stringr::str_c(
+              gisco_id,
+              "-",
+              stringr::str_to_lower(iconv(
+                x = lau_label,
+                to = "ASCII//TRANSLIT"
+              )),
+              "-with_details-",
+              as.integer(Sys.time()),
+              file_format
+            )
+          }
+        }
+        file_name
       },
       content = function(con) {
-        download_df <- sn_export(
-          gisco_id = gisco_id,
-          country = country,
-          export_format = "rds",
-          unlist = FALSE,
-          write_file = FALSE,
-          language = language,
-          connection = connection,
-          cache = TRUE
-        )
-        if (is.null(download_df)) {
-          return(NULL)
+        if (input$export_type == "Export checked streets with details in current municipality (rds)") {
+          file_format <- ".rds"
+          saveRDS(export_r(), con)
+        } else if (input$export_type == "Export checked streets with details in current municipality (rds)") {
+          saveRDS(export_r(), con)
+        } else if (input$export_type == "Export checked streets with details in current municipality (geojson)") {
+          sf::st_write(
+            obj = export_r(),
+            dsn = con
+          )
+        } else {
+          readr::write_csv(export_r(), con)
         }
-        saveRDS(object = download_df, file = con)
       }
     )
 
-
-    ### prepare UI ###
+    #### prepare UI ####
     if (enable == TRUE) {
       output$download_buttons_ui <- renderUI(tagList(
-        downloadButton(
-          outputId = ns("download_current_municipality"),
-          label = "Export checked streets in current municipality"
+        shiny::selectInput(
+          inputId = ns("export_type"),
+          label = "Select type and format of data you wish to export",
+          choices = c(
+            "",
+            "Export checked streets in current municipality",
+            "Export checked streets in current country",
+            "Export checked streets with details in current municipality (csv)",
+            "Export checked streets with details in current municipality (geojson)",
+            "Export checked streets with details in current municipality (rds)",
+            "Export checked streets with details in current municipality (rds_sf)"
+          ),
+          multiple = FALSE,
+          selectize = TRUE,
+          width = "80%"
         ),
-        downloadButton(
-          outputId = ns("download_current_country"),
-          label = "Export checked streets in current country"
-        ),
-        downloadButton(
-          outputId = ns("download_current_municipality_with_details_csv"),
-          label = "Export checked streets with details in current municipality (csv)"
-        ),
-        downloadButton(
-          outputId = ns("download_current_municipality_with_details_geojson"),
-          label = "Export checked streets with details in current municipality (geojson)"
-        ),
-        downloadButton(
-          outputId = ns("download_current_municipality_with_details_rds"),
-          label = "Export checked streets with details in current municipality (rds)"
-        ),
-        downloadButton(
-          outputId = ns("download_current_municipality_with_details_rds_sf"),
-          label = "Export checked streets with details in current municipality (rds_sf)"
-        )
+        shiny::p(shiny::tags$i("N.B. Exporting datasets with details from Wikidata can take just a few seconds if all data has been previously cached, but may take many minutes if the data are being exported for the first time."))
       ))
     } else {
       output$download_buttons_ui <- renderUI(tagList())
@@ -314,7 +285,7 @@ mod_sn_export_server <- function(id,
 #' }
 mod_sn_export_app <- function(country,
                               gisco_id,
-                              language = tidywikidatar::tw_get_language(), 
+                              language = tidywikidatar::tw_get_language(),
                               connection = NULL) {
   ui <- shiny::fluidPage(
     mod_sn_export_ui("snm_export_ui_1")
