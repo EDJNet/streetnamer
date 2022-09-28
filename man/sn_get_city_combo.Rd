@@ -12,7 +12,8 @@ sn_get_city_combo(
   connection = NULL,
   language = tidywikidatar::tw_get_language(),
   search_language = NULL,
-  disconnect_db = FALSE
+  disconnect_db = FALSE,
+  ...
 )
 }
 \arguments{

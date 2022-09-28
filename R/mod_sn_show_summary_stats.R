@@ -43,16 +43,33 @@ mod_sn_show_summary_stats_server <- function(id,
     output$summary_stats_ui <- shiny::renderUI({
       w$show()
       
-      core_df <- sn_get_city_combo(
-        gisco_id = gisco_id,
-        country = country,
-        streets_sf = streets_sf,
-        street_names_df = street_names_df,
-        connection = connection,
-        language = language,
-        search_language = search_language,
-        disconnect_db = disconnect_db
-      )
+      country_code <- sn_standard_country(country = country, type = "code")
+      
+      if (country_code %in% sn_countries_with_streets_as_qid) {
+        core_df <- sn_get_city_combo(
+          gisco_id = gisco_id,
+          country = country,
+          streets_sf = streets_sf,
+          street_names_df = street_names_df,
+          connection = connection,
+          language = language,
+          search_language = search_language,
+          disconnect_db = disconnect_db
+        )
+      } else {
+        core_df <- sn_get_city_combo(
+          gisco_id = gisco_id,
+          country = country,
+          streets_sf = streets_sf,
+          street_names_df = street_names_df,
+          connection = connection,
+          language = language,
+          search_language = search_language,
+          disconnect_db = disconnect_db,
+          check_named_after_original = FALSE, 
+          check_named_after = FALSE
+        )
+      }
       
       total_streets <- nrow(core_df)
       total_checked <- nrow(core_df %>% dplyr::filter(as.logical(checked)))

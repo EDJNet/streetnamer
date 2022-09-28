@@ -13,7 +13,8 @@ sn_get_city_combo <- function(gisco_id,
                               connection = NULL,
                               language = tidywikidatar::tw_get_language(),
                               search_language = NULL,
-                              disconnect_db = FALSE) {
+                              disconnect_db = FALSE,
+                              ...) {
   if (is.null(country)) {
     country <- stringr::str_extract(string = gisco_id, pattern = "[[:alnum:]]{2}") %>%
       stringr::str_to_upper()
@@ -95,7 +96,8 @@ sn_get_city_combo <- function(gisco_id,
     response_language = language,
     connection = connection,
     street_names_df = street_names_for_automatic_checking_df,
-    disconnect_db = FALSE
+    disconnect_db = FALSE,
+    ...
   )
 
   all_wikidata_df <- tw_get(

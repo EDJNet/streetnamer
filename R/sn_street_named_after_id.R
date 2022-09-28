@@ -282,7 +282,6 @@ sn_write_street_named_after_id <- function(gisco_id = NULL,
 #' @param language Defaults to language set with `tw_set_language()`; if not set, "en". Use "all_available" to keep all languages. For available language values, see https://www.wikidata.org/wiki/Help:Wikimedia_language_codes/lists/all
 #' @param connection Defaults to NULL. If NULL, and caching is enabled, `streetnamer` will use a local sqlite database. A custom connection to other databases can be given (see vignette `caching` for details).
 #' @param disconnect_db Defaults to TRUE. If FALSE, leaves the connection open.
-#'
 #' @return If data present in database, returns a data frame with relevant data stored in the database.
 #' @export
 #'
