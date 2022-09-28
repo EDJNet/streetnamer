@@ -133,81 +133,84 @@ sn_get_city_combo <- function(gisco_id,
       by = "street_name"
     )
 
-  automatically_checked_df <- sn_search_named_after(
-    gisco_id = gisco_id,
-    search_language = search_language,
-    response_language = language,
-    connection = connection,
-    street_names_df = street_names_for_automatic_checking_df,
-    disconnect_db = FALSE,
-    ...
-  )
-
-  all_wikidata_df <- tw_get(
-    id = c(automatically_checked_df$named_after_id),
-    language = language,
-    cache = TRUE,
-    overwrite_cache = FALSE,
-    cache_connection = connection,
-    disconnect_db = FALSE
-  )
-
-  humans_df <- all_wikidata_df %>%
-    dplyr::filter(
-      is.na(.data$id) == FALSE,
-      property == "P31",
-      value == "Q5"
-    ) %>%
-    dplyr::distinct(.data$id) %>%
-    dplyr::transmute(
-      named_after_id = .data$id,
-      person = as.numeric(1)
+  if (nrow(street_names_for_automatic_checking_df)>0) {
+    automatically_checked_df <- sn_search_named_after(
+      gisco_id = gisco_id,
+      search_language = search_language,
+      response_language = language,
+      connection = connection,
+      street_names_df = street_names_for_automatic_checking_df,
+      disconnect_db = FALSE,
+      cache = TRUE,
+      ...
     )
-
-  gender_df <- all_wikidata_df %>%
-    dplyr::filter(
-      is.na(.data$id) == FALSE,
-      property == "P21"
-    ) %>%
-    dplyr::distinct(.data$id, .data$value) %>%
-    dplyr::mutate(gender = dplyr::case_when(
-      value == "Q6581097" ~ "male",
-      value == "Q6581072" ~ "female",
-      value %>% stringr::str_starts(string = , pattern = "Q") ~ "other"
-    )) %>%
-    dplyr::group_by(id) %>%
-    dplyr::summarise(gender = dplyr::case_when(
-      "other" %in% gender ~ "other",
-      dplyr::row_number() > 1 ~ "other",
-      TRUE ~ gender
-    ), .groups = "drop") %>%
-    dplyr::distinct() %>%
-    dplyr::rename(named_after_id = .data$id)
-
-
-  automatically_checked_core_df <- automatically_checked_df %>%
-    dplyr::transmute(.data$street_name,
-      .data$named_after_id,
-      checked = as.integer(0),
-      ignore = as.integer(NA)
-    ) %>%
-    dplyr::left_join(y = humans_df, by = "named_after_id") %>%
-    dplyr::mutate(person = dplyr::case_when(
-      person == 1 ~ person,
-      is.na(named_after_id) == FALSE ~ as.numeric(0)
-    )) %>%
-    dplyr::left_join(y = gender_df, by = "named_after_id") %>%
-    dplyr::mutate(
-      category = as.character(NA),
-      tag = as.character(NA)
+    
+    all_wikidata_df <- tw_get(
+      id = c(automatically_checked_df$named_after_id),
+      language = language,
+      cache = TRUE,
+      overwrite_cache = FALSE,
+      cache_connection = connection,
+      disconnect_db = FALSE
     )
-
-
-  core_df <- dplyr::bind_rows(
-    manually_checked_core_df,
-    automatically_checked_core_df
-  ) %>%
+    
+    humans_df <- all_wikidata_df %>%
+      dplyr::filter(
+        is.na(.data$id) == FALSE,
+        property == "P31",
+        value == "Q5"
+      ) %>%
+      dplyr::distinct(.data$id) %>%
+      dplyr::transmute(
+        named_after_id = .data$id,
+        person = as.numeric(1)
+      )
+    
+    gender_df <- all_wikidata_df %>%
+      dplyr::filter(
+        is.na(.data$id) == FALSE,
+        property == "P21"
+      ) %>%
+      dplyr::distinct(.data$id, .data$value) %>%
+      dplyr::mutate(gender = dplyr::case_when(
+        value == "Q6581097" ~ "male",
+        value == "Q6581072" ~ "female",
+        value %>% stringr::str_starts(string = , pattern = "Q") ~ "other"
+      )) %>%
+      dplyr::group_by(id) %>%
+      dplyr::summarise(gender = dplyr::case_when(
+        "other" %in% gender ~ "other",
+        dplyr::row_number() > 1 ~ "other",
+        TRUE ~ gender
+      ), .groups = "drop") %>%
+      dplyr::distinct() %>%
+      dplyr::rename(named_after_id = .data$id)
+    
+    
+    automatically_checked_core_df <- automatically_checked_df %>%
+      dplyr::transmute(.data$street_name,
+                       .data$named_after_id,
+                       checked = as.integer(0),
+                       ignore = as.integer(NA)
+      ) %>%
+      dplyr::left_join(y = humans_df, by = "named_after_id") %>%
+      dplyr::mutate(person = dplyr::case_when(
+        person == 1 ~ person,
+        is.na(named_after_id) == FALSE ~ as.numeric(0)
+      )) %>%
+      dplyr::left_join(y = gender_df, by = "named_after_id") %>%
+      dplyr::mutate(
+        category = as.character(NA),
+        tag = as.character(NA)
+      )
+    core_df <- dplyr::bind_rows(
+      manually_checked_core_df,
+      automatically_checked_core_df
+    ) 
+  } else {
+    core_df <- manually_checked_core_df
+  }
+ 
+  core_df %>%
     dplyr::arrange(street_name)
-
-  core_df
 }
