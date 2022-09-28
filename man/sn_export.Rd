@@ -10,6 +10,8 @@ sn_export(
   street_name = NULL,
   keep_only_latest = TRUE,
   only_checked = TRUE,
+  include_checked_elsewhere_in_country = FALSE,
+  streets_sf = NULL,
   remove_ignored = TRUE,
   additional_properties = c("P39", "P509", "P140", "P611", "P411", "P241", "P410", "P97",
     "P607", "P27", "P172"),
