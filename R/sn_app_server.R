@@ -102,6 +102,7 @@ sn_app_server <- function(input, output, session) {
           string = input$current_gisco_id,
           pattern = "[A-Z][A-Z]"
         ),
+        streets_sf = current_streets_sf_r(),
         connection = golem::get_golem_options("connection"),
         language = "en"
       )

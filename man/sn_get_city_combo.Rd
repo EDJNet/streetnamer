@@ -9,6 +9,7 @@ sn_get_city_combo(
   country = NULL,
   streets_sf = NULL,
   street_names_df = NULL,
+  include_checked_elsewhere_in_country = FALSE,
   connection = NULL,
   language = tidywikidatar::tw_get_language(),
   search_language = NULL,
@@ -20,6 +21,8 @@ sn_get_city_combo(
 \item{gisco_id}{Identifier of a municipality, typically a gisco identifier. Can be any code, as long as it used consistently, and it starts with a two-letter country code.}
 
 \item{country}{Defaults to NULL. A character string, expected to be a two-letter country code. If not given, tentatively extracted from `gisco_id`.}
+
+\item{include_checked_elsewhere_in_country}{Defaults to FALSE. If TRUE, checks if streets with the same name have been checked at country level. Requires `streets_sf`.}
 
 \item{connection}{Defaults to NULL. If NULL, and caching is enabled, `streetnamer` will use a local sqlite database. A custom connection to other databases can be given (see vignette `caching` for details).}
 

@@ -1,5 +1,6 @@
 #' Get a data frame with all streets in a city with matching, including both automatic and manually checked inputs
 #'
+#' @param include_checked_elsewhere_in_country Defaults to FALSE. If TRUE, checks if streets with the same name have been checked at country level. Requires `streets_sf`.
 #' @inheritParams sn_write_street_named_after_id
 #'
 #' @return
@@ -10,6 +11,7 @@ sn_get_city_combo <- function(gisco_id,
                               country = NULL,
                               streets_sf = NULL,
                               street_names_df = NULL,
+                              include_checked_elsewhere_in_country = FALSE,
                               connection = NULL,
                               language = tidywikidatar::tw_get_language(),
                               search_language = NULL,
@@ -22,15 +24,56 @@ sn_get_city_combo <- function(gisco_id,
   country_code <- sn_standard_country(country = country, type = "code")
   country_name <- sn_standard_country(country = country, type = "name")
 
-  manually_checked_df <- sn_get_street_named_after_id(
-    gisco_id = gisco_id,
-    country = country,
-    language = language,
-    connection = connection,
-    only_checked = TRUE,
-    disconnect_db = FALSE
-  ) %>%
-    dplyr::arrange(dplyr::desc(time))
+  if (include_checked_elsewhere_in_country== TRUE) {
+    current_gisco_id <- gisco_id
+    
+    if (is.null(streets_sf)) {
+      usethis::ui_warn("To include checked elsewhere in country, `street_names_df` must be given.")
+      manually_checked_df <- sn_get_street_named_after_id(
+        gisco_id = gisco_id,
+        country = country,
+        language = language,
+        connection = connection,
+        only_checked = TRUE,
+        disconnect_db = FALSE
+      ) %>%
+        dplyr::arrange(dplyr::desc(time))
+    } else {
+      if (!"street_name" %in% colnames(streets_sf)) {
+        streets_sf <- streets_sf %>% 
+          dplyr::rename(street_name = name)
+      }
+      
+      manually_checked_df <- sn_get_street_named_after_id(
+        street_name = streets_sf %>% 
+          sf::st_drop_geometry() %>% 
+          dplyr::distinct(street_name) %>% 
+          dplyr::pull(street_name),
+        country = country,
+        language = language,
+        connection = connection,
+        only_checked = TRUE,
+        disconnect_db = FALSE
+      ) %>%
+        dplyr::mutate(check_gisco_id = current_gisco_id == .data$gisco_id) %>% 
+        dplyr::arrange(check_gisco_id, dplyr::desc(time)) %>% 
+        dplyr::select(-check_gisco_id)
+    }
+    
+
+  } else {
+    
+    manually_checked_df <- sn_get_street_named_after_id(
+      gisco_id = gisco_id,
+      country = country,
+      language = language,
+      connection = connection,
+      only_checked = TRUE,
+      disconnect_db = FALSE
+    ) %>%
+      dplyr::arrange(dplyr::desc(time))
+  }
+  
 
   # basic_checked_df
   manually_checked_core_df <- manually_checked_df %>%
