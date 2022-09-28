@@ -449,6 +449,11 @@ sn_search_named_after <- function(gisco_id,
       )
   }
 
+  if (!"named_after_from_wikidata" %in% colnames(final_output_df)) {
+    final_output_df <- final_output_df %>% 
+      dplyr::mutate(named_after_from_wikidata = 0)
+  }
+  
   df <- final_output_df %>%
     dplyr::transmute(.data$street_name,
       named_after_id = .data$id,
