@@ -199,6 +199,8 @@ sn_app_server <- function(input, output, session) {
         }
       } else if (current_country_code == "IE") {
         current_country_name <- "ireland-and-northern-ireland"
+      } else if (current_country_code == "MD") {
+        current_country_name <- "moldova"
       } else {
         current_country_name <- NULL
       }

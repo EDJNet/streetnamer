@@ -23,5 +23,15 @@ sn_lau_by_country %>%
   dplyr::filter(is.na(CNTR_NAME)) %>%
   dplyr::distinct(CNTR_CODE)
 
+sn_lau_by_country <- dplyr::bind_rows(sn_lau_by_country,
+                                      sn_lau_by_nuts %>% 
+                                        dplyr::transmute(GISCO_ID = gisco_id,
+                                                         LAU_NAME = lau_name,
+                                                         CNTR_CODE = country,
+                                                         CNTR_NAME = country_name)) %>% 
+  dplyr::distinct()
+
+
+
 
 usethis::use_data(sn_lau_by_country, overwrite = TRUE)

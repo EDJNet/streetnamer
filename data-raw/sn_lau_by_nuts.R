@@ -1,5 +1,5 @@
 ## code to prepare `sn_lau_by_nuts` dataset goes here
-
+library("latlon2map")
 library("readr")
 library("dplyr")
 sn_lau_by_nuts_df <- readr::read_csv(
@@ -64,9 +64,81 @@ sn_lau_by_nuts_pre_df %>%
   arrange(country, desc(population)) %>%
   filter(country == "CH")
 
-sn_lau_by_nuts <- sn_lau_by_nuts_pre_df %>%
+#### Add custom streets ####
+
+##### Add Brussels #####
+
+brussels_row_df <- ll_get_nuts_eu(nuts_id = "BE100") %>% 
+  sf::st_drop_geometry() %>% 
+  dplyr::transmute(gisco_id = NUTS_ID,
+                   country = "BE", 
+                   country_name = "Belgium",
+                   nuts_2 = "BE10", 
+                   nuts_3 = "BE100", 
+                   lau_name = NAME_LATN, 
+                   priority = TRUE,
+                   lau_label = NAME_LATN) 
+
+##### Add Portugal #####
+
+pt_concelho_df <- ll_lau_pt_id %>% 
+  dplyr::transmute(gisco_id = id,
+                   country = "PT", 
+                   country_name = "Portugal",
+                   lau_name = Concelho, 
+                   population,
+                   priority = TRUE,
+                   lau_label = Concelho) 
+
+##### Add Ukraine #####
+
+ua1_df <- ll_get_gadm(geo = "UKR", level = 1) %>%
+  sf::st_drop_geometry() %>% 
+  dplyr::filter(ENGTYPE_1 == "Independent City") %>% 
+  dplyr::transmute(country = "UA",
+                   country_name = "Ukraine",
+                   gisco_id = stringr::str_c("UA_", GID_1), 
+                   lau_name = "Kyiv",
+                   lau_label = "Kyiv")
+
+ua2_df <- ll_get_gadm(geo = "UKR", level = 2) %>%
+  sf::st_drop_geometry() %>% 
+  dplyr::filter(ENGTYPE_2 == "City"|ENGTYPE_2 == "City of Regional Significance") %>% 
+  dplyr::transmute(country = "UA",
+                   country_name = "Ukraine",
+                   gisco_id = stringr::str_c("UA_", GID_2), 
+                   lau_name = VARNAME_2,
+                   lau_label = VARNAME_2) %>% 
+  dplyr::filter(is.na(lau_name)==FALSE, 
+                lau_name!="NA")
+
+
+
+
+
+
+
+##### Add Moldova #####
+
+md_rows <- ll_get_adm_ocha(geo = "MD", level = 1) %>% 
+  sf::st_drop_geometry()  %>% 
+  dplyr::transmute(gisco_id = ADM1_PCODE,
+                   country = "MD", 
+                   country_name = "Moldova",
+                   lau_name = ADM1_EN,
+                   lau_label = ADM1_EN,
+                   priority = FALSE)
+
+md_rows$priority[md_rows$lau_label=="Chisinau"] <- TRUE
+
+sn_lau_by_nuts <- dplyr::bind_rows(sn_lau_by_nuts_pre_df,
+                                   brussels_row_df,
+                                   pt_concelho_df,
+                                   ua1_df,
+                                   md_rows) %>%
   group_by(country) %>%
-  arrange(country, desc(population)) %>%
-  ungroup()
+  arrange(country, desc(priority), desc(population)) %>%
+  ungroup() %>% 
+  dplyr::select(-priority)
 
 usethis::use_data(sn_lau_by_nuts, overwrite = TRUE)

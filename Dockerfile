@@ -32,10 +32,10 @@ RUN Rscript -e 'remotes::install_version("shinyWidgets",upgrade="never", version
 RUN Rscript -e 'remotes::install_version("countrycode",upgrade="never", version = "1.4.0")'
 RUN Rscript -e 'remotes::install_version("waiter",upgrade="never", version = "0.2.5")'
 RUN Rscript -e 'remotes::install_version("sf",upgrade="never", version = "1.0-8")'
-RUN Rscript -e 'remotes::install_version("golem",upgrade="never", version = "0.3.3")'
+RUN Rscript -e 'remotes::install_version("golem",upgrade="never", version = "0.3.4")'
 RUN Rscript -e 'remotes::install_version("DT",upgrade="never", version = "0.25")'
 RUN Rscript -e 'remotes::install_github("edjnet/tidywikidatar@3fe1a1fa6194119e093ad524a430308841ec9b99")'
-RUN Rscript -e 'remotes::install_github("giocomai/latlon2map@f4e6d6c1ad9ede20eb6b07ac96b5d7ca6447eef7")'
+RUN Rscript -e 'remotes::install_github("giocomai/latlon2map@6d2e029f8144472dfad35d5fc6fba1dbe9d00373")'
 
 
 
