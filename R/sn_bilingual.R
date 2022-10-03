@@ -54,7 +54,7 @@ sn_get_clean_street_name_bilingual_df <- function(gisco_id,
     name_clean_df <- current_street_names_df %>%
       dplyr::mutate(name_clean = sn_clean_street_name(
         street_name = name,
-        country = country_name
+        country = "Belgium"
       ))
   }
 

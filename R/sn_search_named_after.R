@@ -421,6 +421,10 @@ sn_search_named_after <- function(gisco_id,
   } 
   
   if ("id" %in% colnames(output_df)) {
+    if (!"named_after_id" %in% colnames(output_df)) {
+      output_df <- output_df %>% 
+        dplyr::mutate(named_after_id = as.character(NA))
+    }
     output_df <- output_df %>% 
       dplyr::mutate(named_after_id = dplyr::if_else(is.na(named_after_id),
                                                     as.character(id),
