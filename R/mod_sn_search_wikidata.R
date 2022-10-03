@@ -54,7 +54,7 @@ mod_sn_search_wikidata_server <- function(id,
           cache = cache,
           cache_connection = connection
         ) %>%
-          tidyr::drop_na()
+          dplyr::filter(is.na(id)==FALSE)
       }
       search_results_df
     })
@@ -153,6 +153,7 @@ mod_sn_search_wikidata_server <- function(id,
 
 mod_sn_search_app <- function(search_string,
                               search_language,
+                              description_language,
                               languages = streetnamer::sn_available_languages,
                               cache = FALSE,
                               connection = NULL,
@@ -167,6 +168,7 @@ mod_sn_search_app <- function(search_string,
       id = "sn_search_wikidata_ui_1",
       search_string = search_string,
       search_language = search_language,
+      description_language = description_language,
       languages = languages,
       cache = cache,
       connection = connection
@@ -180,4 +182,4 @@ mod_sn_search_app <- function(search_string,
   shiny::shinyApp(ui, server)
 }
 
-# mod_sn_search_app(search_string = "example", search_language = "en", cache = TRUE, connection = connection)
+# mod_sn_search_app(search_string = "example", search_language = "en",description_language = "en", cache = TRUE, connection = connection)
