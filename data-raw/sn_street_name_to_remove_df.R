@@ -244,7 +244,8 @@ sn_street_name_to_remove_df <- dplyr::bind_rows(
       "circuit",
       "plein",
       "pleintje",
-      "steeg"
+      "steeg",
+      "tunnel"
     ) %>%
       stringr::str_c(., "$") %>%
       c(
@@ -531,6 +532,7 @@ sn_street_name_to_remove_df <- dplyr::bind_rows(
           "Terrasse ",
           "Traverse ",
           "Tunnel ",
+          "Venelle ",
           "Vieux Chemin ",
           "Voie "
         ),

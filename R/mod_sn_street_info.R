@@ -28,17 +28,17 @@ mod_sn_street_info_server <- function(id,
     ns <- session$ns
     # current_lau <- streetnamer::sn_lau_by_nuts %>%
     #   dplyr::filter(country_name == gisco_id)
-
-
+    
+    
     if (is.null(country)) {
       country <- stringr::str_extract(string = gisco_id, pattern = "[[:alnum:]]{2}") %>%
         stringr::str_to_upper()
     }
     country_code <- sn_standard_country(country = country, type = "code")
     country_name <- sn_standard_country(country = country, type = "name")
-
+    
     checked_lv <- NULL
-
+    
     if (is.null(named_after_id) == FALSE) {
       if (is.na(named_after_id)) {
         named_after_id_selected <- as.character(NA)
@@ -78,36 +78,50 @@ mod_sn_street_info_server <- function(id,
         checked_lv <- details_from_db$checked
       } else {
         guessing <- TRUE
-
+        
         checked_switch_selected <- FALSE
-
+        
         # try to guess wikidata id based on country
         search_language <- streetnamer::sn_language_defaults_by_country %>%
           dplyr::filter(.data$country == country_name) %>%
           dplyr::pull(.data$language_code)
-
+        
         if (length(search_language) == 0) {
           search_language <- language
         } else if (length(search_language) > 1) {
           search_language <- search_language[1]
         }
-
-
-        # fix guesser by language
-
-        search_string_v <- sn_clean_street_name(
-          street_name = street_name,
-          country = country_name
-        )
-
-        search_df <- tidywikidatar::tw_search(
-          search = search_string_v,
-          language = search_language,
-          cache_connection = connection,
-          cache = TRUE
-        )
-
-
+        
+        if (country_code == "BE") {
+          search_string_v <- sn_get_clean_street_name_bilingual_df(gisco_id = gisco_id,
+                                                                   street_names_df = tibble::tibble(name = street_name),
+                                                                   languages = "french-flemish") %>% 
+            dplyr::pull(name_clean)
+          
+        } else {
+          search_string_v <- sn_clean_street_name(
+            street_name = street_name,
+            country = country_name
+          )
+        }
+        
+        current_street_df <- tibble::tibble(name = street_name,
+                                            name_clean = search_string_v)
+        
+        search_df <- sn_search_named_after(gisco_id = gisco_id,
+                                           search_language = search_language,
+                                           response_language = language,
+                                           check_named_after_original = TRUE,
+                                           check_named_after_original_n = 1,
+                                           check_named_after = FALSE,
+                                           drop_if_street = TRUE,
+                                           drop_if_disambiguation_page = TRUE,
+                                           cache = TRUE,
+                                           connection = connection,
+                                           disconnect_db = FALSE,
+                                           street_names_df = current_street_df) %>% 
+          dplyr::select(id = named_after_id)
+        
         if (nrow(search_df) > 0) {
           named_after_id_selected <- search_df[["id"]][[1]]
           gender_selected <- sn_get_gender_label(
@@ -122,38 +136,38 @@ mod_sn_street_info_server <- function(id,
         }
       }
     }
-
+    
     ### Store data in database
-
+    
     # TODO Introduce category
     category <- as.character(NA)
-
-
+    
+    
     gisco_id_v <- gisco_id
-
+    
     lau_label_v_pre <- sn_lau_by_nuts %>%
       dplyr::filter(.data$gisco_id == gisco_id_v) %>%
       dplyr::pull(.data$lau_label)
-
+    
     lau_label_v <- dplyr::if_else(condition = length(lau_label_v_pre) == 1,
-      true = lau_label_v_pre,
-      false = gisco_id
+                                  true = lau_label_v_pre,
+                                  false = gisco_id
     )
-
-
+    
+    
     if (is.null(checked_lv)) {
       checked_lv <- FALSE
     } else {
       checked_lv <- as.logical(checked_lv)
     }
-
-
+    
+    
     status_v <- dplyr::case_when(
       guessing ~ "Automatic guess",
       checked_lv ~ "Manually checked",
       TRUE ~ "Undetermined"
     )
-
+    
     ### Prepare output
     output$street_name_info_box <- shiny::renderUI(
       shiny::tagList(
@@ -180,8 +194,8 @@ mod_sn_street_info_server <- function(id,
         #   width = "90%"
         # ),
         shiny::tags$b(ifelse(guessing,
-          "N.B. Showing first Wikipedia match, review carefully",
-          ""
+                             "N.B. Showing first Wikipedia match, review carefully",
+                             ""
         )),
         shinyWidgets::switchInput(
           inputId = ns("person_switch"),
@@ -293,7 +307,7 @@ mod_sn_street_info_server <- function(id,
         # )
       )
     )
-
+    
     ## Return
     selected_df_r <- shiny::reactive({
       if (length(input$person_switch) == 0) {
@@ -303,7 +317,7 @@ mod_sn_street_info_server <- function(id,
       } else {
         tag_v <- input$tag_selectize_not_person
       }
-
+      
       if (length(input$category_radio) == 0) {
         category_v <- ""
       } else {
@@ -315,7 +329,7 @@ mod_sn_street_info_server <- function(id,
       } else {
         gender_selected_v <- input$gender_switch
       }
-
+      
       sn_write_street_named_after_id(
         gisco_id = gisco_id,
         street_name = street_name,
@@ -334,7 +348,7 @@ mod_sn_street_info_server <- function(id,
         return_df_only = TRUE
       )
     })
-
+    
     shiny::reactive(selected_df_r())
   })
 }
@@ -383,7 +397,7 @@ mod_sn_street_info_app <- function(street_name,
       connection = connection,
       language = language
     )
-
+    
     output$selected_df_ui <- shiny::renderTable({
       selected_df_r()
     })

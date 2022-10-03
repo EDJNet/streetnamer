@@ -4,10 +4,16 @@
 \alias{sn_get_clean_street_name_bilingual_df}
 \title{Get name_clean_df for cities with bilingual city names}
 \usage{
-sn_get_clean_street_name_bilingual_df(gisco_id, street_names_df = NULL)
+sn_get_clean_street_name_bilingual_df(
+  gisco_id,
+  street_names_df = NULL,
+  languages = NULL
+)
 }
 \arguments{
 \item{gisco_id}{A gisco identifier}
+
+\item{languages}{Couple of languages. Supported: "french-flemish"}
 }
 \description{
 So far supported:
