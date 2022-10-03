@@ -357,6 +357,12 @@ sn_search_named_after <- function(gisco_id,
               disconnect_db = FALSE
             )
           )
+      } else {
+        named_after_df <- structure(list(id = character(0), property = character(0), value = character(0), 
+                                         rank = character(0), name_clean = character(0), label = character(0), 
+                                         description = character(0), named_after_id = character(0), 
+                                         named_after_label = character(0), named_after_description = character(0)), row.names = integer(0), class = c("tbl_df", 
+                                                                                                                                                      "tbl", "data.frame"))
       }
     }
     

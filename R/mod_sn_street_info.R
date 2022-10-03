@@ -108,19 +108,38 @@ mod_sn_street_info_server <- function(id,
         current_street_df <- tibble::tibble(name = street_name,
                                             name_clean = search_string_v)
         
-        search_df <- sn_search_named_after(gisco_id = gisco_id,
-                                           search_language = search_language,
-                                           response_language = language,
-                                           check_named_after_original = TRUE,
-                                           check_named_after_original_n = 1,
-                                           check_named_after = FALSE,
-                                           drop_if_street = TRUE,
-                                           drop_if_disambiguation_page = TRUE,
-                                           cache = TRUE,
-                                           connection = connection,
-                                           disconnect_db = FALSE,
-                                           street_names_df = current_street_df) %>% 
-          dplyr::select(id = named_after_id)
+        if (country_code %in% sn_countries_with_streets_as_qid) {
+          
+          search_df <- sn_search_named_after(gisco_id = gisco_id,
+                                             search_language = search_language,
+                                             response_language = language,
+                                             check_named_after_original = TRUE,
+                                             check_named_after_original_n = 1,
+                                             check_named_after = FALSE,
+                                             drop_if_street = TRUE,
+                                             drop_if_disambiguation_page = TRUE,
+                                             cache = TRUE,
+                                             connection = connection,
+                                             disconnect_db = TRUE,
+                                             street_names_df = current_street_df) %>% 
+            dplyr::select(id = named_after_id)
+          
+        } else {
+          search_df <- sn_search_named_after(gisco_id = gisco_id,
+                                             search_language = search_language,
+                                             response_language = language,
+                                             check_named_after_original = FALSE,
+                                             check_named_after_original_n = 1,
+                                             check_named_after = FALSE,
+                                             drop_if_street = TRUE,
+                                             drop_if_disambiguation_page = TRUE,
+                                             cache = TRUE,
+                                             connection = connection,
+                                             disconnect_db = TRUE,
+                                             street_names_df = current_street_df) %>% 
+            dplyr::select(id = named_after_id)
+        }
+        
         
         if (nrow(search_df) > 0) {
           named_after_id_selected <- search_df[["id"]][[1]]
