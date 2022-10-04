@@ -327,6 +327,7 @@ sn_street_name_to_remove_df <- dplyr::bind_rows(
   tibble::tibble(
     country = "Hungary",
     string = c(
+      " lépcső",
       " utca",
       " köz",
       " út",
@@ -343,7 +344,8 @@ sn_street_name_to_remove_df <- dplyr::bind_rows(
       " sugárút",
       " zug",
       " útfél",
-      " liget"
+      " liget",
+      " park"
     ) %>%
       stringr::str_c(., "$")
   ),
