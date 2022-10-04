@@ -100,6 +100,7 @@ sn_app_ui <- function(request) {
               choices = c(
                 "Not yet checked",
                 "Checked humans without confirmed gender",
+                "Checked humans without confirmed id",
                 "Not yet checked, but likely humans",
                 "Not yet checked in this municipality",
                 "All streets",

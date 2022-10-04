@@ -302,6 +302,22 @@ sn_app_server <- function(input, output, session) {
         ) %>%
         dplyr::distinct(street_name) %>%
         dplyr::rename(name = street_name)
+    } else if (input$streets_to_show_in_dt == "Checked humans without confirmed id") {
+      sn_get_street_named_after_id(
+       # gisco_id = input$current_gisco_id,
+        country = stringr::str_extract(
+          string = input$current_gisco_id,
+          pattern = "[A-Z][A-Z]"
+        ),
+        connection = golem::get_golem_options("connection")
+      ) %>%
+        dplyr::filter(
+          checked == TRUE,
+          person == TRUE,
+          is.na(.data$named_after_id) == TRUE
+        ) %>%
+        dplyr::distinct(street_name) %>%
+        dplyr::rename(name = street_name)
     } else if (input$streets_to_show_in_dt == "Not yet checked, but likely humans") {
       
       current_country_v <- stringr::str_extract(
