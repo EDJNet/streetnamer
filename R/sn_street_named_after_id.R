@@ -63,7 +63,7 @@ sn_write_street_named_after_id <- function(gisco_id = NULL,
     df <- df_to_write
 
     if (is.null(country)) {
-      country_pre_v <- stringr::str_extract_all(string = stringr::str_to_upper(df[["gisco_id"]]), pattern = "[A-Z][A-Z]", simplify = TRUE)
+      country_pre_v <- stringr::str_extract(string = stringr::str_to_upper(df[["gisco_id"]]), pattern = "[A-Z][A-Z]")
       country_v <- as.character(unique(country_pre_v))
     } else {
       country_v <- stringr::str_to_upper(country)
