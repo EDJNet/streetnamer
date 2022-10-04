@@ -34,6 +34,8 @@ sn_get_gender_label <- function(named_after_id,
     .f = function(x) {
       if (is.na(x)) {
         gender_selected <- as.character(NA)
+      } else if (x == "NA") {
+        gender_selected <- as.character(NA)
       } else if (x == "Q6581097") {
         gender_selected <- "male"
       } else if (x == "Q6581072") {

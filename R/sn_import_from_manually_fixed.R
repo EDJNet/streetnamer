@@ -109,17 +109,22 @@ sn_import_from_manually_fixed <- function(input_df,
     )
     )
 
-    confirmed_humans_df <- confirmed_humans_df %>%
-      dplyr::mutate(fixed_sex_or_gender = dplyr::case_when(
-        is.na(.data$fixed_sex_or_gender) == TRUE & tidywikidatar::tw_check_qid(.data$named_after_id, logical_vector = TRUE) ~
-        sn_get_gender_label(
-          named_after_id = .data$named_after_id,
-          language = language,
-          cache_connection = connection,
-          cache = TRUE
-        ),
-        TRUE ~ as.character(fixed_sex_or_gender)
-      ))
+    confirmed_humans_fix_gender_df <- confirmed_humans_df %>% 
+      dplyr::filter(is.na(.data$fixed_sex_or_gender) == TRUE & tidywikidatar::tw_check_qid(.data$named_after_id, logical_vector = TRUE))
+    
+    if (nrow(confirmed_humans_fix_gender_df)>0) {
+      confirmed_humans_df <- confirmed_humans_df %>%
+        dplyr::mutate(fixed_sex_or_gender = dplyr::case_when(
+          is.na(.data$fixed_sex_or_gender) == TRUE & tidywikidatar::tw_check_qid(.data$named_after_id, logical_vector = TRUE) ~
+            sn_get_gender_label(
+              named_after_id = .data$named_after_id,
+              language = language,
+              cache_connection = connection,
+              cache = TRUE
+            ),
+          TRUE ~ as.character(fixed_sex_or_gender)
+        ))
+    }
 
     gender_confirmed_v <- dplyr::case_when(
       is.na(confirmed_humans_df$fixed_sex_or_gender) ~ as.character(NA),
