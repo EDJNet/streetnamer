@@ -117,6 +117,10 @@ sn_clean_street_name <- function(street_name,
 #'
 #' sn_clean_street_name_polish("Pawła Edmunda Strzeleckiego")
 sn_clean_street_name_polish <- function(street_name) {
+  if (is.na(street_name)) {
+    return("")
+  }
+  
   if (stringr::str_detect(string = street_name, pattern = "ego$")) {
     split_string <- stringr::str_split(string = street_name, pattern = "[[:space:]]", simplify = TRUE) %>% as.character()
 
