@@ -142,7 +142,7 @@ sn_clean_street_name_polish <- function(street_name) {
       } else if (stringr::str_detect(string = split_string[i], pattern = "szka$")) {
         split_string[i] <- stringr::str_replace(string = split_string[i], pattern = "szka$", replacement = "szek")
       } else if (stringr::str_detect(string = split_string[i], pattern = "ndra$")) {
-        split_string[j] <- stringr::str_replace(
+        split_string[i] <- stringr::str_replace(
           string = split_string[i],
           pattern = "ndra$",
           replacement = "nder"
@@ -216,14 +216,30 @@ sn_clean_street_name_polish <- function(street_name) {
     )
 
     name_replace_f_v <- c(
+      Agnieszki = "Agnieszka",
       Aleksandry = "Aleksandra",
+      Aliny = "Alina",
+      Anny = "Anna",
+      Barbary = "Barbara",
+      Bitwa = "Bitwy",
+      Elżbiety = "Elżbieta",
+      Emilii = "Emilia",
+      Ewy = "Ewa",
+      Haliny = "Halina",
+      Hanny = "Hanna",
       Heleny = "Helena",
-      Natalii = "Natalia",
-      Wisławy = "Wisława",
-      Marii = "Maria",
-      Świętej = "Święta",
+      Janiny = "Janina",
+      Katarzyny = "Katarzyna",
+      Królowej = "Królowa",
       Księżnej = "Księżna",
-      Bitwa = "Bitwy"
+      Ludwiki = "Ludwika",
+      Marii = "Maria",
+      Natalii = "Natalia",
+      Poli = "Pola",
+      Świętej = "Święta",
+      Wandy = "Wanda",
+      Wisławy = "Wisława",
+      Zofii = "Zofia"
     )
 
     if (split_string[1] %in% names(name_replace_m_v)) {
