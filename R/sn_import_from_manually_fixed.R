@@ -85,7 +85,12 @@ sn_import_from_manually_fixed <- function(input_df,
       .data$fixed_sex_or_gender,
       .data$fixed_category,
       .data$fixed_n_dedicated_to
-    )
+    ) %>% 
+    dplyr::mutate(tick_if_wrong = as.character(.data$tick_if_wrong),
+                  fixed_human = as.character(.data$fixed_human),
+                  fixed_named_after_id = as.character(.data$fixed_named_after_id),
+                  fixed_sex_or_gender = as.character(.data$fixed_sex_or_gender),
+                  fixed_category = as.character(.data$fixed_category))
 
   if (type == "humans") {
 
