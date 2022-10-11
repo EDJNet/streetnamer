@@ -423,7 +423,7 @@ sn_app_server <- function(input, output, session) {
         filter = "top",
         options = list(
           dom = "tp",
-          pageLength = 5,
+          pageLength = 8,
           lengthMenu = c(
             3, 5,
             10,
