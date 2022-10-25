@@ -428,6 +428,7 @@ sn_street_name_to_remove_df <- dplyr::bind_rows(
     string = c(
       purrr::map(
         .x = c(
+          "Corte ",
           "Via ",
           "Viale ",
           "Piazza ",

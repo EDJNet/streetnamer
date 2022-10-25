@@ -54,7 +54,7 @@ mod_sn_search_wikidata_server <- function(id,
           cache = cache,
           cache_connection = connection
         ) %>%
-          dplyr::filter(is.na(id)==FALSE)
+          dplyr::filter(is.na(id) == FALSE)
       }
       search_results_df
     })

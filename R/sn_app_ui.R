@@ -9,7 +9,7 @@ sn_app_ui <- function(request) {
     # Leave this function for adding external resources
     golem_add_external_resources(),
     waiter::use_waiter(),
-    #waiter::useHostess(),
+    # waiter::useHostess(),
     cicerone::use_cicerone(),
     waiter::waiter_show_on_load(html = waiter::spin_wandering_cubes()),
     tags$head(shiny::HTML(golem::get_golem_options("custom_head_html"))),
@@ -39,7 +39,7 @@ sn_app_ui <- function(request) {
       # background-color: #ff5454;
       # z-index: 1000;"
       #       ),
-      #waiter::autoWaiter(),
+      # waiter::autoWaiter(),
       fluidRow(
         column(
           width = 2,

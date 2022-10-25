@@ -16,7 +16,8 @@
 sn_get_gender_label <- function(named_after_id,
                                 language = tidywikidatar::tw_get_language(),
                                 cache_connection = NULL,
-                                cache = TRUE) {
+                                cache = TRUE,
+                                disconnect_db = TRUE) {
   if (is.null(named_after_id)) {
     return(NULL)
   }
@@ -27,7 +28,8 @@ sn_get_gender_label <- function(named_after_id,
     only_first = TRUE,
     language = language,
     cache_connection = cache_connection,
-    cache = cache
+    cache = cache,
+    disconnect_db = disconnect_db
   )
   purrr::map_chr(
     .x = gender_id,

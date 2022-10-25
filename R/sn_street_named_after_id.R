@@ -332,7 +332,7 @@ sn_get_street_named_after_id <- function(country = NULL,
   db <- tidywikidatar::tw_connect_to_cache(
     connection = connection,
     language = language,
-    cache = TRUE,
+    cache = TRUE
   )
 
 

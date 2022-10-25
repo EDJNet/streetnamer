@@ -8,7 +8,8 @@ sn_get_gender_label(
   named_after_id,
   language = tidywikidatar::tw_get_language(),
   cache_connection = NULL,
-  cache = TRUE
+  cache = TRUE,
+  disconnect_db = TRUE
 )
 }
 \arguments{

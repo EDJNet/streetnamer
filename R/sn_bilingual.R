@@ -27,15 +27,15 @@ sn_get_clean_street_name_bilingual_df <- function(gisco_id,
       dplyr::distinct(name)
   }
 
-  if (is.null(languages)==FALSE) {
-    if (languages=="french-flemish") {
-      fr_fl <- TRUE  
+  if (is.null(languages) == FALSE) {
+    if (languages == "french-flemish") {
+      fr_fl <- TRUE
     } else {
       fr_fl <- FALSE
-    } 
+    }
   } else {
     if (gisco_id %in% c("BE100", "BE_21004", "BE_21015", "BE_21001", "BE_21012", "BE_21016")) {
-      fr_fl <- TRUE  
+      fr_fl <- TRUE
     } else {
       fr_fl <- FALSE
     }

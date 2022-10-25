@@ -31,28 +31,30 @@ mod_sn_show_summary_stats_server <- function(id,
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
 
-    w <- waiter::Waiter$new(id = ns("summary_stats_ui"),
-                            html = waiter::spin_loaders(id = 15,color = "#FF5454"),
-                            fadeout = TRUE,
-                            color = "#fef7ed")
-    
+    w <- waiter::Waiter$new(
+      id = ns("summary_stats_ui"),
+      html = waiter::spin_loaders(id = 15, color = "#FF5454"),
+      fadeout = TRUE,
+      color = "#fef7ed"
+    )
+
     if (is.null(gisco_label)) {
       gisco_label <- ""
     }
 
-  
+
     output$summary_stats_ui <- shiny::renderUI({
       w$show()
-      
+
       country_code <- sn_standard_country(country = country, type = "code")
-      
+
       if (country_code %in% sn_countries_with_streets_as_qid) {
         core_df <- sn_get_city_combo(
           gisco_id = gisco_id,
           country = country,
           streets_sf = streets_sf,
           street_names_df = street_names_df,
-          check_named_after_original = TRUE, 
+          check_named_after_original = TRUE,
           check_named_after = FALSE,
           include_checked_elsewhere_in_country = include_checked_elsewhere_in_country,
           connection = connection,
@@ -71,57 +73,57 @@ mod_sn_show_summary_stats_server <- function(id,
           language = language,
           search_language = search_language,
           disconnect_db = disconnect_db,
-          check_named_after_original = FALSE, 
+          check_named_after_original = FALSE,
           check_named_after = FALSE
         )
       }
-      
+
       total_streets <- nrow(core_df)
       total_checked <- nrow(core_df %>% dplyr::filter(as.logical(checked)))
       total_ignored <- nrow(core_df %>% dplyr::filter(as.logical(ignore)))
       total_valid <- total_streets - total_ignored
       total_with_named_after_id <- nrow(core_df %>%
-                                          dplyr::filter(
-                                            is.na(ignore) | as.logical(ignore) == FALSE,
-                                            is.na(named_after_id) == FALSE
-                                          ))
+        dplyr::filter(
+          is.na(ignore) | as.logical(ignore) == FALSE,
+          is.na(named_after_id) == FALSE
+        ))
       total_with_named_after_id_checked <- nrow(core_df %>%
-                                                  dplyr::filter(
-                                                    is.na(ignore) | as.logical(ignore) == FALSE,
-                                                    is.na(named_after_id) == FALSE,
-                                                    as.logical(checked)
-                                                  ))
-      
+        dplyr::filter(
+          is.na(ignore) | as.logical(ignore) == FALSE,
+          is.na(named_after_id) == FALSE,
+          as.logical(checked)
+        ))
+
       total_tentative_humans <- nrow(core_df %>%
-                                       dplyr::filter(
-                                         is.na(ignore) | as.logical(ignore) == FALSE,
-                                         as.logical(person)
-                                       ))
-      
+        dplyr::filter(
+          is.na(ignore) | as.logical(ignore) == FALSE,
+          as.logical(person)
+        ))
+
       total_humans_checked <- nrow(core_df %>%
-                                     dplyr::filter(
-                                       is.na(ignore) | as.logical(ignore) == FALSE,
-                                       as.logical(checked),
-                                       as.logical(person)
-                                     ))
-      
+        dplyr::filter(
+          is.na(ignore) | as.logical(ignore) == FALSE,
+          as.logical(checked),
+          as.logical(person)
+        ))
+
       total_humans_with_id_checked <- nrow(core_df %>%
-                                             dplyr::filter(
-                                               is.na(ignore) | as.logical(ignore) == FALSE,
-                                               is.na(named_after_id) == FALSE,
-                                               as.logical(checked),
-                                               as.logical(person)
-                                             ))
-      
+        dplyr::filter(
+          is.na(ignore) | as.logical(ignore) == FALSE,
+          is.na(named_after_id) == FALSE,
+          as.logical(checked),
+          as.logical(person)
+        ))
+
       total_humans_with_gender <- nrow(core_df %>%
-                                         dplyr::filter(
-                                           is.na(ignore) | as.logical(ignore) == FALSE,
-                                           as.logical(checked),
-                                           as.logical(person),
-                                           is.na(gender) == FALSE
-                                         ))
-      
-      
+        dplyr::filter(
+          is.na(ignore) | as.logical(ignore) == FALSE,
+          as.logical(checked),
+          as.logical(person),
+          is.na(gender) == FALSE
+        ))
+
+
       core_confirmed_individuals_with_id_df <- core_df %>%
         dplyr::filter(
           is.na(ignore) | as.logical(ignore) == FALSE,
@@ -130,7 +132,7 @@ mod_sn_show_summary_stats_server <- function(id,
           as.logical(person)
         ) %>%
         dplyr::distinct(.data$named_after_id)
-      
+
       items_df <- tidywikidatar::tw_get(
         id = core_confirmed_individuals_with_id_df$named_after_id,
         language = language,
@@ -139,45 +141,45 @@ mod_sn_show_summary_stats_server <- function(id,
         cache_connection = connection,
         disconnect_db = FALSE
       )
-      
-      
+
+
       qid_with_gender <- items_df %>%
         dplyr::filter(property == "P21") %>%
         # gender
         dplyr::distinct(.data$id) %>%
         base::nrow()
-      
+
       qid_with_dob <- items_df %>%
         dplyr::filter(property == "P569") %>%
         # date of birth
         dplyr::distinct(.data$id) %>%
         base::nrow()
-      
+
       qid_with_dod <- items_df %>%
         dplyr::filter(property == "P570") %>%
         # date of death
         dplyr::distinct(.data$id) %>%
         base::nrow()
-      
+
       qid_with_pob <- items_df %>%
         dplyr::filter(property == "P19") %>%
         # place of birth
         dplyr::distinct(.data$id) %>%
         base::nrow()
-      
+
       qid_with_pod <- items_df %>%
         dplyr::filter(property == "P20") %>%
         # place of death
         dplyr::distinct(.data$id) %>%
         base::nrow()
-      
+
       qid_with_occupation <- items_df %>%
         dplyr::filter(property == "P106") %>%
         # place of death
         dplyr::distinct(.data$id) %>%
         base::nrow()
-      
-      
+
+
       summary_taglist <- shiny::tagList(
         shiny::h2(stringr::str_c("Summary statistics for ", gisco_label, " (", gisco_id, ")")),
         shiny::tags$ul(
@@ -244,11 +246,11 @@ mod_sn_show_summary_stats_server <- function(id,
         ),
         shiny::p(shiny::tags$i("* Since streets may be dedicated to more than one individual, totals may not match exactly, as it is expected that there are slightly more individuals than streets named after individuals."))
       )
-      
-      
-      
-      
-      summary_taglist 
+
+
+
+
+      summary_taglist
     })
 
     core_df_r <- shiny::reactive({

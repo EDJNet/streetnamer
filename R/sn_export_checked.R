@@ -414,17 +414,17 @@ sn_export <- function(gisco_id = NULL,
   )
 
   if (!"street_name" %in% colnames(streets_sf)) {
-    streets_sf <- streets_sf %>% 
+    streets_sf <- streets_sf %>%
       dplyr::rename(street_name = name)
   }
-  
+
   current_gisco_id <- gisco_id
-  
+
   if (include_checked_elsewhere_in_country) {
     stored_street_names_df <- sn_get_street_named_after_id(
-      street_name = streets_sf %>% 
-        sf::st_drop_geometry() %>% 
-        dplyr::distinct(street_name) %>% 
+      street_name = streets_sf %>%
+        sf::st_drop_geometry() %>%
+        dplyr::distinct(street_name) %>%
         dplyr::pull(street_name),
       country = country,
       keep_only_latest = keep_only_latest,
@@ -434,8 +434,8 @@ sn_export <- function(gisco_id = NULL,
       connection = connection_db,
       disconnect_db = FALSE
     ) %>%
-      dplyr::mutate(check_gisco_id = current_gisco_id == .data$gisco_id) %>% 
-      dplyr::arrange(check_gisco_id, dplyr::desc(time)) %>% 
+      dplyr::mutate(check_gisco_id = current_gisco_id == .data$gisco_id) %>%
+      dplyr::arrange(check_gisco_id, dplyr::desc(time)) %>%
       dplyr::select(-check_gisco_id)
   } else {
     stored_street_names_df <- sn_get_street_named_after_id(
@@ -449,7 +449,7 @@ sn_export <- function(gisco_id = NULL,
       connection = connection_db,
       disconnect_db = FALSE
     ) %>%
-      dplyr::select(-.data$session, -.data$time) 
+      dplyr::select(-.data$session, -.data$time)
   }
 
   current_confirmed_df <- stored_street_names_df %>%

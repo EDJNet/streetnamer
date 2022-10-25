@@ -24,9 +24,9 @@ sn_get_city_combo <- function(gisco_id,
   country_code <- sn_standard_country(country = country, type = "code")
   country_name <- sn_standard_country(country = country, type = "name")
 
-  if (include_checked_elsewhere_in_country== TRUE) {
+  if (include_checked_elsewhere_in_country == TRUE) {
     current_gisco_id <- gisco_id
-    
+
     if (is.null(streets_sf)) {
       usethis::ui_warn("To include checked elsewhere in country, `street_names_df` must be given.")
       manually_checked_df <- sn_get_street_named_after_id(
@@ -40,14 +40,14 @@ sn_get_city_combo <- function(gisco_id,
         dplyr::arrange(dplyr::desc(time))
     } else {
       if (!"street_name" %in% colnames(streets_sf)) {
-        streets_sf <- streets_sf %>% 
+        streets_sf <- streets_sf %>%
           dplyr::rename(street_name = name)
       }
-      
+
       manually_checked_df <- sn_get_street_named_after_id(
-        street_name = streets_sf %>% 
-          sf::st_drop_geometry() %>% 
-          dplyr::distinct(street_name) %>% 
+        street_name = streets_sf %>%
+          sf::st_drop_geometry() %>%
+          dplyr::distinct(street_name) %>%
           dplyr::pull(street_name),
         country = country,
         language = language,
@@ -55,14 +55,11 @@ sn_get_city_combo <- function(gisco_id,
         only_checked = TRUE,
         disconnect_db = FALSE
       ) %>%
-        dplyr::mutate(check_gisco_id = current_gisco_id == .data$gisco_id) %>% 
-        dplyr::arrange(check_gisco_id, dplyr::desc(time)) %>% 
+        dplyr::mutate(check_gisco_id = current_gisco_id == .data$gisco_id) %>%
+        dplyr::arrange(check_gisco_id, dplyr::desc(time)) %>%
         dplyr::select(-check_gisco_id)
     }
-    
-
   } else {
-    
     manually_checked_df <- sn_get_street_named_after_id(
       gisco_id = gisco_id,
       country = country,
@@ -73,7 +70,7 @@ sn_get_city_combo <- function(gisco_id,
     ) %>%
       dplyr::arrange(dplyr::desc(time))
   }
-  
+
 
   # basic_checked_df
   manually_checked_core_df <- manually_checked_df %>%
@@ -133,7 +130,7 @@ sn_get_city_combo <- function(gisco_id,
       by = "street_name"
     )
 
-  if (nrow(street_names_for_automatic_checking_df)>0) {
+  if (nrow(street_names_for_automatic_checking_df) > 0) {
     automatically_checked_df <- sn_search_named_after(
       gisco_id = gisco_id,
       search_language = search_language,
@@ -144,7 +141,7 @@ sn_get_city_combo <- function(gisco_id,
       cache = TRUE,
       ...
     )
-    
+
     all_wikidata_df <- tw_get(
       id = c(automatically_checked_df$named_after_id),
       language = language,
@@ -153,7 +150,7 @@ sn_get_city_combo <- function(gisco_id,
       cache_connection = connection,
       disconnect_db = FALSE
     )
-    
+
     humans_df <- all_wikidata_df %>%
       dplyr::filter(
         is.na(.data$id) == FALSE,
@@ -165,7 +162,7 @@ sn_get_city_combo <- function(gisco_id,
         named_after_id = .data$id,
         person = as.numeric(1)
       )
-    
+
     gender_df <- all_wikidata_df %>%
       dplyr::filter(
         is.na(.data$id) == FALSE,
@@ -185,13 +182,13 @@ sn_get_city_combo <- function(gisco_id,
       ), .groups = "drop") %>%
       dplyr::distinct() %>%
       dplyr::rename(named_after_id = .data$id)
-    
-    
+
+
     automatically_checked_core_df <- automatically_checked_df %>%
       dplyr::transmute(.data$street_name,
-                       .data$named_after_id,
-                       checked = as.integer(0),
-                       ignore = as.integer(NA)
+        .data$named_after_id,
+        checked = as.integer(0),
+        ignore = as.integer(NA)
       ) %>%
       dplyr::left_join(y = humans_df, by = "named_after_id") %>%
       dplyr::mutate(person = dplyr::case_when(
@@ -206,11 +203,11 @@ sn_get_city_combo <- function(gisco_id,
     core_df <- dplyr::bind_rows(
       manually_checked_core_df,
       automatically_checked_core_df
-    ) 
+    )
   } else {
     core_df <- manually_checked_core_df
   }
- 
+
   core_df %>%
     dplyr::arrange(street_name)
 }

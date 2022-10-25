@@ -39,8 +39,10 @@ sn_app_server <- function(input, output, session) {
 
   #### modules #####
 
-  observeEvent(list(credentials()$user_auth, 
-                    input$current_gisco_id), {
+  observeEvent(list(
+    credentials()$user_auth,
+    input$current_gisco_id
+  ), {
     mod_sn_export_server(
       id = "snm_export_ui_1",
       gisco_id = input$current_gisco_id,
@@ -304,7 +306,7 @@ sn_app_server <- function(input, output, session) {
         dplyr::rename(name = street_name)
     } else if (input$streets_to_show_in_dt == "Checked humans without confirmed id") {
       sn_get_street_named_after_id(
-       # gisco_id = input$current_gisco_id,
+        # gisco_id = input$current_gisco_id,
         country = stringr::str_extract(
           string = input$current_gisco_id,
           pattern = "[A-Z][A-Z]"
@@ -319,12 +321,11 @@ sn_app_server <- function(input, output, session) {
         dplyr::distinct(street_name) %>%
         dplyr::rename(name = street_name)
     } else if (input$streets_to_show_in_dt == "Not yet checked, but likely humans") {
-      
       current_country_v <- stringr::str_extract(
         string = input$current_gisco_id,
         pattern = "[A-Z][A-Z]"
       )
-      
+
       not_checked_df <- current_streets_sf_r() %>%
         sf::st_drop_geometry() %>%
         dplyr::distinct(name) %>%
@@ -340,39 +341,52 @@ sn_app_server <- function(input, output, session) {
             dplyr::rename(name = street_name),
           by = "name"
         )
-      
-      if (current_country_v=="BE") {
-        to_search_df <- tibble::tibble(name = not_checked_df$name, 
-                                       name_clean = sn_clean_street_name(street_name = not_checked_df$name,
-                                                                         country = current_country_v))
-        to_search_df <- sn_get_clean_street_name_bilingual_df(gisco_id = input$current_gisco_id,
-                                                              street_names_df = to_search_df)
+
+      if (current_country_v == "BE") {
+        to_search_df <- tibble::tibble(
+          name = not_checked_df$name,
+          name_clean = sn_clean_street_name(
+            street_name = not_checked_df$name,
+            country = current_country_v
+          )
+        )
+        to_search_df <- sn_get_clean_street_name_bilingual_df(
+          gisco_id = input$current_gisco_id,
+          street_names_df = to_search_df
+        )
       } else {
-        to_search_df <- tibble::tibble(name = not_checked_df$name, 
-                                       name_clean = sn_clean_street_name(street_name = not_checked_df$name,
-                                                                         country = current_country_v))
-        
+        to_search_df <- tibble::tibble(
+          name = not_checked_df$name,
+          name_clean = sn_clean_street_name(
+            street_name = not_checked_df$name,
+            country = current_country_v
+          )
+        )
       }
-      
-     
-      auto_named_after_df <- sn_search_named_after(gisco_id = input$current_gisco_id,
-                                                   street_names_df = to_search_df,
-                                                   cache = TRUE,
-                                                   overwrite_cache = FALSE,
-                                                   connection = golem::get_golem_options("connection"))
-      
-      auto_named_after_humans_df <- auto_named_after_df %>% 
-        dplyr::mutate(instance_of = tw_get_p1(id = named_after_id,
-                                              p = "P31",
-                                              cache = TRUE,
-                                              overwrite_cache = FALSE,
-                                              cache_connection = golem::get_golem_options("connection"),
-                                              disconnect_db = TRUE)) %>% 
-        dplyr::filter(is.na(instance_of)==FALSE) %>% 
+
+
+      auto_named_after_df <- sn_search_named_after(
+        gisco_id = input$current_gisco_id,
+        street_names_df = to_search_df,
+        cache = TRUE,
+        overwrite_cache = FALSE,
+        connection = golem::get_golem_options("connection")
+      )
+
+      auto_named_after_humans_df <- auto_named_after_df %>%
+        dplyr::mutate(instance_of = tw_get_p1(
+          id = named_after_id,
+          p = "P31",
+          cache = TRUE,
+          overwrite_cache = FALSE,
+          cache_connection = golem::get_golem_options("connection"),
+          disconnect_db = TRUE
+        )) %>%
+        dplyr::filter(is.na(instance_of) == FALSE) %>%
         dplyr::filter(instance_of == "Q5")
-      
-      auto_named_after_humans_df %>% 
-        dplyr::rename(name = street_name) %>% 
+
+      auto_named_after_humans_df %>%
+        dplyr::rename(name = street_name) %>%
         dplyr::distinct(name)
     } else {
       current_streets_sf_r() %>%
