@@ -10,6 +10,14 @@
 mod_sn_export_ui <- function(id) {
   ns <- NS(id)
   shiny::tagList(
+    shiny::selectInput(
+      inputId = ns("language_selector"),
+      label = "Language to be used for labels",
+      choices = setNames(available_languages$language_code, available_languages$language_name),
+      selected = tidywikidatar::tw_get_language(),
+      multiple = FALSE,
+      selectize = TRUE
+    ),
     shiny::uiOutput(ns("download_buttons_ui"))
   )
 }
@@ -23,6 +31,7 @@ mod_sn_export_server <- function(id,
                                  include_checked_elsewhere_in_country = FALSE,
                                  streets_sf = NULL,
                                  language = tidywikidatar::tw_get_language(),
+                                 available_languages = streetnamer::sn_available_languages,
                                  connection = NULL,
                                  enable = TRUE) {
   moduleServer(id, function(input, output, session) {
@@ -51,7 +60,7 @@ mod_sn_export_server <- function(id,
       if (input$export_type == "Export checked streets in current country") {
         export_df <- sn_get_street_named_after_id(
           country = country,
-          language = language,
+          language = input$language_selector,
           connection = connection,
           remove_ignored = FALSE
         )
@@ -60,7 +69,7 @@ mod_sn_export_server <- function(id,
         export_df <- sn_get_street_named_after_id(
           gisco_id = gisco_id,
           country = country,
-          language = language,
+          language = input$language_selector,
           connection = connection,
           remove_ignored = FALSE
         )
@@ -74,7 +83,7 @@ mod_sn_export_server <- function(id,
           streets_sf = streets_sf,
           unlist = TRUE,
           write_file = FALSE,
-          language = language,
+          language = input$language_selector,
           connection = connection,
           cache = TRUE
         )
@@ -88,7 +97,7 @@ mod_sn_export_server <- function(id,
           streets_sf = streets_sf,
           unlist = TRUE,
           write_file = FALSE,
-          language = language,
+          language = input$language_selector,
           connection = connection,
           cache = TRUE
         )
@@ -102,7 +111,7 @@ mod_sn_export_server <- function(id,
           streets_sf = streets_sf,
           unlist = TRUE,
           write_file = FALSE,
-          language = language,
+          language = input$language_selector,
           connection = connection,
           cache = TRUE
         )
