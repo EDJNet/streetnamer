@@ -13,7 +13,7 @@ mod_sn_export_ui <- function(id) {
     shiny::selectInput(
       inputId = ns("language_selector"),
       label = "Language to be used for labels",
-      choices = setNames(available_languages$language_code, available_languages$language_name),
+      choices = setNames(sn_available_languages$language_code, sn_available_languages$language_name),
       selected = tidywikidatar::tw_get_language(),
       multiple = FALSE,
       selectize = TRUE
