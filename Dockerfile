@@ -10,9 +10,9 @@ RUN Rscript -e 'remotes::install_version("tibble",upgrade="never", version = "3.
 RUN Rscript -e 'remotes::install_version("glue",upgrade="never", version = "1.6.2")'
 RUN Rscript -e 'remotes::install_version("stringi",upgrade="never", version = "1.7.8")'
 RUN Rscript -e 'remotes::install_version("fs",upgrade="never", version = "1.5.2")'
-RUN Rscript -e 'remotes::install_version("bslib",upgrade="never", version = "0.4.0")'
+RUN Rscript -e 'remotes::install_version("bslib",upgrade="never", version = "0.4.1")'
 RUN Rscript -e 'remotes::install_version("htmltools",upgrade="never", version = "0.5.3")'
-RUN Rscript -e 'remotes::install_version("shiny",upgrade="never", version = "1.7.2")'
+RUN Rscript -e 'remotes::install_version("shiny",upgrade="never", version = "1.7.3")'
 RUN Rscript -e 'remotes::install_version("DBI",upgrade="never", version = "1.1.3")'
 RUN Rscript -e 'remotes::install_version("dplyr",upgrade="never", version = "1.0.10")'
 RUN Rscript -e 'remotes::install_version("knitr",upgrade="never", version = "1.40")'
@@ -32,19 +32,17 @@ RUN Rscript -e 'remotes::install_version("shinyauthr",upgrade="never", version =
 RUN Rscript -e 'remotes::install_version("shinyWidgets",upgrade="never", version = "0.7.4")'
 RUN Rscript -e 'remotes::install_version("countrycode",upgrade="never", version = "1.4.0")'
 RUN Rscript -e 'remotes::install_version("waiter",upgrade="never", version = "0.2.5")'
+RUN Rscript -e 'remotes::install_version("tidywikidatar",upgrade="never", version = "0.5.5")'
 RUN Rscript -e 'remotes::install_version("sf",upgrade="never", version = "1.0-8")'
-RUN Rscript -e 'remotes::install_version("golem",upgrade="never", version = "0.3.4")'
-RUN Rscript -e 'remotes::install_version("DT",upgrade="never", version = "0.25")'
-RUN Rscript -e 'remotes::install_github("edjnet/tidywikidatar@3fe1a1fa6194119e093ad524a430308841ec9b99")'
+RUN Rscript -e 'remotes::install_version("golem",upgrade="never", version = "0.3.5")'
+RUN Rscript -e 'remotes::install_version("DT",upgrade="never", version = "0.26")'
 RUN Rscript -e 'remotes::install_github("giocomai/latlon2map@6d2e029f8144472dfad35d5fc6fba1dbe9d00373")'
 
-
-
 # ODBC driver
-ADD https://dev.mysql.com/get/Downloads/Connector-ODBC/8.0/mysql-connector-odbc-8.0.30-linux-glibc2.27-x86-64bit.tar.gz .
-RUN tar -C . -xzvf mysql-connector-odbc-8.0.30-linux-glibc2.27-x86-64bit.tar.gz
-RUN cp -r mysql-connector-odbc-8.0.30-linux-glibc2.27-x86-64bit/bin/* /usr/local/bin
-RUN cp -r mysql-connector-odbc-8.0.30-linux-glibc2.27-x86-64bit/lib/* /usr/local/lib
+ADD https://dev.mysql.com/get/Downloads/Connector-ODBC/8.0/mysql-connector-odbc-8.0.31-linux-glibc2.27-x86-64bit.tar.gz .
+RUN tar -C . -xzvf mysql-connector-odbc-8.0.31-linux-glibc2.27-x86-64bit.tar.gz
+RUN cp -r mysql-connector-odbc-8.0.31-linux-glibc2.27-x86-64bit/bin/* /usr/local/bin
+RUN cp -r mysql-connector-odbc-8.0.31-linux-glibc2.27-x86-64bit/lib/* /usr/local/lib
 RUN myodbc-installer -a -d -n "MySQL ODBC 8.0 Driver" -t "Driver=/usr/local/lib/libmyodbc8w.so"
 
 
