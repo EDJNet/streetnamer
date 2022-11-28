@@ -52,7 +52,8 @@ sn_create_map <- function(streets_sf = NULL,
       "gender"
     ) %>% 
     dplyr::mutate(qid_label = tw_get_label(id = named_after_id,
-                                           cache_connection = connection)
+                                           cache_connection = connection,
+                                           cache = TRUE)
                   # ,
                   # qid_description = tw_get_description(id = named_after_id,
                   #                                      cache_connection = connection)
