@@ -12,7 +12,8 @@
 #' sn_get_info_box("Q676555")
 sn_get_info_box <- function(named_after_id,
                             language = "en",
-                            connection = NULL) {
+                            connection = NULL,
+                            disconnect_db = TRUE) {
   if (is.na(named_after_id)) {
     return(shiny::tagList())
   }
@@ -168,7 +169,7 @@ sn_get_info_box <- function(named_after_id,
   tidywikidatar::tw_disconnect_from_cache(
     cache = TRUE,
     cache_connection = current_db_connection,
-    disconnect_db = TRUE,
+    disconnect_db = disconnect_db,
     language = language
   )
   

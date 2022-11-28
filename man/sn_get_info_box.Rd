@@ -4,7 +4,12 @@
 \alias{sn_get_info_box}
 \title{Get data from Wikidata and generate a box with key information}
 \usage{
-sn_get_info_box(named_after_id, language = "en", connection = NULL)
+sn_get_info_box(
+  named_after_id,
+  language = "en",
+  connection = NULL,
+  disconnect_db = TRUE
+)
 }
 \arguments{
 \item{named_after_id}{A wikidata identifiers, must start with "Q".}
