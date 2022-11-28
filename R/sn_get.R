@@ -91,6 +91,7 @@ sn_get_streets <- function(country) {
       "streets_shp",
       country
     )
+  
   if (fs::file_exists(country_street_shp_folder) == FALSE) {
     sn_extract_streets(countries = country)
   }
@@ -204,7 +205,11 @@ sn_extract_places <- function(countries,
 #' @export
 #'
 
-sn_get_city_boundaries <- function(city, country, admin_level = 6, administrative = NULL, cache = TRUE) {
+sn_get_city_boundaries <- function(city,
+                                   country,
+                                   admin_level = 6,
+                                   administrative = NULL,
+                                   cache = TRUE) {
   query <- paste(city, country, sep = ", ")
 
   dir.create(path = "data", showWarnings = FALSE)
