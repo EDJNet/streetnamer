@@ -17,11 +17,18 @@ sn_get_info_box <- function(named_after_id,
     return(shiny::tagList())
   }
 
+  current_db_connection <- tidywikidatar::tw_connect_to_cache(
+    connection = connection,
+    language = language,
+    cache = TRUE
+  )
+  
   item_df <- tidywikidatar::tw_get(
     id = named_after_id,
     language = language,
-    cache_connection = connection,
-    cache = TRUE
+    cache_connection = current_db_connection,
+    cache = TRUE,
+    disconnect_db = FALSE
   )
 
   label_df <- item_df %>%
@@ -88,8 +95,9 @@ sn_get_info_box <- function(named_after_id,
     # not a human!
     instance_of_label <- tidywikidatar::tw_get_label(instance_of_df$value[1],
       language = language,
-      cache_connection = connection,
-      cache = TRUE
+      cache_connection = current_db_connection,
+      cache = TRUE,
+      disconnect_db = FALSE
     )
 
     if (is.na(instance_of_label)) {
@@ -157,7 +165,13 @@ sn_get_info_box <- function(named_after_id,
     )
   }
 
-
+  tidywikidatar::tw_disconnect_from_cache(
+    cache = TRUE,
+    cache_connection = current_db_connection,
+    disconnect_db = TRUE,
+    language = language
+  )
+  
   shiny::tagList(
     shiny::h3(label),
     shiny::p(subtitle),

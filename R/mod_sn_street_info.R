@@ -216,7 +216,7 @@ mod_sn_street_info_server <- function(id,
         shiny::p("Status: ", shiny::strong(status_v)),
         shiny::hr(),
         shiny::p("Named after:"),
-        streetnamer::sn_get_info_box(
+        sn_get_info_box( # check
           named_after_id = named_after_id_selected,
           language = language,
           connection = current_db_connection
