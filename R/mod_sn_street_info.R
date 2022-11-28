@@ -39,6 +39,12 @@ mod_sn_street_info_server <- function(id,
     country_name <- sn_standard_country(country = country, type = "name")
 
     checked_lv <- NULL
+    
+    current_db_connection <- tidywikidatar::tw_connect_to_cache(
+      connection = connection,
+      language = language,
+      cache = TRUE
+    )
 
     if (is.null(named_after_id) == FALSE) {
       if (is.na(named_after_id)) {
@@ -58,17 +64,11 @@ mod_sn_street_info_server <- function(id,
         gender_selected <- sn_get_gender_label(
           named_after_id = named_after_id_selected,
           language = language,
-          cache_connection = connection,
+          cache_connection = current_db_connection,
           cache = TRUE
         )
       }
     } else {
-      current_db_connection <- tidywikidatar::tw_connect_to_cache(
-        connection = connection,
-        language = language,
-        cache = TRUE
-      )
-
       # check if street in database
       details_from_db <- sn_get_street_named_after_id(
         gisco_id = gisco_id,
@@ -169,12 +169,7 @@ mod_sn_street_info_server <- function(id,
           gender_selected <- as.character(NA)
         }
       }
-      tidywikidatar::tw_disconnect_from_cache(
-        cache = TRUE,
-        cache_connection = current_db_connection,
-        disconnect_db = TRUE,
-        language = language
-      )
+
     }
 
     tictoc::toc()
@@ -223,7 +218,7 @@ mod_sn_street_info_server <- function(id,
         streetnamer::sn_get_info_box(
           named_after_id = named_after_id_selected,
           language = language,
-          connection = connection
+          connection = current_db_connection
         ),
         shiny::hr(),
         # shinyWidgets::switchInput(
@@ -390,13 +385,18 @@ mod_sn_street_info_server <- function(id,
         named_after_n = as.integer(input$named_after_n),
         session = session$token,
         append = TRUE,
-        connection = connection,
+        connection = current_db_connection,
+        disconnect_db = FALSE,
         return_df_only = TRUE
       )
     })
-
-
-
+    
+    tidywikidatar::tw_disconnect_from_cache(
+      cache = TRUE,
+      cache_connection = current_db_connection,
+      disconnect_db = TRUE,
+      language = language
+    )
     shiny::reactive(selected_df_r())
   })
 }
