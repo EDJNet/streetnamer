@@ -65,7 +65,8 @@ mod_sn_street_info_server <- function(id,
           named_after_id = named_after_id_selected,
           language = language,
           cache_connection = current_db_connection,
-          cache = TRUE
+          cache = TRUE,
+          disconnect_db = FALSE
         )
       }
     } else {
