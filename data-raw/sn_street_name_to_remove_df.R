@@ -388,9 +388,9 @@ sn_street_name_to_remove_df <- dplyr::bind_rows(
     country = "Romania",
     string = c(
       "Bulevardul ",
+      "Calea ",
       "Strada ",
       "Stradela ",
-      "Calea ",
       "Șoseaua ",
       "Piața ",
       "Splaiul ",
@@ -402,9 +402,10 @@ sn_street_name_to_remove_df <- dplyr::bind_rows(
       "Podul ",
       "Prelungirea ",
       "Fundătura ",
-      "Ulița ",
       "Piațeta ",
-      "Pietonalul "
+      "Pietonalul ",
+      "Scara ",
+      "Ulița "
     ) %>%
       stringr::str_c("^", .)
   ),
