@@ -50,15 +50,33 @@ sn_create_map <- function(streets_sf = NULL,
       "named_after_id",
       "person",
       "gender"
+    ) %>% 
+    dplyr::mutate(qid_label = tw_get_label(id = named_after_id,
+                                           cache_connection = connection)
+                  # ,
+                  # qid_description = tw_get_description(id = named_after_id,
+                  #                                      cache_connection = connection)
+                  ) %>% 
+    
+    dplyr::mutate(
+      popup_content = stringr::str_c(
+        "<big><p>",
+        street_name, 
+        "</p><b><a href='https://www.wikidata.org/wiki/",
+        named_after_id,
+        "' target='_blank'>",
+        qid_label, "</a></b><br />")
     )
 
+  
   if (scope == "base") {
     leaflet::leaflet(data = streets_pre_sf) %>%
       leaflet::addTiles(urlTemplate = "https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png") %>%
       leaflet::addPolylines(
         color = "#ff5454",
-        weight = 3
-      )
+        weight = 3,
+        popup = streets_pre_sf$popup_content
+      ) 
   } else if (scope == "gender") {
     factpal <- leaflet::colorFactor(
       palette = topo.colors(5),
@@ -69,7 +87,8 @@ sn_create_map <- function(streets_sf = NULL,
       leaflet::addTiles(urlTemplate = "https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png") %>%
       leaflet::addPolylines(
         color = ~ factpal(gender),
-        weight = 3
+        weight = 3,
+        popup = streets_pre_sf$popup_content
       )
   } else if (scope == "year_of_birth") {
     pre_yob_sf <- streets_pre_sf %>%

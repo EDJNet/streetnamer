@@ -691,7 +691,7 @@ sn_app_server <- function(input, output, session) {
     sn_create_map(streets_sf = current_streets_sf_r(), 
                   streets_data_df = sn_get_street_named_after_id(
                     gisco_id = input$current_gisco_id,
-                    connection = connection,
+                    connection = golem::get_golem_options("connection"),
                     remove_ignored = FALSE
                   ),
                   gisco_id = input$current_gisco_id,
