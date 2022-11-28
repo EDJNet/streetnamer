@@ -36,7 +36,7 @@ RUN Rscript -e 'remotes::install_version("tidywikidatar",upgrade="never", versio
 RUN Rscript -e 'remotes::install_version("sf",upgrade="never", version = "1.0-9")'
 RUN Rscript -e 'remotes::install_version("golem",upgrade="never", version = "0.3.5")'
 RUN Rscript -e 'remotes::install_version("DT",upgrade="never", version = "0.26")'
-RUN Rscript -e 'remotes::install_github("giocomai/latlon2map@6d2e029f8144472dfad35d5fc6fba1dbe9d00373")'
+RUN Rscript -e 'remotes::install_github("giocomai/latlon2map@68603866417168a5a99a54415d9cef242d4632fc")'
 
 # ODBC driver
 ADD https://dev.mysql.com/get/Downloads/Connector-ODBC/8.0/mysql-connector-odbc-8.0.31-linux-glibc2.27-x86-64bit.tar.gz .
