@@ -688,12 +688,21 @@ sn_app_server <- function(input, output, session) {
       return(NULL)
     }
 
-    leaflet::leaflet(data = current_streets_sf_r()) %>%
-      leaflet::addTiles(urlTemplate = "https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png") %>%
-      leaflet::addPolylines(
-        color = "#ff5454",
-        weight = 3
-      )
+    sn_create_map(streets_sf = current_streets_sf_r(), 
+                  streets_data_df = sn_get_street_named_after_id(
+                    gisco_id = input$current_gisco_id,
+                    connection = connection,
+                    remove_ignored = FALSE
+                  ),
+                  gisco_id = input$current_gisco_id,
+                  scope = input$map_scope_selector)
+    
+    # leaflet::leaflet(data = current_streets_sf_r()) %>%
+    #   leaflet::addTiles(urlTemplate = "https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png") %>%
+    #   leaflet::addPolylines(
+    #     color = "#ff5454",
+    #     weight = 3
+    #   )
   })
 
 

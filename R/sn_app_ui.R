@@ -180,12 +180,19 @@ sn_app_ui <- function(request) {
             tabPanel(
               "Map",
               shiny::uiOutput(outputId = "current_city_title"),
+              shiny::selectInput(
+                inputId = "map_scope_selector",
+                label = "Select map type",
+                choices = list(`Base map` = "base",
+                               `Gender` = "gender",
+                               `Year of birth` = "year_of_birth")
+                ),
               leaflet::leafletOutput(
                 outputId = "current_city_map_leaflet",
                 height = "600px"
               )
             ),
-            tabPanel("Deduplicate", HTML("...")),
+          #  tabPanel("Deduplicate", HTML("...")),
             tabPanel(
               "Export",
               shinyauthr::loginUI(id = "login"),

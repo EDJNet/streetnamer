@@ -6,6 +6,7 @@
 \usage{
 sn_create_map(
   streets_sf = NULL,
+  streets_data_df = NULL,
   gisco_id = NULL,
   scope = "base",
   unnamed_streets = FALSE,
@@ -13,10 +14,6 @@ sn_create_map(
 )
 }
 \arguments{
-\item{streets_sf}{}
-
-\item{gisco_id}{}
-
 \item{scope}{Defaults to "base". Available values include "gender", "year_of_birth"}
 }
 \description{
