@@ -131,13 +131,18 @@ sn_get_info_box <- function(named_after_id,
     .noWS = "outside"
   )
 
-  wikipedia_link <- tidywikidatar::tw_get_wikipedia(
-    id = named_after_id,
-    id_df = item_df,
-    language = language,
-    cache_connection = connection,
-    cache = TRUE
-  )
+  wikipedia_base_link <- item_df %>%
+    dplyr::filter(.data$property == stringr::str_c("sitelink_", language, "wiki")) %>%
+    dplyr::pull("value")
+  
+  if (length(wikipedia_base_link)==0) {
+    wikipedia_link <- NA_character_
+  } else {
+    wikipedia_link <- stringr::str_c("https://",
+                                     language,
+                                     ".wikipedia.org/wiki/",
+                                     wikipedia_base_link)
+  }
 
   if (is.na(wikipedia_link) == TRUE) {
     link_tag <- htmltools::tagList(
