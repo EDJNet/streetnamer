@@ -80,7 +80,12 @@ sn_create_map <- function(streets_sf = NULL,
       ) 
   } else if (scope == "gender") {
     factpal <- leaflet::colorFactor(
-      palette = topo.colors(5),
+      palette = c("#00E5FF", # aquamarine
+                  "#004CFF", # blu
+                  "#FFFF00", # giallo
+                  "#00FF4D", # verde
+                  "#4C00FF" # viola
+                  ),
       domain = unique(streets_pre_sf$gender)
     )
 

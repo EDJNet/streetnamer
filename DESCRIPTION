@@ -1,6 +1,6 @@
 Package: streetnamer
 Title: Match street names to their Wikidata identifier with a Shiny interface 
-Version: 0.0.0.9008
+Version: 0.0.0.9009
 Authors@R: 
     c(person(given = "Giorgio",
              family = "Comai",

@@ -695,7 +695,8 @@ sn_app_server <- function(input, output, session) {
                     remove_ignored = FALSE
                   ),
                   gisco_id = input$current_gisco_id,
-                  scope = input$map_scope_selector)
+                  scope = input$map_scope_selector,
+                  connection = golem::get_golem_options("connection"))
     
     # leaflet::leaflet(data = current_streets_sf_r()) %>%
     #   leaflet::addTiles(urlTemplate = "https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png") %>%
