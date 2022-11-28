@@ -75,7 +75,7 @@ sn_create_map <- function(streets_sf = NULL,
       leaflet::addTiles(urlTemplate = "https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png") %>%
       leaflet::addPolylines(
         color = "#ff5454",
-        weight = 3,
+        weight = 4,
         popup = streets_pre_sf$popup_content
       ) 
   } else if (scope == "gender") {
@@ -93,7 +93,7 @@ sn_create_map <- function(streets_sf = NULL,
       leaflet::addTiles(urlTemplate = "https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png") %>%
       leaflet::addPolylines(
         color = ~ factpal(gender),
-        weight = 3,
+        weight = 4,
         popup = streets_pre_sf$popup_content
       )
   } else if (scope == "year_of_birth") {
@@ -136,7 +136,7 @@ sn_create_map <- function(streets_sf = NULL,
       leaflet::addTiles(urlTemplate = "https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png") %>%
       leaflet::addPolylines(
         color = ~ factpal(period_of_birth),
-        weight = 3
+        weight = 4
       ) %>%
       leaflet::addLegend("bottomright",
         pal = factpal,
