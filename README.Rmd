@@ -150,6 +150,7 @@ For ease of processing, files with humans and non-humans will be stored separate
 ```{r eval = FALSE}
 sn_get_details_by_lau(gisco_id = current_city,
                       export_format = "csv",
+                      additional_properties = NULL, # you probably don't need so much details at this stage
                       manual_check_columns = TRUE)
 ```
 
