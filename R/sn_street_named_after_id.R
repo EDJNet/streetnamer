@@ -366,10 +366,11 @@ sn_get_street_named_after_id <- function(country = NULL,
     )
   } else if (is.null(street_name) == FALSE & is.null(gisco_id) == TRUE) {
     # if street name given, but not municipality, return all streets with given name
+    street_name_to_filter <- street_name
     db_result <- tryCatch(
       dplyr::tbl(src = db, table_name) %>%
         dplyr::filter(
-          .data$street_name %in% !!stringr::str_c(street_name)
+          street_name %in% street_name_to_filter
         ),
       error = function(e) {
         logical(1L)
