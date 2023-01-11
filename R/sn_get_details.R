@@ -290,7 +290,8 @@ sn_get_details_by_lau <- function(gisco_id,
       )
 
       city_df <- tidywikidatar::tw_get_p_wide(
-        id = search_df,
+        id = search_df %>% 
+          dplyr::pull(named_after_id),
         p = c(
           "P31",
           "P21",
