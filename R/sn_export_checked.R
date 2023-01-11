@@ -34,15 +34,15 @@ sn_export_checked_legacy <- function(gisco_id = NULL,
     export_format <- "csv"
     unlist <- TRUE
   }
-  
-  
-  
+
+
+
   connection_db <- tidywikidatar::tw_connect_to_cache(
     connection = cache_connection,
     language = language,
     cache = cache
   )
-  
+
   if (source == "fixed_csv") {
     local_files <- fs::dir_ls(
       path = fs::path(fixed_folder),
@@ -50,13 +50,13 @@ sn_export_checked_legacy <- function(gisco_id = NULL,
       type = "file",
       glob = "*.csv"
     )
-    
+
     if (is.null(gisco_id) == FALSE) {
       files_to_keep <- local_files[stringr::str_starts(
         string = fs::path_file(path = local_files),
         pattern = stringr::str_c(gisco_id, "-")
       )]
-      
+
       country_name <- sn_standard_country(
         country = stringr::str_extract(string = gisco_id, pattern = "[A-Z][A-Z]") %>%
           stringr::str_to_upper(),
@@ -67,7 +67,7 @@ sn_export_checked_legacy <- function(gisco_id = NULL,
         string = fs::path_file(path = local_files),
         pattern = stringr::str_c(stringr::str_to_upper(country), "_")
       )]
-      
+
       country_name <- sn_standard_country(
         country = country %>%
           stringr::str_to_upper(),
@@ -102,8 +102,8 @@ sn_export_checked_legacy <- function(gisco_id = NULL,
           disconnect_db = FALSE
         )
       )
-    
-    
+
+
     city_df <- current_confirmed_df %>%
       dplyr::pull(named_after_id) %>%
       tidywikidatar::tw_get_p_wide(
@@ -132,7 +132,7 @@ sn_export_checked_legacy <- function(gisco_id = NULL,
         -.data$id,
         -.data$label
       )
-    
+
     processed_df <- dplyr::bind_cols(current_confirmed_df, city_df) %>%
       dplyr::mutate(
         place_of_birth_single = purrr::map_chr(
@@ -150,24 +150,24 @@ sn_export_checked_legacy <- function(gisco_id = NULL,
       ) %>%
       dplyr::mutate(
         place_of_birth_coordinates = tw_get_p(place_of_birth_single,
-                                              p = "P625",
-                                              only_first = TRUE,
-                                              preferred = TRUE,
-                                              cache = cache,
-                                              language = language,
-                                              overwrite_cache = overwrite_cache,
-                                              cache_connection = connection_db,
-                                              disconnect_db = FALSE
+          p = "P625",
+          only_first = TRUE,
+          preferred = TRUE,
+          cache = cache,
+          language = language,
+          overwrite_cache = overwrite_cache,
+          cache_connection = connection_db,
+          disconnect_db = FALSE
         ),
         place_of_death_coordinates = tw_get_p(place_of_death_single,
-                                              p = "P625",
-                                              only_first = TRUE,
-                                              preferred = TRUE,
-                                              cache = cache,
-                                              language = language,
-                                              overwrite_cache = overwrite_cache,
-                                              cache_connection = connection_db,
-                                              disconnect_db = FALSE
+          p = "P625",
+          only_first = TRUE,
+          preferred = TRUE,
+          cache = cache,
+          language = language,
+          overwrite_cache = overwrite_cache,
+          cache_connection = connection_db,
+          disconnect_db = FALSE
         )
       ) %>%
       tidyr::separate(
@@ -223,7 +223,7 @@ sn_export_checked_legacy <- function(gisco_id = NULL,
           disconnect_db = FALSE
         )
       )
-    
+
     if (include_image_credits == TRUE) {
       img_metadata_df <- processed_df %>%
         dplyr::distinct(.data$named_after_id) %>%
@@ -235,7 +235,7 @@ sn_export_checked_legacy <- function(gisco_id = NULL,
           cache_connection = connection_db,
           disconnect_db = FALSE
         )
-      
+
       processed_df <- processed_df %>%
         dplyr::left_join(
           y = img_metadata_df %>%
@@ -253,7 +253,7 @@ sn_export_checked_legacy <- function(gisco_id = NULL,
           by = "named_after_id"
         )
     }
-    
+
     if (unlist == TRUE) {
       output_df <- processed_df %>%
         dplyr::group_by(row_number) %>%
@@ -262,7 +262,7 @@ sn_export_checked_legacy <- function(gisco_id = NULL,
             where(is.list),
             function(x) {
               stringr::str_c(unique(unlist(x)),
-                             collapse = "; "
+                collapse = "; "
               )
             }
           )
@@ -281,7 +281,7 @@ sn_export_checked_legacy <- function(gisco_id = NULL,
         dplyr::group_by(row_number) %>%
         dplyr::mutate(
           unlisted_gender = stringr::str_c(unique(unlist(sex_or_gender_label)),
-                                           collapse = "; "
+            collapse = "; "
           )
         ) %>%
         dplyr::ungroup() %>%
@@ -296,23 +296,23 @@ sn_export_checked_legacy <- function(gisco_id = NULL,
         dplyr::select(-.data$unlisted_gender)
     }
   }
-  
+
   output_df <- output_df %>%
     dplyr::rename(named_after_id = .data$named_after_id)
-  
+
   tidywikidatar::tw_disconnect_from_cache(
     cache = cache,
     cache_connection = connection_db,
     disconnect_db = disconnect_db,
     language = language
   )
-  
-  
+
+
   if (is.null(export_format) == FALSE) {
     city_name <- streetnamer::sn_lau_by_country %>%
       dplyr::filter(GISCO_ID == gisco_id) %>%
       dplyr::pull(LAU_NAME)
-    
+
     fs::dir_create(path = fs::path(export_folder, country, export_format), recurse = TRUE)
     if (export_format == "csv") {
       readr::write_csv(
@@ -338,7 +338,7 @@ sn_export_checked_legacy <- function(gisco_id = NULL,
       if (is.null(gisco_id)) {
         usethis::ui_stop("For export in the `geojson` format, `gisco_id` must be given.")
       }
-      
+
       export_sf <- latlon2map::ll_osm_get_lau_streets(
         gisco_id = gisco_id,
         unnamed_streets = FALSE
@@ -348,7 +348,7 @@ sn_export_checked_legacy <- function(gisco_id = NULL,
           y = output_df,
           by = "street_name"
         )
-      
+
       sf::st_write(
         obj = export_sf,
         dsn = fs::path(
@@ -369,7 +369,7 @@ sn_export_checked_legacy <- function(gisco_id = NULL,
       )
     }
   }
-  
+
   output_df
 }
 
@@ -408,13 +408,13 @@ sn_export <- function(gisco_id = NULL,
       unlist <- TRUE
     }
   }
-  
+
   connection_db <- tidywikidatar::tw_connect_to_cache(
     connection = connection,
     language = language,
     cache = cache
   )
-  
+
   if (is.null(streets_sf)) {
     streets_sf <- latlon2map::ll_osm_get_lau_streets(
       gisco_id = gisco_id,
@@ -422,12 +422,12 @@ sn_export <- function(gisco_id = NULL,
       unnamed_streets = FALSE
     )
   }
-  
+
   if (!"street_name" %in% colnames(streets_sf)) {
     streets_sf <- streets_sf %>%
       dplyr::rename(street_name = name)
   }
-  
+
   if (include_checked_elsewhere_in_country) {
     stored_street_names_df <- sn_get_street_named_after_id(
       street_name = streets_sf %>%
@@ -459,7 +459,7 @@ sn_export <- function(gisco_id = NULL,
     ) %>%
       dplyr::select(-c("session", "time"))
   }
-  
+
   current_confirmed_df <- stored_street_names_df %>%
     dplyr::mutate(
       label = tidywikidatar::tw_get_label(
@@ -479,8 +479,8 @@ sn_export <- function(gisco_id = NULL,
         disconnect_db = FALSE
       )
     )
-  
-  
+
+
   city_df <- current_confirmed_df %>%
     dplyr::pull(named_after_id) %>%
     tidywikidatar::tw_get_p_wide(
@@ -508,7 +508,7 @@ sn_export <- function(gisco_id = NULL,
     dplyr::select(
       -c("id", "label")
     )
-  
+
   processed_df <- dplyr::bind_cols(
     current_confirmed_df,
     city_df
@@ -529,24 +529,24 @@ sn_export <- function(gisco_id = NULL,
     ) %>%
     dplyr::mutate(
       place_of_birth_coordinates = tidywikidatar::tw_get_p(place_of_birth_single,
-                                                           p = "P625",
-                                                           only_first = TRUE,
-                                                           preferred = TRUE,
-                                                           cache = cache,
-                                                           language = language,
-                                                           overwrite_cache = overwrite_cache,
-                                                           cache_connection = connection_db,
-                                                           disconnect_db = FALSE
+        p = "P625",
+        only_first = TRUE,
+        preferred = TRUE,
+        cache = cache,
+        language = language,
+        overwrite_cache = overwrite_cache,
+        cache_connection = connection_db,
+        disconnect_db = FALSE
       ),
       place_of_death_coordinates = tidywikidatar::tw_get_p(place_of_death_single,
-                                                           p = "P625",
-                                                           only_first = TRUE,
-                                                           preferred = TRUE,
-                                                           cache = cache,
-                                                           language = language,
-                                                           overwrite_cache = overwrite_cache,
-                                                           cache_connection = connection_db,
-                                                           disconnect_db = FALSE
+        p = "P625",
+        only_first = TRUE,
+        preferred = TRUE,
+        cache = cache,
+        language = language,
+        overwrite_cache = overwrite_cache,
+        cache_connection = connection_db,
+        disconnect_db = FALSE
       )
     ) %>%
     tidyr::separate(
@@ -602,7 +602,7 @@ sn_export <- function(gisco_id = NULL,
         disconnect_db = FALSE
       )
     )
-  
+
   if (include_image_credits == TRUE) {
     img_metadata_df <- processed_df %>%
       dplyr::distinct(.data$named_after_id) %>%
@@ -615,7 +615,7 @@ sn_export <- function(gisco_id = NULL,
         disconnect_db = FALSE,
         cache = cache
       )
-    
+
     processed_df <- processed_df %>%
       dplyr::left_join(
         y = img_metadata_df %>%
@@ -633,7 +633,7 @@ sn_export <- function(gisco_id = NULL,
         by = "named_after_id"
       )
   }
-  
+
   if (unlist == TRUE) {
     output_df <- processed_df %>%
       dplyr::group_by(row_number) %>%
@@ -642,7 +642,7 @@ sn_export <- function(gisco_id = NULL,
           where(is.list),
           function(x) {
             stringr::str_c(unique(unlist(x)),
-                           collapse = "; "
+              collapse = "; "
             )
           }
         )
@@ -661,7 +661,7 @@ sn_export <- function(gisco_id = NULL,
       dplyr::group_by(row_number) %>%
       dplyr::mutate(
         unlisted_gender = stringr::str_c(unique(unlist(sex_or_gender_label)),
-                                         collapse = "; "
+          collapse = "; "
         )
       ) %>%
       dplyr::ungroup() %>%
@@ -675,24 +675,24 @@ sn_export <- function(gisco_id = NULL,
       ) %>%
       dplyr::select(-.data$unlisted_gender)
   }
-  
-  
+
+
   tidywikidatar::tw_disconnect_from_cache(
     cache = cache,
     cache_connection = connection_db,
     disconnect_db = disconnect_db,
     language = language
   )
-  
+
   if (is.null(export_format) == FALSE) {
     if (write_file == TRUE) {
       city_name <- streetnamer::sn_lau_by_country %>%
         dplyr::filter(GISCO_ID == gisco_id) %>%
         dplyr::pull(LAU_NAME)
-      
+
       fs::dir_create(path = fs::path(export_folder, country, export_format), recurse = TRUE)
     }
-    
+
     if (export_format == "csv") {
       if (write_file == TRUE) {
         readr::write_csv(
@@ -722,7 +722,7 @@ sn_export <- function(gisco_id = NULL,
       if (is.null(gisco_id)) {
         usethis::ui_stop("For export in the `geojson` format, `gisco_id` must be given.")
       }
-      
+
       export_sf <- latlon2map::ll_osm_get_lau_streets(
         gisco_id = gisco_id,
         unnamed_streets = FALSE
@@ -732,7 +732,7 @@ sn_export <- function(gisco_id = NULL,
           y = output_df,
           by = "street_name"
         )
-      
+
       if (write_file == TRUE) {
         sf::st_write(
           obj = export_sf,
@@ -813,6 +813,6 @@ sn_export <- function(gisco_id = NULL,
       return(output_df)
     }
   }
-  
+
   output_df
 }
