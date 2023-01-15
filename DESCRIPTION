@@ -1,54 +1,56 @@
 Package: streetnamer
-Title: Match street names to their Wikidata identifier with a Shiny interface 
-Version: 0.0.0.9011
-Authors@R: 
-    c(person(given = "Giorgio",
-             family = "Comai",
-             role = c("aut", "cre", "cph"),
-             email = "g@giorgiocomai.eu",
-             comment = c(ORCID = "0000-0002-0515-9542")), 
-      person(given = "EDJNet",
-             role = "fnd"))
-Description: Find information about the people who have been dedicated street names, facilitate fixing what the automatic part got wrong.  
+Title: Match street names to their Wikidata identifier with a Shiny
+    interface
+Version: 0.0.0.9012
+Authors@R: c(
+    person("Giorgio", "Comai", , "g@giorgiocomai.eu", role = c("aut", "cre", "cph"),
+           comment = c(ORCID = "0000-0002-0515-9542")),
+    person("EDJNet", role = "fnd")
+  )
+Description: Find information about the people who have been dedicated
+    street names, facilitate fixing what the automatic part got wrong.
 License: MIT + file LICENSE
+Depends: 
+    R (>= 2.10)
 Imports: 
-    attempt,
     bslib,
+    cicerone,
     config (>= 0.3.1),
+    countrycode,
+    DBI,
+    dplyr,
     DT,
+    fs,
     glue,
     golem (>= 0.3.1),
     htmltools,
-    magrittr,
-    shiny (>= 1.6.0),
-    tibble,
-    dplyr,
-    sf,
-    fs,
-    usethis,
-    tidywikidatar,
-    RSQLite,
-    DBI,
-    waiter,
-    countrycode,
-    shinyWidgets,
-    shinyauthr,
-    cicerone,
     latlon2map,
     leaflet,
-    dbplyr,
-    tidyr,
+    magrittr,
+    osmdata,
+    pool,
+    purrr,
+    readr,
+    RSQLite,
+    scales,
+    sf,
+    shiny (>= 1.6.0),
+    shinyauthr,
+    shinyWidgets,
     stringi,
-    tictoc
+    stringr,
+    tibble,
+    tictoc,
+    tidyr,
+    tidywikidatar,
+    usethis,
+    waiter,
+    WikidataR
+Suggests: 
+    testthat (>= 3.0.0)
+VignetteBuilder: 
+    knitr
+Config/testthat/edition: 3
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.2.3
-Depends: 
-    R (>= 2.10)
-Suggests: 
-    rmarkdown,
-    knitr,
-    odbc,
-    testthat (>= 3.0.0)
-VignetteBuilder: knitr
-Config/testthat/edition: 3
