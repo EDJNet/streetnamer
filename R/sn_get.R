@@ -277,11 +277,11 @@ sn_get_boundary_by_id <- function(id,
   )
 
   if (is.numeric(id) == TRUE) {
-    query_by_id <- genderedstreetnamer::create_city_boundary_id_combo(id = id, type = type)
+    query_by_id <- sn_create_city_boundary_id_combo(id = id, type = type)
   } else if (class(id) == "list") {
     query_by_id <- id
   } else if (is.na(as.numeric(id) == FALSE)) {
-    query_by_id <- genderedstreetnamer::create_city_boundary_id_combo(id = as.numeric(id), type = type)
+    query_by_id <- sn_create_city_boundary_id_combo(id = as.numeric(id), type = type)
   } else {
     stop("Wrong id format. `id` must be an integer or an object created with `create_city_boundary_id_combo()`.")
   }
