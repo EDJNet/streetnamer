@@ -181,7 +181,8 @@ sn_get_details_by_lau <- function(gisco_id,
                                   disconnect_db = TRUE) {
   country_name <- sn_standard_country(
     country = stringr::str_extract(string = gisco_id, pattern = "[A-Z][A-Z]") %>%
-      stringr::str_to_upper(),
+      stringr::str_to_upper() %>% 
+      unique(),
     type = "name"
   )
 
