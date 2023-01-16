@@ -127,7 +127,8 @@ sn_import_from_manually_fixed <- function(input_df,
             named_after_id = .data$named_after_id,
             language = language,
             cache_connection = connection,
-            cache = TRUE
+            cache = TRUE,
+            disconnect_db = FALSE
           ),
           TRUE ~ as.character(fixed_sex_or_gender)
         ))
@@ -154,7 +155,8 @@ sn_import_from_manually_fixed <- function(input_df,
       person = TRUE,
       session = session,
       return_df_only = return_df_only,
-      connection = connection
+      connection = connection,
+      disconnect_db = FALSE
     )
 
     # write fixed humans
@@ -182,7 +184,8 @@ sn_import_from_manually_fixed <- function(input_df,
           named_after_id = fixed_named_after_id,
           language = language,
           cache_connection = connection,
-          cache = TRUE
+          cache = TRUE,
+          disconnect_db = FALSE
         ),
         TRUE ~ fixed_sex_or_gender
       ))
@@ -210,6 +213,7 @@ sn_import_from_manually_fixed <- function(input_df,
       person = person_lv,
       session = session,
       return_df_only = return_df_only,
+      disconnect_db = FALSE,
       connection = connection
     )
 
@@ -235,7 +239,8 @@ sn_import_from_manually_fixed <- function(input_df,
           named_after_id = fixed_named_after_id,
           language = language,
           cache_connection = connection,
-          cache = TRUE
+          cache = TRUE,
+          disconnect_db = FALSE
         ),
         TRUE ~ fixed_sex_or_gender
       ))
