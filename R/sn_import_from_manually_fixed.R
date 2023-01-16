@@ -219,21 +219,13 @@ sn_import_from_manually_fixed <- function(input_df,
       fixed_output_df
     ))
   } else if (type == "not_humans") {
+    # these are the confirmed wrong, hence id must be kept only if given in the checked column
     all_fixed_df <- relevant_df %>%
       dplyr::filter(is.na(.data$tick_if_wrong) == FALSE)
 
-    named_after_id_import <- dplyr::if_else(condition = is.na(tidywikidatar::tw_check_qid(
+    named_after_id_import <- tidywikidatar::tw_check_qid(
       id = all_fixed_df$fixed_named_after_id,
       non_id_as_NA = TRUE
-    )),
-    true = tidywikidatar::tw_check_qid(
-      id = all_fixed_df$named_after_id,
-      non_id_as_NA = TRUE
-    ),
-    false = tidywikidatar::tw_check_qid(
-      id = all_fixed_df$fixed_named_after_id,
-      non_id_as_NA = TRUE
-    )
     )
 
     all_fixed_df <- all_fixed_df %>%
