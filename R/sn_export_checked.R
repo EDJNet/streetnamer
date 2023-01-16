@@ -428,7 +428,9 @@ sn_export <- function(gisco_id = NULL,
       dplyr::rename(street_name = name)
   }
 
-  if (include_checked_elsewhere_in_country) {
+  if (include_checked_elsewhere_in_country==TRUE) {
+    current_gisco_id <- gisco_id
+    
     stored_street_names_df <- sn_get_street_named_after_id(
       street_name = streets_sf %>%
         sf::st_drop_geometry() %>%
