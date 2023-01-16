@@ -28,13 +28,16 @@ sn_get_details_by_country(
 )
 }
 \arguments{
-\item{country}{A country, either a two letter country code, or country full name. See `sn_country_codes` for valid values.}
+\item{country}{A country, either a two letter country code, or country full
+name. See `sn_country_codes` for valid values.}
 
 \item{additional_properties}{Defaults to a vector of Wikidata properties, with common properties of interest for humans. Some basic properties related to birth, death, and occupation are included by default.}
 
 \item{export_format}{Defaults to NULL. If given, it exports outputs in the given format. Available values include "csv" and "geojson".}
 
-\item{collapse_lists}{Defaults to FALSE. If TRUE, collapses multiple values in a single string, with each value separated by ";". Useful for exports in tabular format.}
+\item{collapse_lists}{Defaults to FALSE. If TRUE, collapses multiple values
+in a single string, with each value separated by ";". Useful for exports in
+tabular format.}
 
 \item{search_language}{Defaults to NULL, guessed based on country.}
 
@@ -63,7 +66,8 @@ Passed to `ll_osm_get_lau_streets()`.}
 
 \item{cache}{Logical, defaults to TRUE.}
 
-\item{disconnect_db}{Defaults to TRUE. If FALSE, leaves the connection to cache open.}
+\item{disconnect_db}{Defaults to TRUE. If FALSE, leaves the connection to
+cache open.}
 }
 \description{
 Get a pre-defined set of details about
