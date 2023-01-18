@@ -534,12 +534,14 @@ sn_get_details_by_lau <- function(gisco_id,
 
         output_df
       } else if (export_format == "geojson") {
+        print(stringr::str_c(current_file))
         current_sf <- latlon2map::ll_osm_get_lau_streets(
           gisco_id = gisco_id,
           unnamed_streets = FALSE,
           streets_sf = streets_sf
         ) %>%
-          dplyr::left_join(y = output_df, by = "name")
+          dplyr::rename(street_name = name) %>% 
+          dplyr::left_join(y = output_df, by = "street_name")
 
         sf::st_write(
           obj = current_sf,
