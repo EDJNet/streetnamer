@@ -1748,15 +1748,15 @@
     },
     "streetnamer": {
       "Package": "streetnamer",
-      "Version": "0.0.0.9013",
+      "Version": "0.0.0.9014",
       "Source": "GitHub",
       "RemoteType": "github",
       "RemoteHost": "api.github.com",
       "RemoteRepo": "streetnamer",
       "RemoteUsername": "edjnet",
       "RemoteRef": "HEAD",
-      "RemoteSha": "9abbf8f35db59c180e8185e058214bbd47fde39e",
-      "Hash": "1a3728898591ceeb9ab19a324f6ee06d",
+      "RemoteSha": "9d6afa41c53f7b9c026f6bf10b7d422d7dc5936b",
+      "Hash": "16d45d872ab01a462e3f820b8edbbe78",
       "Requirements": [
         "DBI",
         "DT",
