@@ -1,0 +1,6 @@
+docker build -f Dockerfile_base --progress=plain -t streetnamer_base .
+docker build -f Dockerfile --progress=plain -t giocomai/streetnamer:2023-01-30 .
+
+
+# docker run -p 80:80 streetnamer:latest
+# then go to 127.0.0.1:80
