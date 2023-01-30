@@ -81,6 +81,22 @@ brussels_row_df <- ll_get_nuts_eu(nuts_id = "BE100") %>%
     lau_label = NAME_LATN
   )
 
+##### Add Dublin #####
+
+dublin_row_df <- ll_get_nuts_eu(nuts_id = "IE061") %>%
+  sf::st_drop_geometry() %>%
+  dplyr::transmute(
+    gisco_id = NUTS_ID,
+    country = "IE",
+    country_name = "Ireland",
+    nuts_2 = "IE06",
+    nuts_3 = "IE061",
+    lau_name = NAME_LATN,
+    priority = TRUE,
+    lau_label = NAME_LATN
+  )
+
+
 ##### Add Portugal #####
 
 pt_concelho_df <- ll_lau_pt_id %>%
@@ -146,6 +162,7 @@ md_rows$priority[md_rows$lau_label == "Chisinau"] <- TRUE
 sn_lau_by_nuts <- dplyr::bind_rows(
   sn_lau_by_nuts_pre_df,
   brussels_row_df,
+  dublin_row_df,
   pt_concelho_df,
   ua1_df,
   md_rows
