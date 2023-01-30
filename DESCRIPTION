@@ -46,7 +46,8 @@ Imports:
     tidywikidatar,
     usethis,
     waiter,
-    WikidataR
+    WikidataR,
+    odbc
 Suggests: 
     testthat (>= 3.0.0)
 VignetteBuilder: 

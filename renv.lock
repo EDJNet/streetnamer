@@ -1199,6 +1199,21 @@
       "Hash": "170da2130d5332bea7d6ede01875ba1d",
       "Requirements": []
     },
+    "odbc": {
+      "Package": "odbc",
+      "Version": "1.3.4",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "dbbc00be3bd1e9808568a9bb686da239",
+      "Requirements": [
+        "DBI",
+        "Rcpp",
+        "bit64",
+        "blob",
+        "hms",
+        "rlang"
+      ]
+    },
     "openssl": {
       "Package": "openssl",
       "Version": "2.0.5",
@@ -1755,8 +1770,8 @@
       "RemoteRepo": "streetnamer",
       "RemoteUsername": "edjnet",
       "RemoteRef": "HEAD",
-      "RemoteSha": "9d6afa41c53f7b9c026f6bf10b7d422d7dc5936b",
-      "Hash": "16d45d872ab01a462e3f820b8edbbe78",
+      "RemoteSha": "f7cea92ba7f4beb4b14e11037db33024c0ae0565",
+      "Hash": "d6af393fc8fdbe356f5868b9e506a49b",
       "Requirements": [
         "DBI",
         "DT",
