@@ -26,10 +26,17 @@ sn_clean_street_name <- function(street_name,
       dplyr::pull(.data$Name)
   } else {
     country_lower_v <- stringr::str_to_lower(country)
-    country_slice <- streetnamer::sn_country_codes %>%
-      dplyr::mutate(country_lower = stringr::str_to_lower(Name)) %>%
-      dplyr::filter(.data$country_lower == country_lower_v)
-
+    
+    if (country_lower_v=="czechia") {
+      country_slice <- tibble::tibble(Name = "Czechia",
+                                      Code = "CZ",
+                                      country_lower = "czechia")
+    } else {
+      country_slice <- streetnamer::sn_country_codes %>%
+        dplyr::mutate(country_lower = stringr::str_to_lower(Name)) %>%
+        dplyr::filter(.data$country_lower == country_lower_v)
+    }
+    
     country_name <- country_slice %>%
       dplyr::pull(.data$Name)
     country_code <- country_slice %>%
