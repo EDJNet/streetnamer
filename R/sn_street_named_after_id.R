@@ -438,12 +438,14 @@ sn_get_street_named_after_id <- function(country = NULL,
             false = as.numeric(named_after_n)
           )
       ) %>%
-      dplyr::group_by(street_name, named_after_n) %>%
-      dplyr::mutate(named_after_n_id = dplyr::row_number()) %>%
       dplyr::ungroup() %>%
-      dplyr::filter(named_after_n_id <= named_after_n) %>%
+      dplyr::group_by(street_name) %>%
+      dplyr::mutate(named_after_n_id = dplyr::row_number(),
+                    named_after_n_to_keep = dplyr::first(named_after_n)) %>%
+      dplyr::filter(named_after_n_id <= named_after_n_to_keep) %>%
+      dplyr::ungroup() %>%
       dplyr::distinct(gisco_id, street_name, named_after_id, named_after_n_id, .keep_all = TRUE) %>%
-      dplyr::select(-named_after_n_id)
+      dplyr::select(-named_after_n_id, -named_after_n_to_keep)
   }
 
   tidywikidatar::tw_disconnect_from_cache(
