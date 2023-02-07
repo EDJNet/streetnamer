@@ -1,7 +1,7 @@
 Package: streetnamer
 Title: Match street names to their Wikidata identifier with a Shiny
     interface
-Version: 0.0.0.9017
+Version: 0.0.0.9018
 Authors@R: c(
     person("Giorgio", "Comai", , "g@giorgiocomai.eu", role = c("aut", "cre", "cph"),
            comment = c(ORCID = "0000-0002-0515-9542")),
