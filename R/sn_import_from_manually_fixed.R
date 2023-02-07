@@ -44,6 +44,8 @@ sn_import_from_manually_fixed <- function(input_df,
     if (is.null(type)) {
       if (stringr::str_detect(string = input_df, pattern = stringr::fixed("not_humans."))) {
         type <- "not_humans"
+      } else if (stringr::str_detect(string = input_df, pattern = stringr::fixed("non_humans."))) {
+        type <- "not_humans"
       } else if (stringr::str_detect(string = input_df, pattern = stringr::fixed("humans."))) {
         type <- "humans"
       } else {
@@ -60,38 +62,38 @@ sn_import_from_manually_fixed <- function(input_df,
 
   if ("fixed_wikidata_id" %in% colnames(input_df)) {
     input_df <- input_df %>%
-      dplyr::rename(fixed_named_after_id = .data$fixed_wikidata_id)
+      dplyr::rename(fixed_named_after_id = fixed_wikidata_id)
   }
 
   if ("name" %in% colnames(input_df)) {
     input_df <- input_df %>%
-      dplyr::rename(street_name = .data$name)
+      dplyr::rename(street_name = name)
   }
 
   if ("id" %in% colnames(input_df)) {
     input_df <- input_df %>%
-      dplyr::rename(named_after_id = .data$id)
+      dplyr::rename(named_after_id = id)
   }
 
 
   relevant_df <- input_df %>%
     dplyr::select(
-      .data$gisco_id,
-      .data$street_name,
-      .data$named_after_id,
-      .data$tick_if_wrong,
-      .data$fixed_human,
-      .data$fixed_named_after_id,
-      .data$fixed_sex_or_gender,
-      .data$fixed_category,
-      .data$fixed_n_dedicated_to
+      gisco_id,
+      street_name,
+      named_after_id,
+      tick_if_wrong,
+      fixed_human,
+      fixed_named_after_id,
+      fixed_sex_or_gender,
+      fixed_category,
+      fixed_n_dedicated_to
     ) %>%
     dplyr::mutate(
-      tick_if_wrong = as.character(.data$tick_if_wrong),
-      fixed_human = as.character(.data$fixed_human),
-      fixed_named_after_id = as.character(.data$fixed_named_after_id),
-      fixed_sex_or_gender = stringr::str_to_lower(as.character(.data$fixed_sex_or_gender)),
-      fixed_category = as.character(.data$fixed_category)
+      tick_if_wrong = as.character(tick_if_wrong),
+      fixed_human = as.character(fixed_human),
+      fixed_named_after_id = as.character(fixed_named_after_id),
+      fixed_sex_or_gender = stringr::str_to_lower(as.character(fixed_sex_or_gender)),
+      fixed_category = as.character(fixed_category)
     )
 
   if (type == "humans") {
@@ -99,7 +101,7 @@ sn_import_from_manually_fixed <- function(input_df,
     # write confirmed humans
 
     confirmed_humans_df <- relevant_df %>%
-      dplyr::filter(is.na(.data$tick_if_wrong))
+      dplyr::filter(is.na(tick_if_wrong))
 
 
     named_after_id_import <- dplyr::if_else(condition = is.na(tidywikidatar::tw_check_qid(
@@ -117,14 +119,14 @@ sn_import_from_manually_fixed <- function(input_df,
     )
 
     confirmed_humans_fix_gender_df <- confirmed_humans_df %>%
-      dplyr::filter(is.na(.data$fixed_sex_or_gender) == TRUE & tidywikidatar::tw_check_qid(.data$named_after_id, logical_vector = TRUE))
+      dplyr::filter(is.na(fixed_sex_or_gender) == TRUE & tidywikidatar::tw_check_qid(named_after_id, logical_vector = TRUE))
 
     if (nrow(confirmed_humans_fix_gender_df) > 0) {
       confirmed_humans_df <- confirmed_humans_df %>%
         dplyr::mutate(fixed_sex_or_gender = dplyr::case_when(
-          is.na(.data$fixed_sex_or_gender) == TRUE & tidywikidatar::tw_check_qid(.data$named_after_id, logical_vector = TRUE) ~
+          is.na(fixed_sex_or_gender) == TRUE & tidywikidatar::tw_check_qid(named_after_id, logical_vector = TRUE) ~
           sn_get_gender_label(
-            named_after_id = .data$named_after_id,
+            named_after_id = named_after_id,
             language = language,
             cache_connection = connection,
             cache = TRUE,
@@ -162,7 +164,7 @@ sn_import_from_manually_fixed <- function(input_df,
     # write fixed humans
 
     fixed_humans_df <- relevant_df %>%
-      dplyr::filter(is.na(.data$tick_if_wrong) == FALSE)
+      dplyr::filter(is.na(tick_if_wrong) == FALSE)
 
     person_lv <- is.na(fixed_humans_df$fixed_human) == FALSE
 
@@ -179,7 +181,7 @@ sn_import_from_manually_fixed <- function(input_df,
 
     fixed_humans_df <- fixed_humans_df %>%
       dplyr::mutate(fixed_sex_or_gender = dplyr::case_when(
-        is.na(.data$fixed_human) == FALSE & is.na(.data$fixed_sex_or_gender) == TRUE & tidywikidatar::tw_check_qid(.data$fixed_named_after_id, logical_vector = TRUE) ~
+        is.na(fixed_human) == FALSE & is.na(fixed_sex_or_gender) == TRUE & tidywikidatar::tw_check_qid(fixed_named_after_id, logical_vector = TRUE) ~
         sn_get_gender_label(
           named_after_id = fixed_named_after_id,
           language = language,
@@ -225,7 +227,7 @@ sn_import_from_manually_fixed <- function(input_df,
   } else if (type == "not_humans") {
     # these are the confirmed wrong, hence id must be kept only if given in the checked column
     all_fixed_df <- relevant_df %>%
-      dplyr::filter(is.na(.data$tick_if_wrong) == FALSE)
+      dplyr::filter(is.na(tick_if_wrong) == FALSE)
 
     named_after_id_import <- tidywikidatar::tw_check_qid(
       id = all_fixed_df$fixed_named_after_id,
@@ -234,7 +236,7 @@ sn_import_from_manually_fixed <- function(input_df,
 
     all_fixed_df <- all_fixed_df %>%
       dplyr::mutate(fixed_sex_or_gender = dplyr::case_when(
-        is.na(.data$fixed_human) == FALSE & is.na(.data$fixed_sex_or_gender) == TRUE & tidywikidatar::tw_check_qid(.data$fixed_named_after_id, logical_vector = TRUE) ~
+        is.na(fixed_human) == FALSE & is.na(fixed_sex_or_gender) == TRUE & tidywikidatar::tw_check_qid(fixed_named_after_id, logical_vector = TRUE) ~
         sn_get_gender_label(
           named_after_id = fixed_named_after_id,
           language = language,
@@ -280,7 +282,7 @@ sn_import_from_manually_fixed <- function(input_df,
     # unless manually fixed
 
     confirmed_non_humans_df <- relevant_df %>%
-      dplyr::filter(is.na(.data$tick_if_wrong) == TRUE)
+      dplyr::filter(is.na(tick_if_wrong) == TRUE)
 
 
     output_confirmed_non_humans_df <- sn_write_street_named_after_id(
