@@ -1,7 +1,7 @@
 Package: streetnamer
 Title: Match street names to their Wikidata identifier with a Shiny
     interface
-Version: 0.0.0.9019
+Version: 0.0.0.9020
 Authors@R: c(
     person("Giorgio", "Comai", , "g@giorgiocomai.eu", role = c("aut", "cre", "cph"),
            comment = c(ORCID = "0000-0002-0515-9542")),
@@ -19,7 +19,6 @@ Imports:
     countrycode,
     DBI,
     dplyr,
-    dbplyr,
     DT,
     fs,
     glue,
@@ -47,6 +46,7 @@ Imports:
     usethis,
     waiter,
     WikidataR,
+    dbplyr,
     odbc
 Suggests: 
     testthat (>= 3.0.0)
