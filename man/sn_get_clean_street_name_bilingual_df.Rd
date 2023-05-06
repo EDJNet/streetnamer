@@ -13,11 +13,12 @@ sn_get_clean_street_name_bilingual_df(
 \arguments{
 \item{gisco_id}{A gisco identifier}
 
-\item{languages}{Couple of languages. Supported: "french-flemish"}
+\item{languages}{Couple of languages. Supported: "french-flemish"; "italian-german"}
 }
 \description{
 So far supported:
 }
 \details{
-- Brussels
+- major Belgian cities
+- South Tyrol
 }
