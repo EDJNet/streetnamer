@@ -1,20 +1,17 @@
 FROM rocker/shiny:4.2.3
-RUN apt-get update -y && apt-get install -y  libicu-dev make pandoc  libicu-dev make pandoc zlib1g-dev  libcurl4-openssl-dev libssl-dev  libicu-dev libcurl4-openssl-dev libssl-dev make pandoc zlib1g-dev  make  make zlib1g-dev  git libcurl4-openssl-dev libssl-dev  zlib1g-dev  libicu-dev  git libgit2-dev libcurl4-openssl-dev libssl-dev  git  pandoc  libpng-dev libicu-dev make pandoc libgdal-dev gdal-bin libgeos-dev libproj-dev libsqlite3-dev  make unixodbc-dev  libssl-dev  libxml2-dev libproj-dev libicu-dev libcurl4-openssl-dev libssl-dev  libpng-dev  libproj-dev  libgdal-dev gdal-bin libgeos-dev libproj-dev libsqlite3-dev  libxml2-dev libicu-dev libcurl4-openssl-dev libssl-dev  libudunits2-dev libssl-dev libgdal-dev gdal-bin libgeos-dev libproj-dev libsqlite3-dev  libsodium-dev make zlib1g-dev  libsodium-dev  git libgit2-dev libicu-dev libcurl4-openssl-dev libssl-dev make pandoc zlib1g-dev  libudunits2-dev  git libgit2-dev libcurl4-openssl-dev libssl-dev make  libxml2-dev 
+RUN apt-get update -y && apt-get install -y  libicu-dev pandoc make  libicu-dev pandoc zlib1g-dev make  libcurl4-openssl-dev libssl-dev  libicu-dev libcurl4-openssl-dev libssl-dev pandoc zlib1g-dev make  make  make zlib1g-dev  git libcurl4-openssl-dev libssl-dev  zlib1g-dev  libicu-dev  git libgit2-dev libcurl4-openssl-dev libssl-dev  git  pandoc  libpng-dev libicu-dev pandoc libgdal-dev gdal-bin libgeos-dev libproj-dev libsqlite3-dev make  make unixodbc-dev  libssl-dev  libproj-dev libicu-dev libcurl4-openssl-dev libssl-dev libxml2-dev  libpng-dev  libproj-dev  libgdal-dev gdal-bin libgeos-dev libproj-dev libsqlite3-dev  libicu-dev libcurl4-openssl-dev libssl-dev libxml2-dev  libgdal-dev gdal-bin libgeos-dev libproj-dev libsqlite3-dev libssl-dev libudunits2-dev  libsodium-dev make zlib1g-dev  libsodium-dev  git libgit2-dev libicu-dev libcurl4-openssl-dev libssl-dev pandoc zlib1g-dev make  libudunits2-dev  git libgit2-dev libcurl4-openssl-dev libssl-dev make libxml2-dev
 
 
 RUN apt-get install -y  gdal-bin git-core libcurl4-openssl-dev libgdal-dev libgeos-dev libgeos++-dev libgit2-dev libicu-dev libpng-dev libproj-dev libsodium-dev libssl-dev libudunits2-dev libxml2-dev make pandoc pandoc-citeproc unixodbc-dev zlib1g-dev
 RUN apt-get install -y unixodbc unixodbc-dev libsqliteodbc odbc-postgresql --install-suggests
-
 RUN rm -rf /var/lib/apt/lists/*
 
-
 # ODBC driver
-ADD https://dev.mysql.com/get/Downloads/Connector-ODBC/8.0/mysql-connector-odbc-8.0.31-linux-glibc2.27-x86-64bit.tar.gz .
-RUN tar -C . -xzvf mysql-connector-odbc-8.0.31-linux-glibc2.27-x86-64bit.tar.gz
-RUN cp -r mysql-connector-odbc-8.0.31-linux-glibc2.27-x86-64bit/bin/* /usr/local/bin
-RUN cp -r mysql-connector-odbc-8.0.31-linux-glibc2.27-x86-64bit/lib/* /usr/local/lib
+ADD https://dev.mysql.com/get/Downloads/Connector-ODBC/8.0/mysql-connector-odbc-8.0.33-linux-glibc2.28-x86-64bit.tar.gz .
+RUN tar -C . -xzvf mysql-connector-odbc-8.0.33-linux-glibc2.28-x86-64bit.tar.gz
+RUN cp -r mysql-connector-odbc-8.0.33-linux-glibc2.28-x86-64bit/bin/* /usr/local/bin
+RUN cp -r mysql-connector-odbc-8.0.33-linux-glibc2.28-x86-64bit/lib/* /usr/local/lib
 RUN myodbc-installer -a -d -n "MySQL ODBC 8.0 Driver" -t "Driver=/usr/local/lib/libmyodbc8w.so"
-
 
 RUN mkdir -p /usr/local/lib/R/etc/ /usr/lib/R/etc/
 RUN echo "options(renv.config.pak.enabled = TRUE, repos = c(CRAN = 'https://cran.rstudio.com/'), download.file.method = 'libcurl', Ncpus = 4)" | tee /usr/local/lib/R/etc/Rprofile.site | tee /usr/lib/R/etc/Rprofile.site

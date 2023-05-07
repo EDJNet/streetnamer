@@ -1,0 +1,49 @@
+version: "3.3"
+
+services:
+
+  streetnamer:
+    depends_on:
+      - streetnamer_db
+    image:  docker.io/giocomai/streetnamer:2023-05-07
+    container_name: streetnamer
+    ports:
+      - "3838:3838"
+    restart: always
+    volumes:
+      - streetnamer:/srv/shiny-server/
+      - streetnamer_logs:/var/log/shiny-server/
+      - streetnamer_data:/streetnamer_data/
+    networks:
+      static-network:
+        ipv4_address: 172.20.0.1
+
+  streetnamer_db:
+    image: docker.io/library/mysql:8
+#    image: docker.io/library/mariadb:10
+    container_name: streetnamer_db
+    restart: always
+    volumes:
+      - streetnamer_db:/var/lib/mysql:Z
+    environment:
+      MYSQL_ROOT_PASSWORD: secretpassword #FIXME
+      MYSQL_DATABASE: secretdbname #FIXME
+      MYSQL_USER: secretusername #FIXME
+      MYSQL_PASSWORD: secretpassword #FIXME
+    networks:
+      static-network:
+        ipv4_address: 172.20.0.2
+
+
+volumes:
+  streetnamer_db:
+  streetnamer:
+  streetnamer_logs:
+  streetnamer_data:
+networks:
+  static-network:
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+          #docker-compose v3+ do not use ip_range
+          ip_range: 172.28.5.0/24
