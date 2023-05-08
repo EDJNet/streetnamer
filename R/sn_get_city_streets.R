@@ -3,6 +3,7 @@
 #' This function downloads all roads for a given country, downloads boundaries for a given administrative unit, and removes roads with no names.
 #'
 #' @param gisco_id Gisco id of the municipality
+#' @param lau_year Passed to `ll_get_lau()`. Defaults to 2020 for internal consistency.
 #'
 #' @return
 #' @export
@@ -10,7 +11,8 @@
 #' @examples
 sn_get_named_city_streets <- function(gisco_id,
                                       cache_names = FALSE,
-                                      cache_sf = FALSE) {
+                                      cache_sf = FALSE, 
+                                      lau_year = 2020) {
   country_code <- stringr::str_extract(string = gisco_id, pattern = "[A-Z][A-Z]") %>%
     stringr::str_to_upper()
   city_code <- stringr::str_extract(string = gisco_id, pattern = "[[:digit:]]+")
@@ -35,7 +37,7 @@ sn_get_named_city_streets <- function(gisco_id,
       code = city_code
     ) %>%
       dplyr::filter(is.na(name) == FALSE, is.na(highway) == FALSE) %>%
-      sf::st_intersection(y = ll_get_nuts_it(
+      sf::st_intersection(y = latlon2map::ll_get_nuts_it(
         level = "lau",
         resolution = "high"
       ) %>%
@@ -49,7 +51,7 @@ sn_get_named_city_streets <- function(gisco_id,
 
     named_city_roads <- ll_osm_get_roads(country = country_full_name) %>%
       dplyr::filter(is.na(name) == FALSE, is.na(fclass) == FALSE) %>%
-      sf::st_intersection(ll_get_lau_eu() %>%
+      sf::st_intersection(latlon2map::ll_get_lau_eu(year = lau_year) %>%
         dplyr::filter(GISCO_ID == gisco_id)) %>%
       dplyr::group_by(name) %>%
       dplyr::summarise()

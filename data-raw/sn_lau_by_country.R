@@ -2,7 +2,7 @@
 
 sn_country_codes <- readr::read_csv(file = "https://datahub.io/core/country-list/r/data.csv")
 
-sn_lau_by_country <- ll_get_lau_eu() %>%
+sn_lau_by_country <- ll_get_lau_eu(year = 2020) %>%
   sf::st_drop_geometry() %>%
   dplyr::select(GISCO_ID, CNTR_CODE, LAU_NAME) %>%
   dplyr::left_join(

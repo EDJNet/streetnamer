@@ -81,8 +81,10 @@ sn_get_lau_street_names <- function(gisco_id,
 #' @examples
 #'
 #' sn_get_gisco_id(name = "Trento", country = "IT")
-sn_get_gisco_id <- function(name, country) {
-  ll_get_lau_eu() %>%
+sn_get_gisco_id <- function(name,
+                            country,
+                            lau_year = 2020) {
+  ll_get_lau_eu(year = lau_year) %>%
     sf::st_drop_geometry() %>%
     dplyr::filter(CNTR_CODE == country, LAU_NAME == name) %>%
     dplyr::pull(GISCO_ID)

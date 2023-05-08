@@ -4,10 +4,17 @@
 \alias{sn_get_named_city_streets}
 \title{Gets roads within city boundaries, crops them, and keeps only those with names}
 \usage{
-sn_get_named_city_streets(gisco_id, cache_names = FALSE, cache_sf = FALSE)
+sn_get_named_city_streets(
+  gisco_id,
+  cache_names = FALSE,
+  cache_sf = FALSE,
+  lau_year = 2020
+)
 }
 \arguments{
 \item{gisco_id}{Gisco id of the municipality}
+
+\item{lau_year}{Passed to `ll_get_lau()`. Defaults to 2020 for internal consistency.}
 }
 \description{
 This function downloads all roads for a given country, downloads boundaries for a given administrative unit, and removes roads with no names.

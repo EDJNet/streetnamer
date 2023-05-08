@@ -4,7 +4,7 @@
 \alias{sn_get_gisco_id}
 \title{Get gisco id from name of municipality and country}
 \usage{
-sn_get_gisco_id(name, country)
+sn_get_gisco_id(name, country, lau_year = 2020)
 }
 \arguments{
 \item{name}{Name of municipality}

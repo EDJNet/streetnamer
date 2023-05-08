@@ -22,6 +22,9 @@ sn_lau_by_nuts_df <- readr::read_csv(
   )
 )
 
+# https://ec.europa.eu/eurostat/documents/345175/501971/EU-27-LAU-2021-NUTS-2021.xlsx
+
+
 
 library("latlon2map")
 options(timeout = 60000) # big timeout, as big downloads needed

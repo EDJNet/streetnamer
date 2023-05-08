@@ -34,6 +34,7 @@ sn_get_details_by_country <- function(country,
                                         "P27",
                                         "P172"
                                       ),
+                                      lau_year = 2020,
                                       export_format = NULL,
                                       collapse_lists = FALSE,
                                       language = tidywikidatar::tw_get_language(),
@@ -62,7 +63,7 @@ sn_get_details_by_country <- function(country,
   )
 
 
-  current_country_lau_v <- latlon2map::ll_get_lau_eu() %>%
+  current_country_lau_v <- latlon2map::ll_get_lau_eu(year = lau_year) %>%
     sf::st_drop_geometry() %>%
     dplyr::filter(CNTR_CODE == country_code) %>%
     dplyr::arrange(desc(POP_2020)) %>%
