@@ -5,7 +5,7 @@ services:
   streetnamer:
     depends_on:
       - streetnamer_db
-    image:  docker.io/giocomai/streetnamer:2023-05-07
+    image:  docker.io/giocomai/streetnamer:2023-05-08
     container_name: streetnamer
     ports:
       - "3838:3838"
