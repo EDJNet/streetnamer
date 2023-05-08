@@ -19,6 +19,7 @@
 #' @importFrom shiny shinyApp
 #' @importFrom golem with_golem_options
 sn_run_app <- function(lau_by_nuts = sn_lau_by_nuts,
+                       app_title = "Mapping Diversity - European Data Journalism Network (EDJNet)",
                        country_name = NULL,
                        connection = NULL,
                        sn_data_folder = NULL,
@@ -40,6 +41,7 @@ sn_run_app <- function(lau_by_nuts = sn_lau_by_nuts,
     ),
     golem_opts = list(
       lau_by_nuts = lau_by_nuts,
+      app_title = app_title,
       country_name = country_name,
       connection = connection,
       sn_data_folder = sn_data_folder,

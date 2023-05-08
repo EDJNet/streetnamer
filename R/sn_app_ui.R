@@ -7,7 +7,7 @@
 sn_app_ui <- function(request) {
   tagList(
     # Leave this function for adding external resources
-    golem_add_external_resources(),
+    golem_add_external_resources(app_title = golem::get_golem_options("app_title")),
     waiter::use_waiter(),
     # waiter::useHostess(),
     cicerone::use_cicerone(),
@@ -25,7 +25,7 @@ sn_app_ui <- function(request) {
           ital = 1
         )
       ),
-      title = "Mapping Diversity - European Data Journalism Network",
+      title = golem::get_golem_options("app_title"),
       #       tags$footer(
       #         title = "footer",
       #         align = "right",
@@ -215,7 +215,7 @@ sn_app_ui <- function(request) {
 #' @import shiny
 #' @importFrom golem add_resource_path activate_js favicon bundle_resources
 #' @noRd
-golem_add_external_resources <- function() {
+golem_add_external_resources <- function(app_title = "Mapping Diversity - European Data Journalism Network") {
   add_resource_path(
     "www", app_sys("app/www")
   )
@@ -224,7 +224,7 @@ golem_add_external_resources <- function() {
     favicon(ext = "png"),
     bundle_resources(
       path = app_sys("app/www"),
-      app_title = "Mapping Diversity - European Data Journalism Network"
+      app_title = app_title
     )
     # Add here other external resources
     # for example, you can add shinyalert::useShinyalert()
