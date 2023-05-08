@@ -20,6 +20,13 @@ mod_sn_street_info_ui <- function(id) {
 mod_sn_street_info_server <- function(id,
                                       street_name,
                                       gisco_id,
+                                      category_choices = c(
+                                        "politics",
+                                        "culture",
+                                        "religion",
+                                        "military",
+                                        "other"
+                                      ),
                                       named_after_id = NULL,
                                       country = NULL,
                                       connection = NULL,
@@ -269,17 +276,11 @@ mod_sn_street_info_server <- function(id,
             justified = TRUE,
             width = "98%"
           ),
-          shiny::p("Select scope:"),
+          shiny::p("Select category:"),
           shinyWidgets::radioGroupButtons(
             inputId = ns("category_radio"),
             selected = character(0),
-            choices = c(
-              "religion",
-              "military",
-              "politics",
-              "culture",
-              "other"
-            ),
+            choices = category_choices,
             individual = TRUE,
             checkIcon = list(yes = icon("ok", lib = "glyphicon")),
             justified = TRUE,

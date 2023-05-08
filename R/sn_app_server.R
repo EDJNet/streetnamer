@@ -723,6 +723,7 @@ sn_app_server <- function(input, output, session) {
           string = input$current_gisco_id,
           pattern = "[A-Z][A-Z]"
         ),
+        category_choices =  golem::get_golem_options("category_choices"),
         connection = golem::get_golem_options("connection")
       )
     },
@@ -743,6 +744,7 @@ sn_app_server <- function(input, output, session) {
             string = input$current_gisco_id,
             pattern = "[A-Z][A-Z]"
           ),
+          category_choices =  golem::get_golem_options("category_choices"),
           named_after_id = "drop",
           connection = golem::get_golem_options("connection")
         )
@@ -773,6 +775,7 @@ sn_app_server <- function(input, output, session) {
           string = input$current_gisco_id,
           pattern = "[A-Z][A-Z]"
         ),
+        category_choices = golem::get_golem_options("category_choices"),
         named_after_id = selected_named_after_id_from_search_r(),
         connection = golem::get_golem_options("connection")
       )
