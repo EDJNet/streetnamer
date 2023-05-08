@@ -20,6 +20,7 @@ mod_sn_street_info_ui <- function(id) {
 mod_sn_street_info_server <- function(id,
                                       street_name,
                                       gisco_id,
+                                      enable_tag = TRUE,
                                       category_choices = c(
                                         "politics",
                                         "culture",
@@ -220,7 +221,42 @@ mod_sn_street_info_server <- function(id,
     )
 
     tictoc::tic(msg = "Get details based on id")
-
+    
+    if (enable_tag == TRUE) {
+      tag_selectize_person <-  shiny::selectizeInput(
+        inputId = ns("tag_selectize_person"),
+        label = "Add a tag",
+        choices = c(
+          "",
+          "colonialism",
+          "slave trade",
+          "partisan",
+          "communism",
+          "fascism",
+          "sport"
+        ),
+        options = list(create = TRUE)
+      )
+      tag_selectize_not_person <- shiny::selectizeInput(
+        inputId = ns("tag_selectize_not_person"),
+        label = "Add a tag",
+        choices = c(
+          "",
+          "place",
+          "event",
+          "profession",
+          "plant",
+          "animal"
+        ),
+        options = list(create = TRUE)
+      )
+    } else {
+      tag_selectize_person <- shiny::tagList()
+      tag_selectize_not_person <- shiny::tagList()
+    }
+    
+    
+    
     ### Prepare output
     output$street_name_info_box <- shiny::renderUI(
       shiny::tagList(
@@ -286,37 +322,12 @@ mod_sn_street_info_server <- function(id,
             justified = TRUE,
             width = "98%"
           ),
-          shiny::selectizeInput(
-            inputId = ns("tag_selectize_person"),
-            label = "Add a tag",
-            choices = c(
-              "",
-              "colonialism",
-              "slave trade",
-              "partisan",
-              "communism",
-              "fascism",
-              "sport"
-            ),
-            options = list(create = TRUE)
-          )
+          tag_selectize_person
         ),
         conditionalPanel(
           condition = "input.person_switch == false",
           ns = ns,
-          shiny::selectizeInput(
-            inputId = ns("tag_selectize_not_person"),
-            label = "Add a tag",
-            choices = c(
-              "",
-              "place",
-              "event",
-              "profession",
-              "plant",
-              "animal"
-            ),
-            options = list(create = TRUE)
-          )
+          tag_selectize_not_person
         ),
         shinyWidgets::switchInput(
           inputId = ns("named_after_n_switch"),

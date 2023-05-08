@@ -8,6 +8,7 @@ sn_run_app(
   lau_by_nuts = sn_lau_by_nuts,
   app_title = "Mapping Diversity - European Data Journalism Network (EDJNet)",
   country_name = NULL,
+  enable_tag = TRUE,
   category_choices = c("politics", "culture", "religion", "military", "other"),
   connection = NULL,
   sn_data_folder = NULL,
