@@ -7,18 +7,58 @@
 sn_get_clean_street_name_bilingual_df(
   gisco_id,
   street_names_df = NULL,
-  languages = NULL
+  languages = NULL,
+  lau_year = 2020
 )
 }
 \arguments{
 \item{gisco_id}{A gisco identifier}
 
-\item{languages}{Couple of languages. Supported: "french-flemish"; "italian-german"}
+\item{languages}{Couple of languages in the format "it_de" for cities where
+the name of the street is written first in Italian, then there's an hypen,
+and then in German; "de_it" if it's vice versa.}
+
+\item{lau_year}{Defaults to 2020 for internal consistency. Passed to `latlon2map::ll_osm_get_lau_streets()`.}
+}
+\value{
+A data frame with two columns, `name` and `name_clean`. `name_clean`
+  should have the "street" part of a street name removed as well as the part 
+  in the secondary language.
 }
 \description{
 So far supported:
 }
 \details{
-- major Belgian cities
+- Belgian cities
 - South Tyrol
+
+Please file an issue if you find issues.
+}
+\examples{
+\dontrun{
+if (interactive()) {
+  library("latlon2map")
+
+  options(timeout = 60000) # big timeout, as big downloads needed
+
+
+  ll_set_folder(path = fs::path(
+    fs::path_home_r(),
+    "R",
+    "ll_data"
+  ))
+
+sn_get_clean_street_name_bilingual_df(gisco_id = "IT_021008") \%>\% 
+  dplyr::slice_sample(n = 10)
+sn_get_clean_street_name_bilingual_df(gisco_id = "IT_021051") \%>\% 
+  dplyr::slice_sample(n = 10)
+
+sn_get_clean_street_name_bilingual_df(gisco_id = "BE100") \%>\% 
+  dplyr::slice_sample(n = 10)
+sn_get_clean_street_name_bilingual_df(gisco_id = "BE_44021") \%>\% 
+  dplyr::slice_sample(n = 10)
+sn_get_clean_street_name_bilingual_df(gisco_id = "BE_62063") \%>\% 
+  dplyr::slice_sample(n = 10)
+}
+}
 }
