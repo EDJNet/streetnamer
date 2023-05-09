@@ -113,8 +113,7 @@ mod_sn_street_info_server <- function(id,
         if (country_code == "BE") {
           search_string_v <- sn_get_clean_street_name_bilingual_df(
             gisco_id = gisco_id,
-            street_names_df = tibble::tibble(name = street_name),
-            languages = "french-flemish"
+            street_names_df = tibble::tibble(name = street_name)
           ) %>%
             dplyr::pull(name_clean)
         } else if (country_code == "IT")  {

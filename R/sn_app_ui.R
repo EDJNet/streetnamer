@@ -162,7 +162,8 @@ sn_app_ui <- function(request) {
               )
             ),
             tabPanel(
-              "Summary statistics",
+              "About this municipality",
+              shiny::fluidRow(),
               shiny::fluidRow(
                 align = "center",
                 shiny::column(
@@ -198,7 +199,17 @@ sn_app_ui <- function(request) {
               shinyauthr::loginUI(id = "login"),
               mod_sn_import_ui("snm_import_ui_1"),
               mod_sn_export_ui("snm_export_ui_1")
-            )
+            ),
+          tabPanel(
+            "Instructions",
+            shiny::includeHTML(system.file("app/www/instructions.html",
+                                           package="streetnamer"))
+          ),
+          tabPanel(
+            "About",
+            shiny::includeHTML(system.file("app/www/about.html",
+                                           package="streetnamer"))
+          )
           ),
           width = 9
         )
