@@ -46,10 +46,13 @@
 #' }
 #' }
 sn_get_clean_street_name_bilingual_df <- function(gisco_id,
+                                                  street_name = NULL,
                                                   street_names_df = NULL,
                                                   languages = NULL,
                                                   lau_year = 2020) {
-  if (is.null(street_names_df) == FALSE) {
+  if (is.null(street_name)==FALSE) {
+    current_street_names_df <- tibble::tibble(name = street_name)
+  } else if (is.null(street_names_df) == FALSE) {
     current_street_names_df <- street_names_df %>%
       dplyr::distinct(name)
   } else {

@@ -18,7 +18,8 @@
 #'   country = "Germany"
 #' )
 sn_clean_street_name <- function(street_name,
-                                 country) {
+                                 country, 
+                                 gisco_id = NULL) {
   if (nchar(country) == 2) {
     country_code <- stringr::str_to_upper(country)
     country_name <- streetnamer::sn_country_codes %>%

@@ -4,7 +4,7 @@
 \alias{sn_clean_street_name}
 \title{Clean street name in order to keep only the}
 \usage{
-sn_clean_street_name(street_name, country)
+sn_clean_street_name(street_name, country, gisco_id = NULL)
 }
 \arguments{
 \item{street_name}{A character vector.}
