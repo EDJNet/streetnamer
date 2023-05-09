@@ -312,7 +312,8 @@ sn_get_street_named_after_id <- function(country = NULL,
                                          keep_only_latest = TRUE,
                                          only_checked = FALSE,
                                          remove_ignored = TRUE,
-                                         only_ignore = FALSE,
+                                         only_ignored = FALSE,
+                                         include_checked_elsewhere_in_country = FALSE,
                                          language = tidywikidatar::tw_get_language(),
                                          connection = NULL,
                                          disconnect_db = TRUE) {
@@ -325,16 +326,15 @@ sn_get_street_named_after_id <- function(country = NULL,
       string = stringr::str_to_upper(string = gisco_id),
       pattern = "[A-Z][A-Z]"
     )
+  } else {
+    country <- stringr::str_to_upper(country) 
   }
-
-  country <- stringr::str_to_upper(country)
 
   db <- tidywikidatar::tw_connect_to_cache(
     connection = connection,
     language = language,
     cache = TRUE
   )
-
 
   table_name <- sn_get_db_table_name(
     type = "street_named_after_id",
@@ -407,7 +407,7 @@ sn_get_street_named_after_id <- function(country = NULL,
     return(sn_empty_street_named_after_id)
   }
 
-  if (only_ignore == TRUE) {
+  if (only_ignored == TRUE) {
     db_result <- db_result %>%
       dplyr::filter(ignore == 1)
   }

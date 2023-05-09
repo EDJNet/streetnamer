@@ -243,7 +243,7 @@ sn_app_server <- function(input, output, session) {
               pattern = "[A-Z][A-Z]"
             ),
             connection = golem::get_golem_options("connection"),
-            only_ignore = TRUE
+            only_ignored = TRUE
           ) %>%
             dplyr::distinct(street_name) %>%
             dplyr::rename(name = street_name),

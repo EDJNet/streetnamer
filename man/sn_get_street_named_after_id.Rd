@@ -11,7 +11,8 @@ sn_get_street_named_after_id(
   keep_only_latest = TRUE,
   only_checked = FALSE,
   remove_ignored = TRUE,
-  only_ignore = FALSE,
+  only_ignored = FALSE,
+  include_checked_elsewhere_in_country = FALSE,
   language = tidywikidatar::tw_get_language(),
   connection = NULL,
   disconnect_db = TRUE
