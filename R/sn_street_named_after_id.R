@@ -2,14 +2,28 @@
 #'
 #'
 #' @param df A data frame with two columns: gisco_id and name.
-#' @param country Defaults to NULL. A character string, expected to be a two-letter country code. If not given, tentatively extracted from `gisco_id`.
-#' @param overwrite Logical, defaults to FALSE. If TRUE, it first deletes all rows associated with the item(s) included in `item_df`. Useful if the original Wikidata object has been updated.
-#' @param connection Defaults to NULL. If NULL, and caching is enabled, `streetnamer` will use a local sqlite database. A custom connection to other databases can be given (see vignette `caching` for details).
-#' @param disconnect_db Defaults to TRUE. If FALSE, leaves the connection to cache open.
-#' @param gisco_id Identifier of a municipality, typically a gisco identifier. Can be any code, as long as it used consistently, and it starts with a two-letter country code.
-#' @param named_after_n An integer, defaults to NULL, but most commonly expected to be 1. Input more than one if the street is named after `n` entities.
-#' @param named_after_custom_label A character vector, defaults to NULL. To be used only when Wikidata identififer is not available, but it is possible to offer a "cleaner" version of the person/entity a street is dedicated to.
-#' @param return_df_only Logical, defaults to FALSE. If TRUE, does not write to database but simply returns the data frame that would be written to database when set to TRUE.
+#' @param country Defaults to NULL. A character string, expected to be a
+#'   two-letter country code. If not given, tentatively extracted from
+#'   `gisco_id`.
+#' @param overwrite Logical, defaults to FALSE. If TRUE, it first deletes all
+#'   rows associated with the item(s) included in `item_df`. Useful if the
+#'   original Wikidata object has been updated.
+#' @param connection Defaults to NULL. If NULL, and caching is enabled,
+#'   `streetnamer` will use a local sqlite database. A custom connection to
+#'   other databases can be given (see vignette `caching` for details).
+#' @param disconnect_db Defaults to TRUE. If FALSE, leaves the connection to
+#'   cache open.
+#' @param gisco_id Identifier of a municipality, typically a gisco identifier.
+#'   Can be any code, as long as it used consistently, and it starts with a
+#'   two-letter country code.
+#' @param named_after_n An integer, defaults to NULL, but most commonly expected
+#'   to be 1. Input more than one if the street is named after `n` entities.
+#' @param named_after_custom_label A character vector, defaults to NULL. To be
+#'   used only when Wikidata identififer is not available, but it is possible to
+#'   offer a "cleaner" version of the person/entity a street is dedicated to.
+#' @param return_df_only Logical, defaults to FALSE. If TRUE, does not write to
+#'   database but simply returns the data frame that would be written to
+#'   database when set to TRUE.
 #'
 #' @return Nothing, used for its side effects.
 #' @export
@@ -343,7 +357,7 @@ sn_get_street_named_after_id <- function(country = NULL,
       pattern = "[A-Z][A-Z]"
     )
   } else {
-    country <- stringr::str_to_upper(country) 
+    country <- stringr::str_to_upper(country)
   }
 
   db <- tidywikidatar::tw_connect_to_cache(
@@ -367,9 +381,8 @@ sn_get_street_named_after_id <- function(country = NULL,
 
     return(sn_empty_street_named_after_id)
   }
-  
+
   if (include_checked_elsewhere_in_country == TRUE) {
-     
     if (is.null(streets_sf)) {
       current_country_code <- country
       if (current_country_code == "UK") {
@@ -386,21 +399,21 @@ sn_get_street_named_after_id <- function(country = NULL,
       } else {
         current_country_name <- NULL
       }
-      
-      
-      
+
+
+
       streets_df <- latlon2map::ll_osm_get_lau_streets(
         gisco_id = gisco_id,
         country = current_country_name,
         unnamed_streets = FALSE,
         year = lau_year
-      ) %>% 
+      ) %>%
         sf::st_drop_geometry()
     } else {
-      streets_df <- streets_sf %>% 
+      streets_df <- streets_sf %>%
         sf::st_drop_geometry()
     }
-    
+
     # get data for all country
     db_result <- tryCatch(
       dplyr::tbl(src = db, table_name),
@@ -408,7 +421,7 @@ sn_get_street_named_after_id <- function(country = NULL,
         logical(1L)
       }
     )
-    
+
     if (isFALSE(db_result)) {
       tidywikidatar::tw_disconnect_from_cache(
         cache = TRUE,
@@ -418,18 +431,23 @@ sn_get_street_named_after_id <- function(country = NULL,
       )
       return(sn_empty_street_named_after_id)
     }
-    
-    country_df <- streets_df %>% 
-      dplyr::rename(street_name = name) %>% 
-      dplyr::left_join(y = db_result,
-                       by = "street_name",
-                       copy = TRUE) %>% 
-      dplyr::filter(is.na(checked)==FALSE) %>% 
-      dplyr::filter(checked==1) %>% 
+
+    country_df <- streets_df %>%
+      dplyr::rename(street_name = name) %>%
+      dplyr::left_join(
+        y = db_result,
+        by = "street_name",
+        copy = TRUE
+      ) %>%
+      dplyr::filter(is.na(checked) == FALSE) %>%
+      dplyr::filter(checked == 1) %>%
+      tidyr::replace_na(replace = list(named_after_n = 1)) %>%
       dplyr::arrange(dplyr::desc(time)) %>%
       dplyr::group_by(street_name) %>%
-      dplyr::mutate(named_after_n_id = dplyr::row_number(),
-                    named_after_n_to_keep = dplyr::first(named_after_n)) %>%
+      dplyr::mutate(
+        named_after_n_id = dplyr::row_number(),
+        named_after_n_to_keep = dplyr::first(named_after_n)
+      ) %>%
       dplyr::filter(named_after_n_id <= named_after_n_to_keep) %>%
       dplyr::ungroup() %>%
       dplyr::distinct(gisco_id, street_name, named_after_id, named_after_n_id, .keep_all = TRUE) %>%
@@ -492,11 +510,13 @@ sn_get_street_named_after_id <- function(country = NULL,
     return(sn_empty_street_named_after_id)
   }
 
-  if (include_checked_elsewhere_in_country==TRUE) {
-    db_result <- dplyr::bind_rows(db_result %>% dplyr::collect(),
-                                  country_df)
+  if (include_checked_elsewhere_in_country == TRUE) {
+    db_result <- dplyr::bind_rows(
+      db_result %>% dplyr::collect(),
+      country_df
+    )
   }
-  
+
   if (only_ignored == TRUE) {
     db_result <- db_result %>%
       dplyr::filter(ignore == 1)
@@ -520,6 +540,7 @@ sn_get_street_named_after_id <- function(country = NULL,
 
   if (keep_only_latest == TRUE) {
     street_names_df <- street_names_df %>%
+      tidyr::replace_na(replace = list(named_after_n = 1)) %>%
       dplyr::arrange(dplyr::desc(time)) %>%
       dplyr::mutate(
         named_after_n =
@@ -530,8 +551,10 @@ sn_get_street_named_after_id <- function(country = NULL,
       ) %>%
       dplyr::ungroup() %>%
       dplyr::group_by(street_name) %>%
-      dplyr::mutate(named_after_n_id = dplyr::row_number(),
-                    named_after_n_to_keep = dplyr::first(named_after_n)) %>%
+      dplyr::mutate(
+        named_after_n_id = dplyr::row_number(),
+        named_after_n_to_keep = dplyr::first(named_after_n)
+      ) %>%
       dplyr::filter(named_after_n_id <= named_after_n_to_keep) %>%
       dplyr::ungroup() %>%
       dplyr::distinct(gisco_id, street_name, named_after_id, named_after_n_id, .keep_all = TRUE) %>%

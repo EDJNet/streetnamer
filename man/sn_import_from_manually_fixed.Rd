@@ -20,13 +20,21 @@ sn_import_from_manually_fixed(
 
 \item{type}{Defaults to NULL. Valid values are "humans" and "not_humans". If `df` is a path, it will be tentatively desumed from the name, by checking if the file name ends with either "not_humans" or only "humans".}
 
-\item{gisco_id}{Identifier of a municipality, typically a gisco identifier. Can be any code, as long as it used consistently, and it starts with a two-letter country code.}
+\item{gisco_id}{Identifier of a municipality, typically a gisco identifier.
+Can be any code, as long as it used consistently, and it starts with a
+two-letter country code.}
 
-\item{country}{Defaults to NULL. A character string, expected to be a two-letter country code. If not given, tentatively extracted from `gisco_id`.}
+\item{country}{Defaults to NULL. A character string, expected to be a
+two-letter country code. If not given, tentatively extracted from
+`gisco_id`.}
 
-\item{connection}{Defaults to NULL. If NULL, and caching is enabled, `streetnamer` will use a local sqlite database. A custom connection to other databases can be given (see vignette `caching` for details).}
+\item{connection}{Defaults to NULL. If NULL, and caching is enabled,
+`streetnamer` will use a local sqlite database. A custom connection to
+other databases can be given (see vignette `caching` for details).}
 
-\item{return_df_only}{Logical, defaults to FALSE. If TRUE, does not write to database but simply returns the data frame that would be written to database when set to TRUE.}
+\item{return_df_only}{Logical, defaults to FALSE. If TRUE, does not write to
+database but simply returns the data frame that would be written to
+database when set to TRUE.}
 }
 \description{
 Import into the database manually fixed street names
