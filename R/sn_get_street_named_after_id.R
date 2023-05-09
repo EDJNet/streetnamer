@@ -1,7 +1,6 @@
 #' Retrieve combination of municipality/street name/wikidata id and category
 #' from database.
 #'
-#' Country must always be given, other parameters optional.
 #'
 #' @param country A two letter country code. See
 #'   `unique(sn_lau_by_nuts$country)` for available values.
