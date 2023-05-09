@@ -3,6 +3,7 @@
 export("%>%")
 export(mod_sn_export_app)
 export(mod_sn_import_app)
+export(mod_sn_show_basic_municipality_app)
 export(mod_sn_show_summary_stats_app)
 export(mod_sn_street_info_app)
 export(sn_check_data_folder)

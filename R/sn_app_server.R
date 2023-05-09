@@ -83,6 +83,42 @@ sn_app_server <- function(input, output, session) {
 
 
 
+  
+  current_basic_municipality_df_r <- shiny::observeEvent(
+    eventExpr = list(input$update_basic_municipality),
+    handlerExpr = {
+      if (is.null(input$current_gisco_id)) {
+        return(NULL)
+      }
+      
+      if (input$current_gisco_id == " ") {
+        return(NULL)
+      }
+      
+      print("Getting basic municipality stats")
+      
+      mod_sn_show_basic_municipality_server(
+        id = "mod_sn_show_basic_municipality_1",
+        gisco_id = input$current_gisco_id,
+        gisco_label = golem::get_golem_options("lau_by_nuts") %>%
+          dplyr::filter(gisco_id == input$current_gisco_id) %>%
+          dplyr::pull(.data$lau_label),
+        country =  stringr::str_extract(
+          string = input$current_gisco_id,
+          pattern = "[A-Z][A-Z]"
+        ),
+        streets_sf = current_streets_sf_r(),
+        connection = golem::get_golem_options("connection"),
+        language = "en"
+      )
+    },
+    ignoreNULL = TRUE,
+    ignoreInit = TRUE,
+    label = "current_basic_municipality"
+  )
+  
+
+  
   current_core_df_r <- shiny::observeEvent(
     eventExpr = list(input$update_summary_stats),
     handlerExpr = {

@@ -163,14 +163,34 @@ sn_app_ui <- function(request) {
             ),
             tabPanel(
               "About this municipality",
-              shiny::fluidRow(),
+              shiny::fluidRow(
+                align = "center",
+                shiny::column(
+                  width = 10, offset = 1, align = "center",
+                  shiny::actionButton(
+                    inputId = "update_basic_municipality",
+                    label = "Update and show basic stats for the current municipality",
+                    width = "80%",
+                    style = "margin-top:20px;"
+                  )
+                )
+              ),
+              shiny::fluidRow(
+                align = "center",
+                shiny::column(
+                  width = 6,
+                  offset = 3,
+                  align = "center",
+                mod_sn_show_basic_municipality_ui("mod_sn_show_basic_municipality_1")
+                )
+              ),
               shiny::fluidRow(
                 align = "center",
                 shiny::column(
                   width = 10, offset = 1, align = "center",
                   shiny::actionButton(
                     inputId = "update_summary_stats",
-                    label = "Update and show summary stats for the current municipality",
+                    label = "Update and show more details on data availability",
                     width = "80%",
                     style = "margin-top:20px;"
                   )
