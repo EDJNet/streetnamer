@@ -8,6 +8,8 @@ sn_get_street_named_after_id(
   country = NULL,
   gisco_id = NULL,
   street_name = NULL,
+  streets_sf = NULL,
+  lau_year = 2020,
   keep_only_latest = TRUE,
   only_checked = FALSE,
   remove_ignored = TRUE,

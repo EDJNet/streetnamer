@@ -9,6 +9,7 @@ sn_get_city_combo(
   country = NULL,
   streets_sf = NULL,
   street_names_df = NULL,
+  lau_year = 2020,
   include_checked_elsewhere_in_country = FALSE,
   connection = NULL,
   language = tidywikidatar::tw_get_language(),

@@ -12,6 +12,7 @@ sn_export_checked_legacy(
     "P607", "P27", "P172"),
   include_image_credits = TRUE,
   unlist = FALSE,
+  lau_year = 2020,
   fixed_folder = "sn_data_fixed",
   export_folder = "sn_data_export",
   export_format = NULL,

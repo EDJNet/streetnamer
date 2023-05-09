@@ -163,6 +163,7 @@ sn_get_details_by_lau <- function(gisco_id,
                                     "P27",
                                     "P172"
                                   ),
+                                  lau_year = 2020, 
                                   export_format = NULL,
                                   collapse_lists = FALSE,
                                   language = tidywikidatar::tw_get_language(),
@@ -539,7 +540,8 @@ sn_get_details_by_lau <- function(gisco_id,
         current_sf <- latlon2map::ll_osm_get_lau_streets(
           gisco_id = gisco_id,
           unnamed_streets = FALSE,
-          streets_sf = streets_sf
+          streets_sf = streets_sf, 
+          year = lau_year
         ) %>%
           dplyr::rename(street_name = name) %>% 
           dplyr::left_join(y = output_df, by = "street_name")

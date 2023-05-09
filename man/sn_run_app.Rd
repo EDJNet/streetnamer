@@ -10,6 +10,7 @@ sn_run_app(
   country_name = NULL,
   enable_tag = TRUE,
   category_choices = c("politics", "culture", "religion", "military", "other"),
+  lau_year = 2020,
   connection = NULL,
   sn_data_folder = NULL,
   user_base = NULL,

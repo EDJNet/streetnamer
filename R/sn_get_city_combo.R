@@ -11,6 +11,7 @@ sn_get_city_combo <- function(gisco_id,
                               country = NULL,
                               streets_sf = NULL,
                               street_names_df = NULL,
+                              lau_year = 2020,
                               include_checked_elsewhere_in_country = FALSE,
                               connection = NULL,
                               language = tidywikidatar::tw_get_language(),
@@ -103,7 +104,8 @@ sn_get_city_combo <- function(gisco_id,
     current_street_names_df <- latlon2map::ll_osm_get_lau_streets(
       gisco_id = gisco_id,
       unnamed_streets = FALSE,
-      streets_sf = streets_sf
+      streets_sf = streets_sf,
+      year = lau_year
     ) %>%
       sf::st_drop_geometry() %>%
       dplyr::rename(street_name = .data$name) %>%

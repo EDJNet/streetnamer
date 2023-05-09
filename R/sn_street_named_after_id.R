@@ -309,6 +309,8 @@ sn_write_street_named_after_id <- function(gisco_id = NULL,
 sn_get_street_named_after_id <- function(country = NULL,
                                          gisco_id = NULL,
                                          street_name = NULL,
+                                         streets_sf = NULL,
+                                         lau_year = 2020,
                                          keep_only_latest = TRUE,
                                          only_checked = FALSE,
                                          remove_ignored = TRUE,
@@ -351,6 +353,36 @@ sn_get_street_named_after_id <- function(country = NULL,
 
     return(sn_empty_street_named_after_id)
   }
+  
+  if (include_checked_elsewhere_in_country == TRUE) {
+     
+    if (is.null(streets_sf)) {
+      current_country_code <- country
+      if (current_country_code == "UK") {
+        # check if northern ireland
+        if (stringr::str_starts(string = current_gisco_id, pattern = "UK_N")) {
+          current_country_name <- "ireland-and-northern-ireland"
+        } else {
+          current_country_name <- "great-britain"
+        }
+      } else if (current_country_code == "IE") {
+        current_country_name <- "ireland-and-northern-ireland"
+      } else if (current_country_code == "MD") {
+        current_country_name <- "moldova"
+      } else {
+        current_country_name <- NULL
+      }
+      
+      
+      
+      streets_sf <- latlon2map::ll_osm_get_lau_streets(
+        gisco_id = gisco_id,
+        country = current_country_name,
+        unnamed_streets = FALSE,
+        year = lau_year
+      )
+    }
+  }
 
   if (is.null(street_name) == FALSE & is.null(gisco_id) == FALSE) {
     # if both street and gisco given, return for current street only
@@ -378,6 +410,7 @@ sn_get_street_named_after_id <- function(country = NULL,
     )
   } else if (is.null(street_name) == TRUE & is.null(gisco_id) == FALSE) {
     # if street name not given, but municipality given, return all streets for given municipality
+
     db_result <- tryCatch(
       dplyr::tbl(src = db, table_name) %>%
         dplyr::filter(

@@ -211,7 +211,8 @@ sn_app_server <- function(input, output, session) {
       ll_osm_get_lau_streets(
         gisco_id = current_gisco_id,
         country = current_country_name,
-        unnamed_streets = FALSE
+        unnamed_streets = FALSE,
+        year = golem::get_golem_options("lau_year")
       )
     },
     ignoreNULL = TRUE,

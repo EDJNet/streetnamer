@@ -10,6 +10,7 @@
 #' @examples
 sn_create_map <- function(streets_sf = NULL,
                           streets_data_df = NULL,
+                          lau_year = 2020,
                           gisco_id = NULL,
                           scope = "base",
                           unnamed_streets = FALSE,
@@ -17,7 +18,8 @@ sn_create_map <- function(streets_sf = NULL,
   if (is.null(streets_sf)) {
     streets_sf <- latlon2map::ll_osm_get_lau_streets(
       gisco_id = gisco_id,
-      unnamed_streets = unnamed_streets
+      unnamed_streets = unnamed_streets,
+      year = lau_year
     )
   }
   

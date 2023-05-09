@@ -7,6 +7,7 @@
 sn_create_map(
   streets_sf = NULL,
   streets_data_df = NULL,
+  lau_year = 2020,
   gisco_id = NULL,
   scope = "base",
   unnamed_streets = FALSE,

@@ -18,6 +18,7 @@ sn_export_checked_legacy <- function(gisco_id = NULL,
                                      additional_properties = c("P39", "P509", "P140", "P611", "P411", "P241", "P410", "P97", "P607", "P27", "P172"),
                                      include_image_credits = TRUE,
                                      unlist = FALSE,
+                                     lau_year = 2020, 
                                      fixed_folder = "sn_data_fixed",
                                      export_folder = "sn_data_export",
                                      export_format = NULL,
@@ -341,7 +342,8 @@ sn_export_checked_legacy <- function(gisco_id = NULL,
 
       export_sf <- latlon2map::ll_osm_get_lau_streets(
         gisco_id = gisco_id,
-        unnamed_streets = FALSE
+        unnamed_streets = FALSE,
+        year = lau_year
       ) %>%
         dplyr::rename(street_name = .data$name) %>%
         dplyr::left_join(
@@ -419,7 +421,8 @@ sn_export <- function(gisco_id = NULL,
     streets_sf <- latlon2map::ll_osm_get_lau_streets(
       gisco_id = gisco_id,
       country = country,
-      unnamed_streets = FALSE
+      unnamed_streets = FALSE,
+      year = lau_year
     )
   }
 
@@ -727,7 +730,8 @@ sn_export <- function(gisco_id = NULL,
 
       export_sf <- latlon2map::ll_osm_get_lau_streets(
         gisco_id = gisco_id,
-        unnamed_streets = FALSE
+        unnamed_streets = FALSE,
+        year = lau_year
       ) %>%
         dplyr::rename(street_name = .data$name) %>%
         dplyr::left_join(
@@ -761,7 +765,8 @@ sn_export <- function(gisco_id = NULL,
     } else if (export_format == "rds_sf") {
       export_sf <- latlon2map::ll_osm_get_lau_streets(
         gisco_id = gisco_id,
-        unnamed_streets = FALSE
+        unnamed_streets = FALSE,
+        year = lau_year
       ) %>%
         dplyr::rename(street_name = .data$name) %>%
         dplyr::left_join(

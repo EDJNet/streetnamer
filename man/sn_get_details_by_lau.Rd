@@ -8,6 +8,7 @@ sn_get_details_by_lau(
   gisco_id,
   additional_properties = c("P39", "P509", "P140", "P611", "P411", "P241", "P410", "P97",
     "P607", "P27", "P172"),
+  lau_year = 2020,
   export_format = NULL,
   collapse_lists = FALSE,
   language = tidywikidatar::tw_get_language(),
