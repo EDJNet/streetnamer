@@ -788,10 +788,6 @@ sn_app_server <- function(input, output, session) {
   )
 
 
-
-
-
-
   # output$named_after_id_selected_output <- shiny::renderUI(
   #   shiny::p(selected_df_r())
   # )
