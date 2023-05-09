@@ -2,7 +2,8 @@
 % Please edit documentation in R/sn_street_named_after_id.R
 \name{sn_get_street_named_after_id}
 \alias{sn_get_street_named_after_id}
-\title{Retrieve combination of municipality/street name/wikidata id and category from database.}
+\title{Retrieve combination of municipality/street name/wikidata id and category
+from database.}
 \usage{
 sn_get_street_named_after_id(
   country = NULL,
@@ -21,20 +22,34 @@ sn_get_street_named_after_id(
 )
 }
 \arguments{
-\item{country}{A two letter country code. See `unique(sn_lau_by_nuts$country)` for available values.}
+\item{country}{A two letter country code. See
+`unique(sn_lau_by_nuts$country)` for available values.}
 
-\item{gisco_id}{A characther vector of length one, must correpond to a gisco id. See `sn_lau_by_nuts` for available values.}
+\item{gisco_id}{A characther vector of length one, must correpond to a gisco
+id. See `sn_lau_by_nuts` for available values.}
 
-\item{street_name}{A characther vector of length one, a street name. If not given, returns added data on all streets for given municipality.}
+\item{street_name}{A characther vector of length one, a street name. If not
+given, returns added data on all streets for given municipality.}
 
-\item{language}{Defaults to language set with `tw_set_language()`; if not set, "en". Use "all_available" to keep all languages. For available language values, see https://www.wikidata.org/wiki/Help:Wikimedia_language_codes/lists/all}
+\item{include_checked_elsewhere_in_country}{Defaults to FALSE. If TRUE,
+retrieves all streets from the whole country, keeps the most recent, and
+includes it in the final output if no local match is found or the national
+match is more recent.}
 
-\item{connection}{Defaults to NULL. If NULL, and caching is enabled, `streetnamer` will use a local sqlite database. A custom connection to other databases can be given (see vignette `caching` for details).}
+\item{language}{Defaults to language set with `tw_set_language()`; if not
+set, "en". Use "all_available" to keep all languages. For available
+language values, see
+https://www.wikidata.org/wiki/Help:Wikimedia_language_codes/lists/all}
+
+\item{connection}{Defaults to NULL. If NULL, and caching is enabled,
+`streetnamer` will use a local sqlite database. A custom connection to
+other databases can be given (see vignette `caching` for details).}
 
 \item{disconnect_db}{Defaults to TRUE. If FALSE, leaves the connection open.}
 }
 \value{
-If data present in database, returns a data frame with relevant data stored in the database.
+If data present in database, returns a data frame with relevant data
+  stored in the database.
 }
 \description{
 Country must always be given, other parameters optional.
