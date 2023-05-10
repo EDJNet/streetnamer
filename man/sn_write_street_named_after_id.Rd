@@ -18,7 +18,7 @@ sn_write_street_named_after_id(
   named_after_n = NULL,
   named_after_custom_label = NULL,
   session = stringi::stri_rand_strings(n = 1, length = 24),
-  time = NULL,
+  time = Sys.time(),
   overwrite = FALSE,
   append = TRUE,
   connection = NULL,

@@ -175,7 +175,7 @@ sn_write_street_named_after_id <- function(gisco_id = NULL,
     if (is.null(time)) {
       time_v <- Sys.time()
     } else {
-      time_v <- as.numeric(time)
+      time_v <- time
     }
 
 
