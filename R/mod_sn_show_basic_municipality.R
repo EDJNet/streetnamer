@@ -42,12 +42,11 @@ mod_sn_show_basic_municipality_server <- function(id,
       gisco_label <- ""
     }
     
-
     
     output$summary_stats_ui <- shiny::renderUI({
       w$show()
       
-      country_code <- sn_standard_country(country = country, type = "code")
+     # country_code <- sn_standard_country(country = country, type = "code")
       
       basic_df <- sn_export_basic(gisco_id = gisco_id,
                                   streets_sf = streets_sf,
@@ -64,23 +63,37 @@ mod_sn_show_basic_municipality_server <- function(id,
         }
       )
       
-      output$table <- renderTable(basic_df %>% 
-                                    dplyr::filter(person == 1) %>% 
-                                    dplyr::group_by(gender, category) %>% 
-                                    dplyr::tally() %>% 
-                                    dplyr::ungroup() %>% 
-                                    tidyr::pivot_wider(values_from = n, names_from = gender) %>% 
-                                    dplyr::mutate(category = factor(category,
-                                                                    levels = c("politics",
-                                                                               "culture",
-                                                                               "religion",
-                                                                               "military", 
-                                                                               "other"))) %>% 
-                                    dplyr::arrange(category) %>% 
-                                    dplyr::add_row(tibble::tibble(category = "total", 
-                                                                  female = sum(basic_df$gender=="female", na.rm = TRUE),
-                                                                  male = sum(basic_df$gender=="male", na.rm = TRUE),
-                                                                  other = sum(basic_df$gender=="other", na.rm = TRUE))))
+      
+      all_genders_v <- c("female", "male", "other", "uncertain")
+      all_categories_v <- c("politics",
+                            "culture",
+                            "religion",
+                            "military", 
+                            "other",
+                            NA_character_
+                            )
+      
+      summary_by_category_df <- basic_df %>% 
+        dplyr::filter(person == 1) %>% 
+        dplyr::group_by(gender, category) %>% 
+        dplyr::tally() %>% 
+        dplyr::ungroup() %>% 
+        dplyr::full_join(tibble::tibble(gender = all_genders_v), by = "gender") %>% 
+        dplyr::full_join(tibble::tibble(category = all_categories_v), by = "category") %>% 
+        tidyr::replace_na(replace = list(n = 0)) %>% 
+        tidyr::pivot_wider(values_from = n,
+                           names_from = gender, values_fill = 0) %>% 
+        dplyr::mutate(category = factor(category,
+                                        levels = all_categories_v)) %>% 
+        dplyr::arrange(category) %>% 
+        dplyr::add_row(tibble::tibble(category = "total", 
+                                      female = sum(basic_df$gender=="female", na.rm = TRUE),
+                                      male = sum(basic_df$gender=="male", na.rm = TRUE),
+                                      other = sum(basic_df$gender=="other", na.rm = TRUE),
+                                      uncertain = sum(basic_df$gender=="uncertain", na.rm = TRUE),
+                                      `NA`= nrow(basic_df %>% dplyr::filter(person==1, is.na(gender)))))
+      
+      output$table <- renderTable(summary_by_category_df)
       
       
       summary_taglist <- shiny::tagList(
