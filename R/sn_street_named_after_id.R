@@ -65,7 +65,7 @@ sn_write_street_named_after_id <- function(gisco_id = NULL,
                                            named_after_n = NULL,
                                            named_after_custom_label = NULL,
                                            session = stringi::stri_rand_strings(n = 1, length = 24),
-                                           time = NULL,
+                                           time = Sys.time(),
                                            overwrite = FALSE,
                                            append = TRUE,
                                            connection = NULL,
@@ -74,6 +74,11 @@ sn_write_street_named_after_id <- function(gisco_id = NULL,
                                            return_df_only = FALSE,
                                            df_to_write = NULL) {
   if (is.null(df_to_write) == FALSE & is.data.frame(df_to_write) == TRUE) {
+    if (nrow(df_to_write)<1) {
+      warning("sn_write_street_named_after_id has nothing to write.")
+      return(df_to_write)
+    }
+    
     df <- df_to_write
 
     if (is.null(country)) {
@@ -118,49 +123,49 @@ sn_write_street_named_after_id <- function(gisco_id = NULL,
       named_after_id_v <- as.character(named_after_id)
     }
 
-    if (is.null(person)) {
+    if (length(person)==0) {
       person_v <- as.integer(NA)
     } else {
       person_v <- as.integer(person)
     }
 
-    if (is.null(gender)) {
+    if (length(gender)==0) {
       gender_v <- as.character(NA)
     } else {
       gender_v <- as.character(gender)
     }
 
-    if (is.null(category)) {
+    if (length(category)==0) {
       category_v <- as.character(NA)
     } else {
       category_v <- as.character(category)
     }
 
-    if (is.null(checked)) {
+    if (length(checked)==0) {
       checked_v <- as.integer(NA)
     } else {
       checked_v <- as.integer(checked)
     }
 
-    if (is.null(ignore)) {
+    if (length(ignore)==0) {
       ignore_v <- as.integer(NA)
     } else {
       ignore_v <- as.integer(ignore)
     }
 
-    if (is.null(named_after_n)) {
+    if (length(named_after_n)==0) {
       named_after_n_v <- as.integer(NA)
     } else {
       named_after_n_v <- as.integer(named_after_n)
     }
 
-    if (is.null(named_after_custom_label)) {
+    if (length(named_after_custom_label)==0) {
       named_after_custom_label_v <- as.character(NA)
     } else {
       named_after_custom_label_v <- as.character(named_after_custom_label)
     }
 
-    if (is.null(tag)) {
+    if (length(tag)==0) {
       tag_v <- as.character(NA)
     } else {
       tag_v <- as.character(tag)

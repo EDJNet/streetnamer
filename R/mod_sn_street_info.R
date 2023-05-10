@@ -38,7 +38,7 @@ mod_sn_street_info_server <- function(id,
     #   dplyr::filter(country_name == gisco_id)
 
     tictoc::tic(msg = "Getting tentative named_after_id")
-
+    
     if (is.null(country)) {
       country <- stringr::str_extract(string = gisco_id, pattern = "[[:alnum:]]{2}") %>%
         stringr::str_to_upper()
@@ -110,7 +110,7 @@ mod_sn_street_info_server <- function(id,
           search_language <- search_language[1]
         }
 
-        if (input$current_gisco_id %in% sn_bilingual_gisco_id$gisco_id) {
+        if (gisco_id %in% sn_bilingual_gisco_id$gisco_id) {
           search_string_v <- sn_get_clean_street_name_bilingual_df(
             gisco_id = gisco_id,
             street_names_df = tibble::tibble(name = street_name)
@@ -365,7 +365,7 @@ mod_sn_street_info_server <- function(id,
 
     ## Return
     selected_df_r <- shiny::reactive({
-      if (length(input$person_switch) == 0) {
+      if (length(input$person_switch) == 0 | length(input$tag_selectize_person)) {
         tag_v <- ""
       } else if (as.integer(input$person_switch) == 1) {
         tag_v <- input$tag_selectize_person
@@ -401,7 +401,8 @@ mod_sn_street_info_server <- function(id,
         append = TRUE,
         connection = current_db_connection,
         disconnect_db = FALSE,
-        return_df_only = TRUE
+        return_df_only = TRUE, 
+        df_to_write = NULL
       )
     })
     

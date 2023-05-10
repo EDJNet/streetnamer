@@ -601,6 +601,7 @@ sn_app_server <- function(input, output, session) {
   observeEvent(
     list(input$confirm_match),
     {
+      #browser()
       sn_write_street_named_after_id(
         df_to_write = selected_df_rv$df(),
         connection = golem::get_golem_options("connection"),
@@ -773,6 +774,7 @@ sn_app_server <- function(input, output, session) {
   shiny::observeEvent(
     eventExpr = street_selected()$name,
     handlerExpr = {
+      #browser()
       selected_df_rv$df <- mod_sn_street_info_server(
         id = "snm_street_info_ui_1",
         street_name = street_selected()$name,
