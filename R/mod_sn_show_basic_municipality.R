@@ -64,7 +64,11 @@ mod_sn_show_basic_municipality_server <- function(id,
       )
       
       
-      all_genders_v <- c("female", "male", "other", "uncertain")
+      all_genders_v <- c("female",
+                         "male",
+                         "other",
+                         "uncertain",
+                         NA_character_)
       all_categories_v <- c("politics",
                             "culture",
                             "religion",
@@ -74,7 +78,12 @@ mod_sn_show_basic_municipality_server <- function(id,
                             )
       
       summary_by_category_df <- basic_df %>% 
+        dplyr::filter(is.na(person) == FALSE) %>% 
         dplyr::filter(person == 1) %>% 
+        dplyr::mutate(category = dplyr::if_else(condition = category=="",
+                                                true = NA_character_,
+                                                false = category,
+                                                missing = NA_character_)) %>% 
         dplyr::group_by(gender, category) %>% 
         dplyr::tally() %>% 
         dplyr::ungroup() %>% 
