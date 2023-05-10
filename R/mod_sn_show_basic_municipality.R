@@ -97,6 +97,7 @@ mod_sn_show_basic_municipality_server <- function(id,
       
       
       summary_taglist <- shiny::tagList(
+        h3(gisco_label),
         tableOutput(ns("table")),
         downloadButton(
           outputId = ns("export"),
