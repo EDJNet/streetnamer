@@ -22,7 +22,8 @@ sn_app_ui <- function(request) {
         primary = "#ff5454",
         base_font = bslib::font_google(
           family = "Space Mono",
-          ital = 1
+          ital = 1,
+          local = FALSE
         )
       ),
       title = golem::get_golem_options("app_title"),
