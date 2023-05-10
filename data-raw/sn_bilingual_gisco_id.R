@@ -27,7 +27,8 @@ nuts2_wallonia_v <- provinces_Wallonia_df %>%
 
 wallonia_df <- sn_lau_by_nuts %>% 
   dplyr::filter(nuts_2 %in% c(nuts2_wallonia_v, 
-                              c("BE100",
+                              c("BE10",
+                                "BE100",
                                 "BE_21004",
                                 "BE_21015",
                                 "BE_21001",
