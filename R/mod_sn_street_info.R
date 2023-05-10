@@ -100,7 +100,7 @@ mod_sn_street_info_server <- function(id,
         checked_switch_selected <- FALSE
 
         # try to guess wikidata id based on country
-        search_language <- streetnamer::sn_language_defaults_by_country %>%
+        search_language <- sn_language_defaults_by_country %>%
           dplyr::filter(.data$country == country_name) %>%
           dplyr::pull(.data$language_code)
 
@@ -110,13 +110,7 @@ mod_sn_street_info_server <- function(id,
           search_language <- search_language[1]
         }
 
-        if (country_code == "BE") {
-          search_string_v <- sn_get_clean_street_name_bilingual_df(
-            gisco_id = gisco_id,
-            street_names_df = tibble::tibble(name = street_name)
-          ) %>%
-            dplyr::pull(name_clean)
-        } else if (country_code == "IT")  {
+        if (input$current_gisco_id %in% sn_bilingual_gisco_id$gisco_id) {
           search_string_v <- sn_get_clean_street_name_bilingual_df(
             gisco_id = gisco_id,
             street_names_df = tibble::tibble(name = street_name)
