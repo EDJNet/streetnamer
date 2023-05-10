@@ -22,6 +22,12 @@ sn_export_basic <- function(country = NULL,
                             disconnect_db = TRUE) {
   current_gisco_id <- gisco_id
   
+  connection_db <- tidywikidatar::tw_connect_to_cache(
+    connection = connection,
+    language = language,
+    cache = TRUE
+  )
+  
   with_categories_df <- sn_derive_categories(
     country = country,
     gisco_id = gisco_id,
@@ -32,7 +38,7 @@ sn_export_basic <- function(country = NULL,
     occupation_categories_df = occupation_categories_df,
     canonization_religious_qid = canonization_religious_qid,
     language = language,
-    connection = connection,
+    connection = connection_db,
     disconnect_db = FALSE
   )
 
@@ -41,7 +47,7 @@ sn_export_basic <- function(country = NULL,
     language = language,
     cache = TRUE,
     overwrite_cache = FALSE,
-    cache_connection = connection,
+    cache_connection = connection_db,
     disconnect_db = FALSE,
     wait = 0
   ) %>%
@@ -55,7 +61,7 @@ sn_export_basic <- function(country = NULL,
         id_df = tw_df,
         cache = TRUE,
         overwrite_cache = FALSE,
-        cache_connection = connection,
+        cache_connection = connection_db,
         disconnect_db = FALSE
       ),
       description = tidywikidatar::tw_get_description(
@@ -64,7 +70,7 @@ sn_export_basic <- function(country = NULL,
         id_df = tw_df,
         cache = TRUE,
         overwrite_cache = FALSE,
-        cache_connection = connection,
+        cache_connection = connection_db,
         disconnect_db = FALSE
       ),
       instance_of_label = tidywikidatar::tw_get_p1(
@@ -74,7 +80,7 @@ sn_export_basic <- function(country = NULL,
         id_df = tw_df,
         cache = TRUE,
         overwrite_cache = FALSE,
-        cache_connection = connection,
+        cache_connection = connection_db,
         disconnect_db = FALSE
       ) %>%
         tidywikidatar::tw_get_label(
@@ -82,7 +88,7 @@ sn_export_basic <- function(country = NULL,
           id_df = tw_df,
           cache = TRUE,
           overwrite_cache = FALSE,
-          cache_connection = connection,
+          cache_connection = connection_db,
           disconnect_db = FALSE
         ),
       date_of_birth = tidywikidatar::tw_get_p1(
@@ -92,7 +98,7 @@ sn_export_basic <- function(country = NULL,
         id_df = tw_df,
         cache = TRUE,
         overwrite_cache = FALSE,
-        cache_connection = connection,
+        cache_connection = connection_db,
         disconnect_db = FALSE
       ),
       date_of_death = tidywikidatar::tw_get_p1(
@@ -102,7 +108,7 @@ sn_export_basic <- function(country = NULL,
         id_df = tw_df,
         cache = TRUE,
         overwrite_cache = FALSE,
-        cache_connection = connection,
+        cache_connection = connection_db,
         disconnect_db = FALSE
       )
     ) %>% 
@@ -121,6 +127,13 @@ sn_export_basic <- function(country = NULL,
                   date_of_birth, 
                   date_of_death
                   )
+  
+  tidywikidatar::tw_disconnect_from_cache(
+    cache = TRUE,
+    cache_connection = connection_db,
+    disconnect_db = disconnect_db,
+    language = language
+  )
   
   export_df
   

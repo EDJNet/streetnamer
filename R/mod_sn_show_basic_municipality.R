@@ -27,7 +27,7 @@ mod_sn_show_basic_municipality_server <- function(id,
                                              connection = NULL,
                                              language = tidywikidatar::tw_get_language(),
                                              search_language = NULL,
-                                             disconnect_db = FALSE) {
+                                             disconnect_db = TRUE) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
     
@@ -53,7 +53,7 @@ mod_sn_show_basic_municipality_server <- function(id,
                                   streets_sf = streets_sf,
                                   include_checked_elsewhere_in_country = TRUE,
                                   connection = connection,
-                                  disconnect_db = FALSE)
+                                  disconnect_db = disconnect_db)
       
       output$export <- downloadHandler(
         filename = function() {
