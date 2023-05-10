@@ -654,14 +654,6 @@ sn_app_server <- function(input, output, session) {
 
   #### Add details about streets #####
 
-  # output$street_buttons_UI <- shiny::renderUI({
-  #   if (is.null(street_selected()) == TRUE) {
-  #     return(NULL)
-  #   }
-  #
-  #
-  # })
-
   output$current_street_box_UI <- shiny::renderUI({
     if (is.null(street_selected()) == TRUE) {
       return(NULL)
@@ -680,15 +672,19 @@ sn_app_server <- function(input, output, session) {
     ),
     {
 
-      if ( input$current_gisco_id %in% sn_bilingual_gisco_id$gisco_id) {
+      if (input$current_gisco_id %in% sn_bilingual_gisco_id$gisco_id) {
         current_default_search_language_v <- sn_bilingual_gisco_id %>% 
           dplyr::filter(gisco_id == input$current_gisco_id) %>% 
           dplyr::pull(languages) %>% 
           stringr::str_extract(pattern = "[[:alpha:]][[:alpha:]]")
+        
+        bilingual <- TRUE
       } else {
         current_default_search_language_v <- streetnamer::sn_language_defaults_by_country %>%
           dplyr::filter(country == input$current_country_name) %>%
           dplyr::pull(language_code)
+        
+        bilingual <- FALSE
       }
       
       if (length(current_default_search_language_v) == 0) {
@@ -698,18 +694,34 @@ sn_app_server <- function(input, output, session) {
       }
 
 
-      selected_named_after_id_from_search_r <- mod_sn_search_wikidata_server(
-        id = "sn_search_wikidata_ui_1",
-        search_string = sn_get_clean_street_name_bilingual_df(street_name = street_selected()$name,
-                                                              gisco_id = input$current_gisco_id
-          
-        ) %>% 
-          dplyr::pull(name_clean),
-        search_language = current_default_search_language_v,
-        description_language = "en",
-        cache = TRUE,
-        connection = golem::get_golem_options("connection")
-      )
+      if (isTRUE(bilingual)) {
+        selected_named_after_id_from_search_r <- mod_sn_search_wikidata_server(
+          id = "sn_search_wikidata_ui_1",
+          search_string = sn_get_clean_street_name_bilingual_df(street_name = street_selected()$name,
+                                                                gisco_id = input$current_gisco_id
+                                                                
+          ) %>% 
+            dplyr::pull(name_clean),
+          search_language = current_default_search_language_v,
+          description_language = "en",
+          cache = TRUE,
+          connection = golem::get_golem_options("connection")
+        )
+      } else {
+        selected_named_after_id_from_search_r <- mod_sn_search_wikidata_server(
+          id = "sn_search_wikidata_ui_1",
+          search_string = sn_clean_street_name(
+            street_name = street_selected()$name,
+            country = input$current_country_name
+          ),
+          search_language = current_default_search_language_v,
+          description_language = "en",
+          cache = TRUE,
+          connection = golem::get_golem_options("connection")
+        )
+      }
+      
+
     },
     ignoreNULL = TRUE,
     ignoreInit = TRUE
