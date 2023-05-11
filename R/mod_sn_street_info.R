@@ -307,7 +307,7 @@ mod_sn_street_info_server <- function(id,
             choices = c("female", "male", "other", "uncertain"),
             individual = TRUE,
             checkIcon = list(yes = icon("ok", lib = "glyphicon")),
-            justified = TRUE,
+            justified = FALSE,
             width = "98%"
           ),
           shiny::p("Select category:"),
@@ -317,7 +317,7 @@ mod_sn_street_info_server <- function(id,
             choices = category_choices,
             individual = TRUE,
             checkIcon = list(yes = icon("ok", lib = "glyphicon")),
-            justified = TRUE,
+            justified = FALSE,
             width = "98%"
           ),
           tag_selectize_person
