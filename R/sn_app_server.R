@@ -325,7 +325,7 @@ sn_app_server <- function(input, output, session) {
             dplyr::rename(name = street_name),
           by = "name"
         )
-    } else if (input$streets_to_show_in_dt == "Checked humans without confirmed gender") {
+    } else if (input$streets_to_show_in_dt == "Confirmed humans without gender information") {
       sn_get_street_named_after_id(
         gisco_id = input$current_gisco_id,
         country = stringr::str_extract(
@@ -341,7 +341,7 @@ sn_app_server <- function(input, output, session) {
         ) %>%
         dplyr::distinct(street_name) %>%
         dplyr::rename(name = street_name)
-    } else if (input$streets_to_show_in_dt == "Checked humans without confirmed id") {
+    } else if (input$streets_to_show_in_dt == "Confirmed humans without id") {
       sn_get_street_named_after_id(
         gisco_id = input$current_gisco_id,
         country = stringr::str_extract(
@@ -354,6 +354,40 @@ sn_app_server <- function(input, output, session) {
           checked == TRUE,
           person == TRUE,
           is.na(.data$named_after_id) == TRUE
+        ) %>%
+        dplyr::distinct(street_name) %>%
+        dplyr::rename(name = street_name)
+    } else if (input$streets_to_show_in_dt == "Confirmed humans without category") {
+      sn_derive_categories(
+        country = stringr::str_extract(
+          string = input$current_gisco_id,
+          pattern = "[A-Z][A-Z]"
+        ),
+        gisco_id = input$current_gisco_id,
+       # streets_sf = current_streets_sf_r(),
+        include_checked_elsewhere_in_country = TRUE,
+        connection = golem::get_golem_options("connection"),
+        disconnect_db = TRUE
+      ) %>% 
+        dplyr::filter(person == TRUE, 
+                      checked == TRUE, 
+                      is.na(category)) %>% 
+        dplyr::distinct(street_name) %>%
+        dplyr::rename(name = street_name)
+    } else if (input$streets_to_show_in_dt == "Confirmed humans without category set explicitly") {
+      sn_get_street_named_after_id(
+        gisco_id = input$current_gisco_id,
+        country = stringr::str_extract(
+          string = input$current_gisco_id,
+          pattern = "[A-Z][A-Z]"
+        ),
+        connection = golem::get_golem_options("connection"),
+        include_checked_elsewhere_in_country = TRUE,
+      ) %>%
+        dplyr::filter(
+          checked == TRUE,
+          person == TRUE,
+          (is.na(category) == TRUE | category == "")
         ) %>%
         dplyr::distinct(street_name) %>%
         dplyr::rename(name = street_name)

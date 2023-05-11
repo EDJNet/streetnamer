@@ -100,8 +100,10 @@ sn_app_ui <- function(request) {
               label = "List...",
               choices = c(
                 "Not yet checked",
-                "Checked humans without confirmed gender",
-                "Checked humans without confirmed id",
+                "Confirmed humans without gender information",
+                "Confirmed humans without id",
+                "Confirmed humans without category",
+                "Confirmed humans without category set explicitly",
                 "Not yet checked, but likely humans",
                 "Not yet checked in this municipality",
                 "All streets",
