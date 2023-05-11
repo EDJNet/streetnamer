@@ -56,17 +56,20 @@ mod_sn_street_info_server <- function(id,
 
     if (is.null(named_after_id) == FALSE) {
       if (is.na(named_after_id)) {
-        named_after_id_selected <- as.character(NA)
-        gender_selected <- as.character(NA)
+        named_after_id_selected <- NA_character_
+        gender_selected <- NA_character_
+        category_selected <- NA_character_
         checked_switch_selected <- TRUE
         guessing <- FALSE
       } else if (named_after_id == "drop") {
-        named_after_id_selected <- as.character(NA)
-        gender_selected <- as.character(NA)
+        named_after_id_selected <- NA_character_
+        gender_selected <- NA_character_
+        category_selected <- NA_character_
         checked_switch_selected <- TRUE
         guessing <- FALSE
       } else {
         guessing <- FALSE
+        category_selected <- NA_character_
         checked_switch_selected <- TRUE
         named_after_id_selected <- named_after_id
         gender_selected <- sn_get_gender_label(
@@ -93,10 +96,12 @@ mod_sn_street_info_server <- function(id,
         checked_switch_selected <- as.logical(details_from_db[["checked"]])
         named_after_id_selected <- details_from_db[["named_after_id"]]
         gender_selected <- details_from_db[["gender"]]
+        category_selected <- details_from_db[["category"]]
         checked_lv <- details_from_db$checked
       } else {
         guessing <- TRUE
-
+        category_selected <- NA_character_
+        
         checked_switch_selected <- FALSE
 
         # try to guess wikidata id based on country
@@ -308,7 +313,7 @@ mod_sn_street_info_server <- function(id,
           shiny::p("Select category:"),
           shinyWidgets::radioGroupButtons(
             inputId = ns("category_radio"),
-            selected = character(0),
+            selected = category_selected,
             choices = category_choices,
             individual = TRUE,
             checkIcon = list(yes = icon("ok", lib = "glyphicon")),
