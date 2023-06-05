@@ -66,7 +66,7 @@ sn_get_details_by_country <- function(country,
   current_country_lau_v <- latlon2map::ll_get_lau_eu(year = lau_year) %>%
     sf::st_drop_geometry() %>%
     dplyr::filter(CNTR_CODE == country_code) %>%
-    dplyr::arrange(desc(POP_2020)) %>%
+    dplyr::arrange(dplyr::desc(POP_2020)) %>%
     dplyr::pull(GISCO_ID)
 
 

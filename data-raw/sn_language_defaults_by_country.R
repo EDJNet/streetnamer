@@ -26,6 +26,7 @@ sn_language_defaults_by_country <- tibble::tribble(
   "Lithuania", "LT", "Lithuanian", "lt", "Q9083",
   "Moldova", "MD", "Moldovan", "ro", "Q36392",
   "Netherlands", "NL", "Dutch", "nl", "Q7411",
+  "Norway", "NO", "Norwegian", "no", "Q9043",
   "Poland", "PL", "Polish", "pl", "Q809",
   "Portugal", "PT", "Portuguese", "pt", "Q5146",
   "Romania", "RO", "Romanian", "ro", "Q7913",

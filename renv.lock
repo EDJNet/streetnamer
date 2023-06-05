@@ -1967,7 +1967,7 @@
     },
     "streetnamer": {
       "Package": "streetnamer",
-      "Version": "0.0.0.9022",
+      "Version": "0.0.0.9026",
       "Source": "unknown",
       "Requirements": [
         "DBI",
@@ -2007,7 +2007,7 @@
         "usethis",
         "waiter"
       ],
-      "Hash": "26861ba06fe13b28dd19c69191caab2f"
+      "Hash": "0a429256ab538df840e95cc0d625996f"
     },
     "stringi": {
       "Package": "stringi",

@@ -16,6 +16,27 @@ sn_street_name_to_remove_df <- dplyr::bind_rows(
       stringr::str_c("^", .)
   ),
   tibble::tibble(
+    country = c("Norway"),
+    string = c(
+      " allé",
+      "alléen",
+      " brygge",
+      "faret",
+      "gata",
+      " gate",
+      " plass",
+      "plassen",
+      " sti",
+      " terrasse",
+      "torget",
+      " veg",
+      " vei",
+      "veien"
+
+    ) %>%
+      stringr::str_c(., "$")
+  ),
+  tibble::tibble(
     country = c("Slovenia"),
     string = c(
       " cesta",
