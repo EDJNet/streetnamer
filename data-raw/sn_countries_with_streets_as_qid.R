@@ -6,7 +6,8 @@ sn_countries_with_streets_as_qid <- tibble::tribble(
   "CZ",
   "NL",
   "BE",
-  "FR"
+  "FR",
+  "SK"
 )
 
 usethis::use_data(sn_countries_with_streets_as_qid, overwrite = TRUE)

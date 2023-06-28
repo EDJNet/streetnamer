@@ -32,6 +32,7 @@ sn_language_defaults_by_country <- tibble::tribble(
   "Romania", "RO", "Romanian", "ro", "Q7913",
   "Serbia", "RS", "Serbian", "sr", "Q9299",
   "Slovenia", "SI", "Slovenian", "sl", "Q9063",
+  "Slovakia", "SK", "Slovak", "sk", "Q9058",
   "Spain", "ES", "Spanish", "es", "Q1321",
   "Sweden", "SV", "Swedish", "sv", "Q9027",
   "Ukraine", "UA", "Ukrainian", "uk", "Q8798",
