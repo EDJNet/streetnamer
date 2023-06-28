@@ -99,6 +99,18 @@ dublin_row_df <- ll_get_nuts_eu(nuts_id = "IE061") %>%
     lau_label = NAME_LATN
   )
 
+##### Add Bratislava #####
+
+bratislava_row_df <- tibble::tibble(
+    gisco_id = "SK_Bratislava",
+    country = "SK",
+    country_name = "Slovakia",
+    nuts_2 = "SK01",
+    nuts_3 = "SK010",
+    lau_name = "Bratislava",
+    priority = TRUE,
+    lau_label = "Bratislava"
+  )
 
 ##### Add Portugal #####
 
@@ -168,7 +180,8 @@ sn_lau_by_nuts <- dplyr::bind_rows(
   dublin_row_df,
   pt_concelho_df,
   ua1_df,
-  md_rows
+  md_rows,
+  bratislava_row_df
 ) %>%
   group_by(country) %>%
   arrange(country, desc(priority), desc(population)) %>%
