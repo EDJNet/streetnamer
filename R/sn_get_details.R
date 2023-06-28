@@ -226,9 +226,14 @@ sn_get_details_by_lau <- function(gisco_id,
   all_df <- purrr::map_dfr(
     .x = gisco_id,
     .f = function(x) {
-      city_name <- streetnamer::sn_lau_by_country %>%
-        dplyr::filter(GISCO_ID == x) %>%
-        dplyr::pull(LAU_NAME)
+      if (x == "SK_Bratislava") {
+        city_name <- "Bratislava"
+      } else {
+        city_name <- streetnamer::sn_lau_by_country %>%
+          dplyr::filter(GISCO_ID == x) %>%
+          dplyr::pull(LAU_NAME)
+      }
+
 
       if (is.null(export_format) == FALSE) {
         current_file <- fs::path(
