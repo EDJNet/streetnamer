@@ -6,6 +6,7 @@
 sn_language_defaults_by_country <- tibble::tribble(
   ~country, ~country_code, ~language, ~language_code, ~qid,
   "Albania", "AL", "Albanian", "sq", "Q8748",
+  "Kosovo", "AL", "Albanian", "sq", "Q8748",
   "Austria", "AT", "German", "de", "Q188",
   "Belgium", "BE", "Dutch", "nl", "Q7411",
   "Belgium", "BE", "French", "fr", "Q150",
