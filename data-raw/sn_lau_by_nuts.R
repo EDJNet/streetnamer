@@ -174,6 +174,25 @@ md_rows <- ll_get_adm_ocha(geo = "MD", level = 1) %>%
 
 md_rows$priority[md_rows$lau_label == "Chisinau"] <- TRUE
 
+### Add Kosovo ####
+
+
+
+XK2_df <- ll_get_gadm(geo = "XKO", level = 2) %>%
+  sf::st_drop_geometry() %>% 
+  dplyr::filter(NAME_2 == "Priština") %>%
+  dplyr::transmute(
+    country = "XK",
+    country_name = "Kosovo",
+    gisco_id = stringr::str_c("XK_", GID_2),
+    lau_name = "Pristina",
+    lau_label = "Pristina"
+  ) 
+
+
+####
+
+
 sn_lau_by_nuts <- dplyr::bind_rows(
   sn_lau_by_nuts_pre_df,
   brussels_row_df,
@@ -181,7 +200,8 @@ sn_lau_by_nuts <- dplyr::bind_rows(
   pt_concelho_df,
   ua1_df,
   md_rows,
-  bratislava_row_df
+  bratislava_row_df,
+  XK2_df
 ) %>%
   group_by(country) %>%
   arrange(country, desc(priority), desc(population)) %>%
