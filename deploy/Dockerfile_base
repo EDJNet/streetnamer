@@ -1,10 +1,10 @@
-FROM rocker/shiny:4.2.3
-RUN apt-get update -y && apt-get install -y  libicu-dev pandoc make  libicu-dev pandoc zlib1g-dev make  libcurl4-openssl-dev libssl-dev  libicu-dev libcurl4-openssl-dev libssl-dev pandoc zlib1g-dev make  make  make zlib1g-dev  git libcurl4-openssl-dev libssl-dev  zlib1g-dev  libicu-dev  git libgit2-dev libcurl4-openssl-dev libssl-dev  git  pandoc  libpng-dev libicu-dev pandoc libgdal-dev gdal-bin libgeos-dev libproj-dev libsqlite3-dev make  make unixodbc-dev  libssl-dev  libproj-dev libicu-dev libcurl4-openssl-dev libssl-dev libxml2-dev  libpng-dev  libproj-dev  libgdal-dev gdal-bin libgeos-dev libproj-dev libsqlite3-dev  libicu-dev libcurl4-openssl-dev libssl-dev libxml2-dev  libgdal-dev gdal-bin libgeos-dev libproj-dev libsqlite3-dev libssl-dev libudunits2-dev  libsodium-dev make zlib1g-dev  libsodium-dev  git libgit2-dev libicu-dev libcurl4-openssl-dev libssl-dev pandoc zlib1g-dev make  libudunits2-dev  git libgit2-dev libcurl4-openssl-dev libssl-dev make libxml2-dev
-
+FROM rocker/shiny:4.3.1
+RUN apt-get update -y && apt-get install -y  libicu-dev pandoc make  libicu-dev zlib1g-dev pandoc make  libcurl4-openssl-dev libssl-dev  libicu-dev zlib1g-dev pandoc libcurl4-openssl-dev libssl-dev make  make  make zlib1g-dev  git libcurl4-openssl-dev libssl-dev  zlib1g-dev  libicu-dev  git libcurl4-openssl-dev libssl-dev libgit2-dev  git  pandoc  libpng-dev libicu-dev pandoc libgdal-dev gdal-bin libgeos-dev libproj-dev libsqlite3-dev make  make unixodbc-dev  libssl-dev  libproj-dev libicu-dev libcurl4-openssl-dev libssl-dev libxml2-dev  libpng-dev  libproj-dev  libgdal-dev gdal-bin libgeos-dev libproj-dev libsqlite3-dev  libicu-dev libcurl4-openssl-dev libssl-dev libxml2-dev  libudunits2-dev libssl-dev libgdal-dev gdal-bin libgeos-dev libproj-dev libsqlite3-dev  libsodium-dev make zlib1g-dev  libsodium-dev  git libicu-dev zlib1g-dev pandoc libcurl4-openssl-dev libssl-dev make libgit2-dev  libudunits2-dev  git libcurl4-openssl-dev libssl-dev make libgit2-dev  libxml2-dev 
 
 RUN apt-get install -y  gdal-bin git-core libcurl4-openssl-dev libgdal-dev libgeos-dev libgeos++-dev libgit2-dev libicu-dev libpng-dev libproj-dev libsodium-dev libssl-dev libudunits2-dev libxml2-dev make pandoc pandoc-citeproc unixodbc-dev zlib1g-dev
 RUN apt-get install -y unixodbc unixodbc-dev libsqliteodbc odbc-postgresql --install-suggests
 RUN rm -rf /var/lib/apt/lists/*
+
 
 # ODBC driver
 ADD https://dev.mysql.com/get/Downloads/Connector-ODBC/8.0/mysql-connector-odbc-8.0.33-linux-glibc2.28-x86-64bit.tar.gz .
