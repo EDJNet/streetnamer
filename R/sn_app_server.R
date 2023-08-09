@@ -53,6 +53,7 @@ sn_app_server <- function(input, output, session) {
       include_checked_elsewhere_in_country = TRUE,
       streets_sf = current_streets_sf_r(),
       enable = credentials()$user_auth,
+      lau_year = golem::get_golem_options("lau_year"),
       connection = golem::get_golem_options("connection")
     )
 

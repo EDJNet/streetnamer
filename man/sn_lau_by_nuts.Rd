@@ -5,7 +5,7 @@
 \alias{sn_lau_by_nuts}
 \title{A dataset with all European LAUs, with the correspondent NUTS regions}
 \format{
-An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 98932 rows and 14 columns.
+An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 98933 rows and 14 columns.
 }
 \source{
 \url{https://edjnet.github.io/lau_centres/}

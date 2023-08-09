@@ -1,6 +1,12 @@
 # streetnamer (development version)
 
-# streetnamer 0.0.0.9001
+## streetnamer 0.0.0.9029
+
+* Fix missin lau_year parameter in sn_export preventing geojson export
+
+...
+
+## streetnamer 0.0.0.9001
 
 * Added a `NEWS.md` file to track changes to the package.
 * cities now ordered by population (biggest cities first) in the selector

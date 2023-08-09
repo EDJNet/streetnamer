@@ -17,6 +17,7 @@ sn_export(
     "P607", "P27", "P172"),
   include_image_credits = TRUE,
   unlist = FALSE,
+  lau_year = 2020,
   export_folder = "sn_data_export",
   export_format = NULL,
   write_file = FALSE,
