@@ -4,7 +4,7 @@
 # fix last line of Dockerfile
 # check if latlon2map or tidywikidatar have been updated locally
 docker build -f Dockerfile_base --progress=plain -t streetnamer_base .
-docker build -f Dockerfile --progress=plain -t giocomai/streetnamer:2023-06-28 .
+docker build -f Dockerfile --progress=plain -t giocomai/streetnamer:2023-10-05 .
 
-docker push giocomai/streetnamer:2023-06-28
+docker push giocomai/streetnamer:2023-10-05
 #previous 2023-05-11
