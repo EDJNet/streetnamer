@@ -431,6 +431,19 @@ sn_street_name_to_remove_df <- dplyr::bind_rows(
       stringr::str_c("^", .)
   ),
   tibble::tibble(
+    country = "Malta",
+    string = c(
+      "Triq ",
+     "Trejqet ",
+     "Triq id-",
+     "Triq il-",
+     "Triq in-",
+     "Triq ir-",
+     "Triq is-"
+    ) %>%
+      stringr::str_c("^", .)
+  ),
+  tibble::tibble(
     country = "Bulgaria",
     string = c(
       "Акад. ",
