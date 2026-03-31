@@ -16,6 +16,8 @@ sn_search_named_after(
   streets_sf = NULL,
   street_names_df = NULL,
   checked_df = NULL,
+  wait = 1,
+  retry = 10,
   cache = TRUE,
   overwrite_cache = FALSE,
   append = TRUE,
